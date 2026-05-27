@@ -1,0 +1,44 @@
+// 活力新知风（清新人文）主题变量
+:root {
+  // 主色：青绿
+  --color-primary:        #14B8A6;
+  --color-primary-light:  #5EEAD4;
+  --color-primary-dark:   #0F766E;
+
+  // 辅色：暖橙（提醒、标签、点缀）
+  --color-accent:         #FB923C;
+
+  // 背景
+  --color-bg-main:        #FFFFFF;
+  --color-bg-aside:       #ECFDF5;
+
+  // 文字
+  --color-text-title:     #1E293B;
+  --color-text-body:      #475569;
+
+  // 状态点缀
+  --color-warn:           #FDE68A;
+  --color-tag-special:    #A78BFA;
+
+  // 圆角
+  --radius-card:          16px;
+  --radius-btn:           8px;
+  --radius-tag:           999px;
+
+  // 阴影
+  --shadow-card:          0 2px 12px rgba(20, 184, 166, 0.08);
+
+  // Element Plus 主题覆盖
+  --el-color-primary:     #14B8A6;
+}
+
+// SCSS 变量（供 mixin/函数使用）
+$color-primary:       #14B8A6;
+$color-primary-light: #5EEAD4;
+$color-primary-dark:  #0F766E;
+$color-accent:        #FB923C;
+$color-bg-aside:     #ECFDF5;
+$color-text-title:   #1E293B;
+$color-text-body:    #475569;
+$sidebar-width:      220px;
+$header-height:      60px;

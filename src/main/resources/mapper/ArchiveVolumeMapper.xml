@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.laikuang.archive.volume.mapper.ArchiveVolumeMapper">
+
+    <!--
+      查询当前分类组合下最大案卷号（用于档号生成 +1 自增逻辑）。
+      注意：此处使用 #{} 预编译占位符，严禁改为 ${}。
+      调用方在正式归档前必须再次校验唯一索引 uk_archive_no_year。
+    -->
+    <select id="selectMaxVolumeNo" resultType="java.lang.String">
+        SELECT MAX(volume_no)
+        FROM archive_volume
+        WHERE year        = #{year}
+          AND fonds_no    = #{fondsNo}
+          AND category_l1 = #{categoryL1}
+          AND category_l2 = #{categoryL2}
+          AND category_l3 = #{categoryL3}
+          AND device_code = #{deviceCode}
+          AND destroy_flag = 0
+    </select>
+
+</mapper>

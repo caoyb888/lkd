@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.laikuang.archive.system.mapper.SysDictItemMapper">
+
+    <!--
+      查询所有【启用状态】的字典项（父字典 status=1 且字典项 status=1）。
+      按 dict_code 和 sort_order 排序，供前端页面初始化时一次性加载全部下拉数据。
+      全程使用 #{} 预编译，禁止 ${} 拼接。
+    -->
+    <select id="selectAllActiveItems"
+            resultType="com.laikuang.archive.system.domain.vo.DictItemVO">
+        SELECT
+            di.item_id,
+            di.dict_code,
+            di.item_value,
+            di.item_label,
+            di.sort_order,
+            di.status
+        FROM sys_dict_item di
+        INNER JOIN sys_dict d ON di.dict_code = d.dict_code
+        WHERE d.status = 1
+          AND di.status = 1
+        ORDER BY di.dict_code, di.sort_order
+    </select>
+
+    <!--
+      按指定 dictCode 查询启用状态的字典项（单独供某类下拉框使用）。
+    -->
+    <select id="selectActiveItemsByCode"
+            resultType="com.laikuang.archive.system.domain.vo.DictItemVO">
+        SELECT
+            di.item_id,
+            di.dict_code,
+            di.item_value,
+            di.item_label,
+            di.sort_order,
+            di.status
+        FROM sys_dict_item di
+        INNER JOIN sys_dict d ON di.dict_code = d.dict_code
+        WHERE d.status  = 1
+          AND di.status = 1
+          AND di.dict_code = #{dictCode}
+        ORDER BY di.sort_order
+    </select>
+
+</mapper>

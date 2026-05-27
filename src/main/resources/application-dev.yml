@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/laikuang_archive?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: Laikuang@2026
+
+logging:
+  level:
+    root: INFO
+    com.laikuang.archive: DEBUG
+    com.baomidou.mybatisplus: DEBUG

@@ -1,0 +1,85 @@
+@use './variables.scss' as *;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--color-text-body);
+  background-color: var(--color-bg-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+// Element Plus 全局覆盖
+.el-button--primary {
+  border-radius: var(--radius-btn) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3) !important;
+  }
+}
+
+.el-card {
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+// 表格行 hover
+.el-table__row:hover > td {
+  background-color: #ECFDF5 !important;
+}
+
+.el-table__row.current-row > td {
+  background-color: #CCFBF1 !important;
+}
+
+// 滚动条美化
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+
+  &:hover {
+    background: #94A3B8;
+  }
+}
+
+// 页面容器
+.page-container {
+  padding: 24px;
+  height: 100%;
+}
+
+// 搜索/工具栏卡片
+.search-card {
+  margin-bottom: 16px;
+}
+
+// 主按钮（青绿）- 供全局复用
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-btn);
+  border: none;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background-color: var(--color-primary-dark);
+  }
+}

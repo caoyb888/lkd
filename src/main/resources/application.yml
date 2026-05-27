@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: laikuang-archive
+  profiles:
+    active: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:laikuang_archive}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      pool-name: ArchiveHikariPool
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.laikuang.archive
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+
+# Sa-Token 配置
+sa-token:
+  token-name: satoken
+  # Token 有效期（秒），-1 表示永不过期，正式环境建议 86400（1天）
+  timeout: 86400
+  # Token 最低活跃频率（秒），-1 表示关闭，超过此时间无操作则视为过期
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  is-log: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  tomcat:
+    uri-encoding: UTF-8
+
+# 日志配置（SLF4J + Logback）
+logging:
+  pattern:
+    console: "[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%X{traceId}] [%X{clientIP}] [%thread] [%-5level] %logger{50} - %msg%n"
+    file:    "[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%X{traceId}] [%X{clientIP}] [%thread] [%-5level] %logger{50} - %msg%n"
+  file:
+    name: logs/archive.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+  level:
+    root: INFO
+    com.laikuang.archive: DEBUG
