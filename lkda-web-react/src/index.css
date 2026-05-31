@@ -4,15 +4,52 @@
 
 @layer base {
   :root {
+    /* Brand colors */
     --color-primary: #14B8A6;
     --color-primary-light: #5EEAD4;
     --color-primary-dark: #0F766E;
     --color-accent: #FB923C;
+
+    /* Light theme (default) */
     --color-bg-main: #FFFFFF;
     --color-bg-aside: #ECFDF5;
     --color-bg-soft: #F0FDFA;
+    --color-bg-page: #F8FAFC;
+    --color-bg-lighter: #F1F5F9;
     --color-slate-title: #1E293B;
     --color-slate-body: #475569;
+    --color-border-light: #E2E8F0;
+    --color-border-medium: #CBD5E1;
+    --color-header-bg: linear-gradient(135deg, #14B8A6 0%, #0F766E 100%);
+    --color-header-text: #FFFFFF;
+  }
+
+  .dark {
+    --color-bg-main: #0F172A;
+    --color-bg-aside: #064E3B;
+    --color-bg-soft: #1E293B;
+    --color-bg-page: #020617;
+    --color-bg-lighter: #1E293B;
+    --color-slate-title: #F1F5F9;
+    --color-slate-body: #94A3B8;
+    --color-border-light: #334155;
+    --color-border-medium: #475569;
+    --color-header-bg: linear-gradient(135deg, #0F766E 0%, #064E3B 100%);
+    --color-header-text: #F1F5F9;
+  }
+
+  .ocean {
+    --color-bg-main: #F0F9FF;
+    --color-bg-aside: #E0F2FE;
+    --color-bg-soft: #F0F9FF;
+    --color-bg-page: #F8FAFC;
+    --color-bg-lighter: #E0F2FE;
+    --color-slate-title: #0C4A6E;
+    --color-slate-body: #0369A1;
+    --color-border-light: #BAE6FD;
+    --color-border-medium: #7DD3FC;
+    --color-header-bg: linear-gradient(135deg, #0284C7 0%, #0C4A6E 100%);
+    --color-header-text: #FFFFFF;
   }
 
   html {
@@ -24,6 +61,7 @@
   }
 
   body {
-    @apply text-slate-body bg-background-main;
+    @apply text-slate-body;
+    background-color: var(--color-bg-page);
   }
 }

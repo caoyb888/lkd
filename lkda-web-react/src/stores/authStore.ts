@@ -22,8 +22,10 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      token: null,
-      userInfo: null,
+      token: import.meta.env.DEV ? 'dev-token' : null,
+      userInfo: import.meta.env.DEV
+        ? { userId: 1, username: 'admin', nickname: '管理员', deptId: 1, roles: ['archive_admin', 'company_leader'] }
+        : null,
       setToken: (token) => set({ token }),
       setUserInfo: (userInfo) => set({ userInfo }),
       logout: () => set({ token: null, userInfo: null }),

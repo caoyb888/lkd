@@ -1,14 +1,154 @@
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/authStore'
+import { rawMenuTree, filterMenuTree, type MenuItem } from '@/lib/menu'
+import {
+  LayoutDashboard,
+  FolderOpen,
+  FileText,
+  Upload,
+  CheckCircle,
+  Clock,
+  CircleCheck,
+  ClipboardList,
+  BookOpen,
+  User,
+  PenSquare,
+  List,
+  Trash2,
+  Settings,
+  UserCircle,
+  Building,
+  Library,
+  ScrollText,
+  ChevronDown,
+} from 'lucide-react'
 
-export default function Sidebar() {
+const iconMap: Record<string, React.ComponentType<{ className?: string; size?: number }>> = {
+  LayoutDashboard,
+  FolderOpen,
+  FileText,
+  Upload,
+  CheckCircle,
+  Clock,
+  CircleCheck,
+  ClipboardList,
+  BookOpen,
+  User,
+  PenSquare,
+  List,
+  Trash2,
+  Settings,
+  UserCircle,
+  Building,
+  Library,
+  ScrollText,
+}
+
+interface SidebarProps {
+  collapsed?: boolean
+}
+
+export default function Sidebar({ collapsed = false }: SidebarProps) {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { userInfo } = useAuthStore()
+  const roles = userInfo?.roles ?? []
+  const menuTree = filterMenuTree(rawMenuTree, roles)
+  const [openedKeys, setOpenedKeys] = useState<string[]>([])
+
+  const toggleSubMenu = (path: string) => {
+    setOpenedKeys((prev) =>
+      prev.includes(path) ? prev.filter((k) => k !== path) : [...prev, path]
+    )
+  }
+
+  const isActive = (path: string) => location.pathname === path
+  const isChildActive = (children?: MenuItem[]) =>
+    children?.some((c) => location.pathname === c.path)
+
   return (
     <aside
       className={cn(
-        'hidden lg:flex flex-col w-[220px] h-screen bg-background-aside border-r fixed left-0 top-0'
+        'hidden lg:flex flex-col h-screen bg-[var(--color-bg-aside)] border-r border-[var(--color-border-light)] fixed left-0 top-[60px] transition-all duration-300 z-30',
+        collapsed ? 'w-[64px]' : 'w-[220px]'
       )}
     >
-      <div className="p-4 font-bold text-slate-title">莱矿-档案管理系统</div>
-      <nav className="flex-1 px-3 space-y-1">菜单占位</nav>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-2 px-2 scrollbar-thin">
+        {menuTree.map((item) => {
+          const Icon = iconMap[item.icon]
+          const hasChildren = item.children && item.children.length > 0
+          const isOpen = openedKeys.includes(item.path) || isChildActive(item.children)
+
+          return (
+            <div key={item.path} className="mb-1">
+              {hasChildren ? (
+                <>
+                  <button
+                    onClick={() => toggleSubMenu(item.path)}
+                    className={cn(
+                      'w-full flex items-center gap-2 rounded-btn px-3 h-[42px] text-sm transition-colors',
+                      (isOpen || isActive(item.path))
+                        ? 'text-[var(--color-primary-dark)] font-semibold'
+                        : 'text-[var(--color-slate-title)] hover:bg-[var(--color-bg-lighter)]'
+                    )}
+                  >
+                    {Icon && <Icon size={18} />}
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1 text-left">{item.title}</span>
+                        <ChevronDown
+                          size={14}
+                          className={cn(
+                            'transition-transform',
+                            isOpen ? 'rotate-180' : ''
+                          )}
+                        />
+                      </>
+                    )}
+                  </button>
+                  {isOpen && !collapsed && (
+                    <div className="ml-2 mt-1 space-y-1">
+                      {item.children!.map((child) => {
+                        const ChildIcon = iconMap[child.icon]
+                        return (
+                          <button
+                            key={child.path}
+                            onClick={() => navigate(child.path)}
+                            className={cn(
+                              'w-full flex items-center gap-2 rounded-btn pl-9 pr-3 h-[38px] text-[13px] transition-colors',
+                              isActive(child.path)
+                                ? 'bg-gradient-to-r from-primary to-primary-dark text-white font-semibold'
+                                : 'text-[var(--color-slate-body)] hover:bg-[var(--color-bg-lighter)] hover:text-[var(--color-primary-dark)]'
+                            )}
+                          >
+                            {ChildIcon && <ChildIcon size={16} />}
+                            <span>{child.title}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <button
+                  onClick={() => navigate(item.path)}
+                  className={cn(
+                    'w-full flex items-center gap-2 rounded-btn px-3 h-[42px] text-sm transition-colors',
+                    isActive(item.path)
+                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white font-semibold'
+                      : 'text-[var(--color-slate-title)] hover:bg-[var(--color-bg-lighter)] hover:text-[var(--color-primary-dark)]'
+                  )}
+                >
+                  {Icon && <Icon size={18} />}
+                  {!collapsed && <span>{item.title}</span>}
+                </button>
+              )}
+            </div>
+          )
+        })}
+      </nav>
     </aside>
   )
 }
