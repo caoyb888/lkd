@@ -96,7 +96,7 @@ interface TagStyle { text: string; bg: string; color: string }
 
 const BIZ_META: Record<number, TagStyle> = {
   1: { text: '归档审核', bg: '#FEF9C3', color: '#854D0E' },
-  2: { text: '归档确认', bg: '#D1FAE5', color: '#065F46' },
+  2: { text: '归档确认', bg: 'var(--theme-border-light)', color: '#065F46' },
   3: { text: '借阅审批', bg: '#DBEAFE', color: '#1D4ED8' },
   4: { text: '销毁审批', bg: '#FEE2E2', color: '#991B1B' },
 }
@@ -105,7 +105,7 @@ const bizMeta = (type: number): TagStyle =>
 
 // ── 审批动作样式 ─────────────────────────────────────────────────
 const ACTION_META: Record<string, TagStyle> = {
-  PASS:   { text: '通过', bg: '#D1FAE5', color: '#065F46' },
+  PASS:   { text: '通过', bg: 'var(--theme-border-light)', color: '#065F46' },
   REJECT: { text: '驳回', bg: '#FEE2E2', color: '#991B1B' },
   BACK:   { text: '退回', bg: '#DBEAFE', color: '#1D4ED8' },
 }
@@ -468,7 +468,7 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 
   // 表头
   :deep(th.el-table__cell) {
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     color: $color-text-body;
     font-weight: 600;
     font-size: 13px;
@@ -478,7 +478,7 @@ const DATE_FORMAT = 'YYYY-MM-DD'
   :deep(.el-table__cell) { padding: 11px 8px; }
 
   // 普通行 hover
-  :deep(.el-table__row:hover > td) { background: #ECFDF5 !important; }
+  :deep(.el-table__row:hover > td) { background: var(--theme-bg-light) !important; }
 
   // 销毁类型行：右侧细红条
   :deep(.row-destroy > td:first-child) {
@@ -488,7 +488,7 @@ const DATE_FORMAT = 'YYYY-MM-DD'
   // 展开行样式
   :deep(.el-table__expanded-cell) {
     padding: 0 !important;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
   }
 }
 

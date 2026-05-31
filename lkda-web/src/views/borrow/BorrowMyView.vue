@@ -92,7 +92,7 @@ interface OpinionStyle { text: string; bg: string; color: string; icon: string }
 
 const OPINION_MAP: Record<number, OpinionStyle> = {
   0: { text: '待审批中', bg: '#F8FAFC', color: '#64748B', icon: 'Clock' },
-  1: { text: '已批准',   bg: '#F0FDFA', color: '#065F46', icon: 'CircleCheck' },
+  1: { text: '已批准',   bg: 'var(--theme-bg-soft)', color: '#065F46', icon: 'CircleCheck' },
   2: { text: '已驳回',   bg: '#FFF1F2', color: '#BE123C', icon: 'CircleClose' },
   3: { text: '已归还',   bg: '#F0FDF4', color: '#166534', icon: 'Select' },
   4: { text: '已逾期',   bg: '#FFF1F2', color: '#B91C1C', icon: 'Warning' },
@@ -474,12 +474,12 @@ const goApply = () => router.push('/volume/list')
 .btn-new-apply {
   border-color: $color-primary;
   color: $color-primary;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
   border-radius: var(--radius-btn);
   font-weight: 500;
 
   &:hover {
-    background: #CCFBF1;
+    background: var(--theme-bg-lighter);
     border-color: $color-primary-dark;
     color: $color-primary-dark;
   }
@@ -513,7 +513,7 @@ const goApply = () => router.push('/volume/list')
   width: 100%;
 
   :deep(th.el-table__cell) {
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     color: $color-text-body;
     font-weight: 600;
     font-size: 13px;
@@ -522,7 +522,7 @@ const goApply = () => router.push('/volume/list')
 
   :deep(.el-table__cell) { padding: 11px 8px; }
 
-  :deep(.el-table__row:hover > td) { background: #ECFDF5 !important; }
+  :deep(.el-table__row:hover > td) { background: var(--theme-bg-light) !important; }
 
   // 已驳回行：整行灰化
   :deep(.row-rejected) {
@@ -612,7 +612,7 @@ const goApply = () => router.push('/volume/list')
 
 .drawer-header {
   padding: 10px 20px 8px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
 }
 
 .drawer-title-row {
@@ -683,7 +683,7 @@ const goApply = () => router.push('/volume/list')
 
 // 字段网格（竖排）
 .detail-block {
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border: 1px solid #F1F5F9;
   border-radius: 10px;
   padding: 12px 14px;
@@ -748,7 +748,7 @@ const goApply = () => router.push('/volume/list')
 
 // 借阅原因
 .reason-block {
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border: 1px solid #F1F5F9;
   border-radius: 10px;
   padding: 12px 14px;

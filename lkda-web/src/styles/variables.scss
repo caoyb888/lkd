@@ -1,4 +1,9 @@
-// 活力新知风（清新人文）主题变量
+// ============================================================
+// 双主题变量系统：活力新知（默认） + 深海蓝晶
+// 切换方式：给 <html> 添加 data-theme="ocean"
+// ============================================================
+
+// ── 活力新知（默认主题）──────────────────────────────────────
 :root {
   // 主色：青绿
   --color-primary:        #14B8A6;
@@ -11,6 +16,7 @@
   // 背景
   --color-bg-main:        #FFFFFF;
   --color-bg-aside:       #ECFDF5;
+  --color-bg-page:        #F8FAFC;
 
   // 文字
   --color-text-title:     #1E293B;
@@ -26,19 +32,58 @@
   --radius-tag:           999px;
 
   // 阴影
-  --shadow-card:          0 2px 12px rgba(20, 184, 166, 0.08);
+  --shadow-card:          0 2px 12px color-mix(in srgb, var(--color-primary) 8%, transparent);
 
   // Element Plus 主题覆盖
   --el-color-primary:     #14B8A6;
+
+  // ── 语义化主题色（供各组件统一使用）────────────────────────
+  --theme-bg-light:       #ECFDF5;   // 侧边栏、表格hover
+  --theme-bg-lighter:     #CCFBF1;   // hover高亮、active
+  --theme-bg-soft:        #F0FDFA;   // 渐变起始、柔和背景
+  --theme-bg-card:        #FAFFFE;   // 卡片/信息网格背景
+  --theme-border-light:   #D1FAE5;   // 轻边框、标签背景
+  --theme-border-medium:  #A7F3D0;   // 横幅边框、强调边框
+  --theme-accent-light:   #5EEAD4;   // focus环、悬停阴影
 }
 
-// SCSS 变量（供 mixin/函数使用）
-$color-primary:       #14B8A6;
-$color-primary-light: #5EEAD4;
-$color-primary-dark:  #0F766E;
-$color-accent:        #FB923C;
-$color-bg-aside:     #ECFDF5;
-$color-text-title:   #1E293B;
-$color-text-body:    #475569;
-$sidebar-width:      220px;
-$header-height:      60px;
+// ── 深海蓝晶主题 ─────────────────────────────────────────────
+[data-theme="ocean"] {
+  --color-primary:        #2563EB;
+  --color-primary-light:  #60A5FA;
+  --color-primary-dark:   #1D4ED8;
+
+  --color-accent:         #D97706;
+
+  --color-bg-aside:       #EFF6FF;
+  --color-bg-page:        #F8FAFC;
+
+  --color-text-title:     #0F172A;
+  --color-text-body:      #475569;
+
+  --radius-card:          10px;
+  --radius-btn:           6px;
+
+  --shadow-card:          0 1px 8px rgba(15, 23, 42, 0.06);
+
+  --el-color-primary:     #2563EB;
+
+  --theme-bg-light:       #EFF6FF;
+  --theme-bg-lighter:     #DBEAFE;
+  --theme-bg-soft:        #EFF6FF;
+  --theme-bg-card:        #F8FAFC;
+  --theme-border-light:   #BFDBFE;
+  --theme-border-medium:  #93C5FD;
+  --theme-accent-light:   #93C5FD;
+}
+
+// ── SCSS 变量（映射到 CSS 变量，支持运行时切换）────────────
+$color-primary:       var(--color-primary);
+$color-primary-light: var(--color-primary-light);
+$color-primary-dark:  var(--color-primary-dark);
+$color-accent:        var(--color-accent);
+$color-bg-aside:      var(--color-bg-aside);
+$color-text-title:    var(--color-text-title);
+$color-text-body:     var(--color-text-body);
+$sidebar-width:       220px;
+$header-height:       60px;

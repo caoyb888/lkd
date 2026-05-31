@@ -120,8 +120,8 @@ const infoItems = computed(() => [
   align-items: center;
   gap: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, #F0FDFA 0%, #ECFDF5 100%);
-  border: 1px solid #CCFBF1;
+  background: linear-gradient(135deg, var(--theme-bg-soft) 0%, var(--theme-bg-light) 100%);
+  border: 1px solid var(--theme-bg-lighter);
   border-radius: var(--radius-card);
   margin-bottom: 20px;
   box-shadow: var(--shadow-card);
@@ -170,7 +170,7 @@ const infoItems = computed(() => [
     font-size: 13px;
     font-weight: 500;
 
-    &.role_admin   { background: #D1FAE5; color: #065F46; }
+    &.role_admin   { background: var(--theme-border-light); color: #065F46; }
     &.role_user    { background: #DBEAFE; color: #1D4ED8; }
     &.role_leader  { background: #EDE9FE; color: #5B21B6; }
   }
@@ -228,7 +228,7 @@ const infoItems = computed(() => [
   transition: border-color 0.2s;
 
   &:hover {
-    border-color: #A7F3D0;
+    border-color: var(--theme-border-medium);
   }
 }
 
@@ -236,7 +236,7 @@ const infoItems = computed(() => [
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex;
   align-items: center;
   justify-content: center;

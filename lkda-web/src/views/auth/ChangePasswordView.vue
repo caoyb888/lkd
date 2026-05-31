@@ -254,7 +254,7 @@ async function handleSubmit() {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,8 +305,8 @@ async function handleSubmit() {
     box-shadow: 0 0 0 1px #E2E8F0;
     transition: box-shadow 0.2s;
 
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent); }
   }
 
   :deep(.el-input__inner) {
@@ -430,7 +430,7 @@ async function handleSubmit() {
 
   &:not(:disabled):hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 40%, transparent);
   }
 
   &:not(:disabled):active {

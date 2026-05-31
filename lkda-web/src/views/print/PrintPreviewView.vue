@@ -386,8 +386,8 @@ const volTableRows = computed(() => (volume.value ? [volume.value] : []))
 
 <style scoped lang="scss">
 // ── 变量复用 ────────────────────────────────────────────────────
-$primary:      #14B8A6;
-$primary-dark: #0F766E;
+$primary:      var(--color-primary);
+$primary-dark: var(--color-primary-dark);
 $text-title:   #1E293B;
 $text-body:    #475569;
 $border-color: #CBD5E1;
@@ -435,10 +435,10 @@ $border-color: #CBD5E1;
   font-family: 'JetBrains Mono', Consolas, monospace;
   font-size: 13px;
   padding: 3px 12px;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
   color: $primary-dark;
   border-radius: 999px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   font-weight: 600;
 }
 
@@ -453,7 +453,7 @@ $border-color: #CBD5E1;
   border-radius: 8px;
 
   &:hover {
-    background: #F0FDFA;
+    background: var(--theme-bg-soft);
     border-color: $primary-dark;
     color: $primary-dark;
   }
@@ -499,7 +499,7 @@ $border-color: #CBD5E1;
   white-space: nowrap;
 
   &:hover {
-    background: #ECFDF5;
+    background: var(--theme-bg-light);
     color: $primary;
   }
 
@@ -507,7 +507,7 @@ $border-color: #CBD5E1;
     background: $primary;
     color: #fff;
     border-color: $primary;
-    box-shadow: 0 2px 8px rgba(20,184,166,0.3);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent);
   }
 
   .tab-icon {

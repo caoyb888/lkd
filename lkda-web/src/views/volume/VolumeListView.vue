@@ -86,7 +86,12 @@ function handleReset() {
   loadList()
 }
 
-onMounted(loadList)
+onMounted(async () => {
+  if (!dictStore.loaded) {
+    await dictStore.loadAll().catch(() => {})
+  }
+  loadList()
+})
 
 // ── 权限 ────────────────────────────────────────────────────────
 const isAdmin = computed(() => authStore.isAdmin)
@@ -99,6 +104,9 @@ const goDetail = (row: ArchiveVolumeListVO) => router.push({
 const goEdit   = (row: ArchiveVolumeListVO) => router.push({
   path: `/volume/edit/${row.recordId}`,
   query: { year: row.year }
+})
+const goBorrow = (row: ArchiveVolumeListVO) => router.push({
+  path: `/borrow/apply/${encodeURIComponent(row.archiveNo)}`,
 })
 const goNew    = () => router.push('/volume/edit')
 const goImport = () => router.push('/volume/import')
@@ -279,7 +287,7 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="120" fixed="right" align="center">
+        <el-table-column label="操作" width="160" fixed="right" align="center">
           <template #default="{ row }">
             <el-button link type="primary" @click="goDetail(row)">查看</el-button>
             <el-button
@@ -288,6 +296,12 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
               type="primary"
               @click="goEdit(row)"
             >编辑</el-button>
+            <el-button
+              v-if="row.status === 3 && row.inStock === 1"
+              link
+              type="success"
+              @click="goBorrow(row)"
+            >借阅</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -338,6 +352,13 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
           <div class="archive-card-footer">
             <StatusTag type="archive" :value="archiveStatusValue(row)" />
             <StatusTag type="stock" :value="row.inStock" />
+            <el-button
+              v-if="row.status === 3 && row.inStock === 1"
+              link
+              type="success"
+              size="small"
+              @click.stop="goBorrow(row)"
+            >借阅</el-button>
           </div>
         </div>
       </div>
@@ -390,8 +411,8 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
       box-shadow: 0 0 0 1px #E2E8F0;
       transition: box-shadow 0.2s;
 
-      &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-      &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+      &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+      &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent); }
     }
   }
 
@@ -458,7 +479,7 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
     transition: background 0.15s;
 
     &:hover td {
-      background: #F0FDFA !important;
+      background: var(--theme-bg-soft) !important;
     }
   }
 }
@@ -515,7 +536,7 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
 
   &:hover {
     border-color: $color-primary;
-    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.15);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
     transform: translateY(-2px);
   }
 }
@@ -524,7 +545,7 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex;
   align-items: center;
   justify-content: center;

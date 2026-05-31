@@ -637,7 +637,7 @@ onMounted(async () => {
 
   :deep(.el-table__row) {
     transition: background 0.15s;
-    &:hover td { background: #F0FDFA !important; }
+    &:hover td { background: var(--theme-bg-soft) !important; }
   }
 }
 
@@ -655,7 +655,7 @@ onMounted(async () => {
 // SortableJS 拖拽幽灵行
 :global(.sortable-ghost) {
   opacity: 0.4;
-  background: #CCFBF1 !important;
+  background: var(--theme-bg-lighter) !important;
 }
 
 .security-chip {
@@ -710,14 +710,14 @@ onMounted(async () => {
     border-radius: 8px;
     box-shadow: 0 0 0 1px #E2E8F0;
     transition: box-shadow 0.2s;
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20,184,166,0.25); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent); }
   }
 
   :deep(.el-select .el-input__wrapper) {
     box-shadow: 0 0 0 1px #E2E8F0;
     border-radius: 8px;
-    &:hover { box-shadow: 0 0 0 1px #5EEAD4; }
+    &:hover { box-shadow: 0 0 0 1px var(--theme-accent-light); }
   }
 }
 
@@ -750,7 +750,7 @@ onMounted(async () => {
 
 .keyword-tag {
   border-radius: var(--radius-tag);
-  background: #CCFBF1;
+  background: var(--theme-bg-lighter);
   border-color: #99F6E4;
   color: $color-primary-dark;
   font-size: 12px;

@@ -11,7 +11,7 @@ export const borrowRoutes: RouteRecordRaw[] = [
     path: '/borrow/apply/:archiveNo',
     name: 'BorrowApply',
     component: () => import('@/views/borrow/BorrowApplyView.vue'),
-    meta: { title: '申请借阅', roles: ['user'] },
+    meta: { title: '申请借阅' },
   },
   {
     path: '/borrow/approve',

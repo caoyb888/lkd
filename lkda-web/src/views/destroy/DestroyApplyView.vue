@@ -43,7 +43,7 @@ const STATUS_META: Record<number, { text: string; bg: string; color: string }> =
   0:  { text: '草稿',     bg: '#F1F5F9', color: '#64748B' },
   1:  { text: '待审核',   bg: '#FEF9C3', color: '#854D0E' },
   2:  { text: '待确认',   bg: '#DBEAFE', color: '#1D4ED8' },
-  3:  { text: '已归档',   bg: '#D1FAE5', color: '#065F46' },
+  3:  { text: '已归档',   bg: 'var(--theme-border-light)', color: '#065F46' },
   10: { text: '销毁待审批', bg: '#EDE9FE', color: '#5B21B6' },
   11: { text: '已销毁',   bg: '#FEE2E2', color: '#991B1B' },
 }
@@ -313,7 +313,7 @@ async function handleSubmit() {
   :deep(.el-card__header) {
     padding: 14px 20px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 
@@ -361,9 +361,9 @@ async function handleSubmit() {
   align-items: flex-start;
   gap: 14px;
   padding: 14px 18px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
   border-radius: 10px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   margin-bottom: 18px;
 }
 
@@ -466,7 +466,7 @@ async function handleSubmit() {
 
     &:focus-within,
     &:focus {
-      box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2) !important;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
     }
   }
 }

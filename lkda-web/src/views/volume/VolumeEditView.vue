@@ -157,7 +157,12 @@ async function loadDetail() {
   }
 }
 
-onMounted(loadDetail)
+onMounted(async () => {
+  if (!dictStore.loaded) {
+    await dictStore.loadAll().catch(() => {})
+  }
+  loadDetail()
+})
 
 // ── 校验规则 ────────────────────────────────────────────────────
 const rules: FormRules = {
@@ -253,7 +258,7 @@ const STATUS_LABELS: Record<number, { text: string; color: string; bg: string }>
   0: { text: '草稿',   color: '#64748B', bg: '#F1F5F9' },
   1: { text: '待审核', color: '#854D0E', bg: '#FEF9C3' },
   2: { text: '待确认', color: '#1D4ED8', bg: '#DBEAFE' },
-  3: { text: '已归档', color: '#065F46', bg: '#D1FAE5' },
+  3: { text: '已归档', color: '#065F46', bg: 'var(--theme-border-light)' },
 }
 const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LABELS[0])
 </script>
@@ -636,7 +641,7 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
   :deep(.el-card__header) {
     padding: 16px 20px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 
@@ -698,8 +703,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
     box-shadow: 0 0 0 1px #E2E8F0;
     transition: box-shadow 0.2s;
 
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.25); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent); }
   }
 }
 
@@ -710,8 +715,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
   font-size: 14px;
   transition: box-shadow 0.2s;
 
-  &:hover  { box-shadow: 0 0 0 1px #5EEAD4; }
-  &:focus  { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.25); }
+  &:hover  { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+  &:focus  { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent); }
 }
 
 :deep(.el-input-number .el-input__wrapper) {
@@ -755,7 +760,7 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
   }
 
   &.has-value {
-    background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+    background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
     border-color: $color-primary;
     border-style: solid;
 
@@ -814,10 +819,10 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
 .btn-draft {
   border-color: $color-primary;
   color: $color-primary;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
 
   &:hover {
-    background: #CCFBF1;
+    background: var(--theme-bg-lighter);
     border-color: $color-primary-dark;
     color: $color-primary-dark;
   }
@@ -832,7 +837,7 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
   &:hover {
     opacity: 0.9;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 
   transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;

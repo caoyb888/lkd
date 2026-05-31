@@ -597,7 +597,7 @@ onMounted(() => {
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 }
 
@@ -633,7 +633,7 @@ onMounted(() => {
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 }
 
@@ -646,7 +646,7 @@ onMounted(() => {
   }
 
   :deep(.el-table__row:hover > td) {
-    background-color: #ECFDF5 !important;
+    background-color: var(--theme-bg-light) !important;
   }
 
   :deep(.el-table__row.el-table__row--striped > td) {
@@ -680,7 +680,7 @@ onMounted(() => {
   font-size: 11px;
   font-weight: 500;
 
-  &.role_admin  { background: #D1FAE5; color: #065F46; }
+  &.role_admin  { background: var(--theme-border-light); color: #065F46; }
   &.role_user   { background: #DBEAFE; color: #1D4ED8; }
   &.role_leader { background: #EDE9FE; color: #5B21B6; }
 }
@@ -694,7 +694,7 @@ onMounted(() => {
   font-size: 12px;
   font-weight: 500;
 
-  &.enabled  { background: #D1FAE5; color: #065F46; }
+  &.enabled  { background: var(--theme-border-light); color: #065F46; }
   &.disabled { background: #FEE2E2; color: #991B1B; }
 }
 
@@ -756,8 +756,8 @@ onMounted(() => {
     border-radius: 8px;
     box-shadow: 0 0 0 1px #E2E8F0;
 
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent); }
   }
 }
 
@@ -800,7 +800,7 @@ onMounted(() => {
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(20, 184, 166, 0.38);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 38%, transparent);
   }
 }
 
@@ -855,8 +855,8 @@ onMounted(() => {
     border-radius: 8px;
     box-shadow: 0 0 0 1px #E2E8F0;
 
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent); }
   }
 }
 </style>

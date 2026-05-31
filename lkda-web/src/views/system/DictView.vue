@@ -672,8 +672,8 @@ onMounted(loadDictList)
 }
 
 .dict-code-tag {
-  background: #CCFBF1;
-  border-color: #A7F3D0;
+  background: var(--theme-bg-lighter);
+  border-color: var(--theme-border-medium);
   color: $color-primary-dark;
   font-family: monospace;
   font-size: 11px;
@@ -723,7 +723,7 @@ onMounted(loadDictList)
   padding: 0 4px;
 
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: #A7F3D0; border-radius: 2px; }
+  &::-webkit-scrollbar-thumb { background: var(--theme-border-medium); border-radius: 2px; }
 }
 
 .dict-row {
@@ -735,15 +735,15 @@ onMounted(loadDictList)
   border: 1px solid transparent;
 
   &:hover {
-    background: #F0FDFA;
-    border-color: #A7F3D0;
+    background: var(--theme-bg-soft);
+    border-color: var(--theme-border-medium);
 
     .dict-row-actions { opacity: 1; }
   }
 
   &.active {
-    background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
-    border-color: #5EEAD4;
+    background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+    border-color: var(--theme-accent-light);
 
     .dict-code    { color: $color-primary-dark; }
     .dict-name    { color: $color-text-title; font-weight: 600; }
@@ -780,7 +780,7 @@ onMounted(loadDictList)
   border-radius: 99px;
   flex-shrink: 0;
 
-  &.enabled  { background: #D1FAE5; color: #065F46; }
+  &.enabled  { background: var(--theme-border-light); color: #065F46; }
   &.disabled { background: #FEE2E2; color: #991B1B; }
 }
 
@@ -862,7 +862,7 @@ onMounted(loadDictList)
   width: 72px;
   height: 72px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -896,7 +896,7 @@ onMounted(loadDictList)
   }
 
   :deep(.el-table__row:hover > td) {
-    background-color: #ECFDF5 !important;
+    background-color: var(--theme-bg-light) !important;
   }
 }
 
@@ -934,7 +934,7 @@ onMounted(loadDictList)
   font-size: 11px;
   font-weight: 500;
 
-  &.enabled  { background: #D1FAE5; color: #065F46; }
+  &.enabled  { background: var(--theme-border-light); color: #065F46; }
   &.disabled { background: #F1F5F9; color: #64748B; }
 }
 
@@ -983,8 +983,8 @@ onMounted(loadDictList)
     border-radius: 8px;
     box-shadow: 0 0 0 1px #E2E8F0;
 
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent); }
   }
 }
 
@@ -1034,7 +1034,7 @@ onMounted(loadDictList)
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 }
 </style>

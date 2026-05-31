@@ -4,11 +4,13 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifyStore } from '@/stores/notify'
+import { useThemeStore } from '@/stores/theme'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const notifyStore = useNotifyStore()
+const themeStore = useThemeStore()
 
 const MOBILE_BREAKPOINT = 768
 const isMobile = ref(false)
@@ -179,6 +181,14 @@ async function handleLogout() {
       </div>
 
       <div class="header-right">
+        <!-- 主题切换 -->
+        <el-tooltip :content="`切换主题（当前：${themeStore.themeLabel}）`" placement="bottom">
+          <el-icon class="header-icon theme-toggle" @click="themeStore.toggleTheme">
+            <Sunny v-if="themeStore.isOcean" />
+            <Moon v-else />
+          </el-icon>
+        </el-tooltip>
+
         <!-- 待办通知铃铛 -->
         <el-tooltip content="待处理审批" placement="bottom">
           <el-badge
@@ -432,7 +442,7 @@ async function handleLogout() {
 .main-aside {
   background-color: $color-bg-aside;
   transition: width 0.25s ease, transform 0.25s ease;
-  border-right: 1px solid #D1FAE5;
+  border-right: 1px solid var(--theme-border-light);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -461,7 +471,7 @@ async function handleLogout() {
 
     // 滚动条极简化
     &::-webkit-scrollbar { width: 4px; }
-    &::-webkit-scrollbar-thumb { background: #A7F3D0; border-radius: 2px; }
+    &::-webkit-scrollbar-thumb { background: var(--theme-border-medium); border-radius: 2px; }
 
     // ── 顶级 menu-item ──────────────────────────────────────
     :deep(.el-menu-item) {
@@ -474,7 +484,7 @@ async function handleLogout() {
       transition: background 0.2s, color 0.2s;
 
       &:hover:not(.is-active) {
-        background-color: #CCFBF1 !important;
+        background-color: var(--theme-bg-lighter) !important;
         color: $color-primary-dark;
       }
 
@@ -498,7 +508,7 @@ async function handleLogout() {
       transition: background 0.2s, color 0.2s;
 
       &:hover {
-        background-color: #CCFBF1 !important;
+        background-color: var(--theme-bg-lighter) !important;
         color: $color-primary-dark !important;
       }
     }
@@ -523,7 +533,7 @@ async function handleLogout() {
         margin-bottom: 1px;
 
         &:hover:not(.is-active) {
-          background-color: #CCFBF1 !important;
+          background-color: var(--theme-bg-lighter) !important;
           color: $color-primary-dark;
         }
 
@@ -543,7 +553,7 @@ async function handleLogout() {
 
 // ── 内容区 ────────────────────────────────────────────────────
 .main-content {
-  background-color: #F8FAFC;
+  background-color: var(--color-bg-page);
   overflow-y: auto;
   padding: 0;
   min-width: 0;

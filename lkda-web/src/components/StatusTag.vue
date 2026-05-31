@@ -18,13 +18,13 @@ const archiveMap: Record<number, TagStyle> = {
   0: { label: '草稿', bg: '#F1F5F9', color: '#64748B' },
   1: { label: '待审核', bg: '#FEF9C3', color: '#854D0E' },
   2: { label: '待确认', bg: '#DBEAFE', color: '#1D4ED8' },
-  3: { label: '已归档', bg: '#D1FAE5', color: '#065F46' },
+  3: { label: '已归档', bg: 'var(--theme-border-light)', color: '#065F46' },
   10: { label: '销毁待审批', bg: '#EDE9FE', color: '#5B21B6' },
   11: { label: '已销毁', bg: '#FEE2E2', color: '#991B1B' },
 }
 
 const stockMap: Record<number, TagStyle> = {
-  1: { label: '在库', bg: '#CCFBF1', color: '#0F766E' },
+  1: { label: '在库', bg: 'var(--theme-bg-lighter)', color: 'var(--color-primary-dark)' },
   0: { label: '借出', bg: '#FFEDD5', color: '#C2410C' },
 }
 
@@ -44,10 +44,10 @@ const tagStyle = computed<TagStyle>(() => {
     const days = props.remainDays ?? 999
     if (days <= 0) return { label: `逾期${Math.abs(days)}天`, bg: '#FEE2E2', color: '#B91C1C' }
     if (days <= 3) return { label: `即将到期·剩余${days}天`, bg: '#FFEDD5', color: '#C2410C' }
-    return { label: `已借出·剩余${days}天`, bg: '#CCFBF1', color: '#0F766E' }
+    return { label: `已借出·剩余${days}天`, bg: 'var(--theme-bg-lighter)', color: 'var(--color-primary-dark)' }
   }
   if (status === 2) return { label: '已驳回', bg: '#FEE2E2', color: '#991B1B' }
-  if (status === 3) return { label: '已归还', bg: '#D1FAE5', color: '#065F46' }
+  if (status === 3) return { label: '已归还', bg: 'var(--theme-border-light)', color: '#065F46' }
   if (status === 4) {
     // 若传入 remainDays（负值 = 已逾期天数），则显示具体天数
     if (props.remainDays !== undefined && props.remainDays < 0) {

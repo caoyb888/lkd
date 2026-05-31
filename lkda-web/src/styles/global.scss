@@ -21,8 +21,12 @@ html, body, #app {
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3) !important;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 30%, transparent) !important;
   }
+}
+
+[data-theme="ocean"] .el-button--primary:hover {
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
 }
 
 .el-card {
@@ -33,11 +37,11 @@ html, body, #app {
 
 // 表格行 hover
 .el-table__row:hover > td {
-  background-color: #ECFDF5 !important;
+  background-color: var(--theme-bg-light) !important;
 }
 
 .el-table__row.current-row > td {
-  background-color: #CCFBF1 !important;
+  background-color: var(--theme-bg-lighter) !important;
 }
 
 // 滚动条美化
@@ -68,7 +72,7 @@ html, body, #app {
   margin-bottom: 16px;
 }
 
-// 主按钮（青绿）- 供全局复用
+// 主按钮
 .btn-primary {
   background-color: var(--color-primary);
   color: #fff;

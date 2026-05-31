@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { DashboardApi } from '@/api/dashboard'
 import { useNotifyStore } from '@/stores/notify'
+import { useThemeStore } from '@/stores/theme'
 import type { DashboardOverviewVO } from '@/api/dashboard'
 import type { ECharts, EChartsCoreOption } from 'echarts/core'
+
+// 读取 CSS 变量（供 echarts 等 JS 库使用）
+function getCssVar(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#14B8A6'
+}
 
 // ECharts 实例延迟初始化（动态导入减少首屏 chunk）
 let echartsLib: typeof import('echarts/core') | null = null
@@ -28,6 +34,12 @@ async function getEcharts() {
 
 const router = useRouter()
 const notifyStore = useNotifyStore()
+const themeStore = useThemeStore()
+
+// 监听主题变化，重新渲染图表
+watch(() => themeStore.theme, () => {
+  nextTick(() => initCharts())
+})
 
 // ── 数据加载 ─────────────────────────────────────────────────────
 const overview   = ref<DashboardOverviewVO | null>(null)
@@ -89,8 +101,8 @@ const CARDS = [
     key: 'total',
     title: '总案卷数',
     icon: 'Files',
-    color: '#14B8A6',
-    bg: 'linear-gradient(135deg, #F0FDFA, #CCFBF1)',
+    color: 'var(--color-primary)',
+    bg: 'linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-lighter))',
     value: computed(() => animatedTotal.value),
   },
   {
@@ -98,7 +110,7 @@ const CARDS = [
     title: '已正式归档',
     icon: 'FolderChecked',
     color: '#065F46',
-    bg: 'linear-gradient(135deg, #D1FAE5, #A7F3D0)',
+    bg: 'linear-gradient(135deg, var(--theme-border-light), var(--theme-border-medium))',
     value: computed(() => animatedArchived.value),
   },
   {
@@ -125,7 +137,7 @@ const pieChartRef  = ref<HTMLDivElement | null>(null)
 let lineChartInst: ECharts | null = null
 let pieChartInst:  ECharts | null = null
 
-const STATUS_COLORS = ['#94A3B8', '#FBBF24', '#60A5FA', '#14B8A6']
+const STATUS_COLORS = () => ['#94A3B8', '#FBBF24', '#60A5FA', getCssVar('--color-primary')]
 const STATUS_NAMES  = ['草稿', '待审核', '待确认', '已归档']
 
 async function initCharts() {
@@ -157,11 +169,11 @@ async function initCharts() {
         type: 'line',
         smooth: true,
         data: trend.map(t => t.count),
-        itemStyle: { color: '#14B8A6' },
+        itemStyle: { color: getCssVar('--color-primary') },
         areaStyle: {
           color: new (await import('echarts/core')).graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(20, 184, 166, 0.25)' },
-            { offset: 1, color: 'rgba(20, 184, 166, 0.02)' },
+            { offset: 0, color: getCssVar('--color-primary') + '40' },  // 25% opacity
+            { offset: 1, color: getCssVar('--color-primary') + '05' },  // ~2% opacity
           ]),
         },
         lineStyle: { width: 3 },
@@ -198,7 +210,7 @@ async function initCharts() {
         data: dist.map((d, i) => ({
           value: d.count,
           name: d.statusName,
-          itemStyle: { color: STATUS_COLORS[i] || '#CBD5E1' },
+          itemStyle: { color: STATUS_COLORS()[i] || '#CBD5E1' },
         })),
       }],
     })
@@ -241,8 +253,8 @@ const shortcuts = computed(() => [
     title: '我的借阅',
     count: notifyStore.myPendingBorrow,
     icon: 'Suitcase',
-    color: '#14B8A6',
-    bg: '#CCFBF1',
+    color: 'var(--color-primary)',
+    bg: 'var(--theme-bg-lighter)',
     path: '/borrow/my',
     visible: notifyStore.myPendingBorrow > 0,
   },
@@ -477,7 +489,7 @@ const hasShortcuts = computed(() => shortcuts.value.some(s => s.visible))
   :deep(.el-card__header) {
     padding: 14px 20px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 
@@ -518,7 +530,7 @@ const hasShortcuts = computed(() => shortcuts.value.some(s => s.visible))
   :deep(.el-card__header) {
     padding: 14px 20px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 

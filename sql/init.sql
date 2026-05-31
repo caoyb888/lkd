@@ -314,6 +314,47 @@ INSERT INTO `sys_dict_item` (`dict_code`, `item_value`, `item_label`, `sort_orde
   ('archive_status', '2', '待确认',   3),
   ('archive_status', '3', '已正式归档', 4);
 
+-- 数据字典：一级类目 (category_l1)
+INSERT INTO `sys_dict` (`dict_code`, `dict_name`) VALUES ('category_l1', '一级类目');
+INSERT INTO `sys_dict_item` (`dict_code`, `item_value`, `item_label`, `sort_order`) VALUES
+  ('category_l1', '01', '01', 1),
+  ('category_l1', '02', '02', 2),
+  ('category_l1', '03', '03', 3),
+  ('category_l1', '04', '04', 4),
+  ('category_l1', '05', '05', 5),
+  ('category_l1', '8',  '8',  6);
+
+-- 数据字典：二级类目 (category_l2)
+INSERT INTO `sys_dict` (`dict_code`, `dict_name`) VALUES ('category_l2', '二级类目');
+INSERT INTO `sys_dict_item` (`dict_code`, `item_value`, `item_label`, `sort_order`) VALUES
+  ('category_l2', 'A',  'A',  1),
+  ('category_l2', 'B',  'B',  2),
+  ('category_l2', 'C',  'C',  3),
+  ('category_l2', 'D',  'D',  4),
+  ('category_l2', '01', '01', 5);
+
+-- 数据字典：全宗号 (fonds_no)
+INSERT INTO `sys_dict` (`dict_code`, `dict_name`) VALUES ('fonds_no', '全宗号');
+INSERT INTO `sys_dict_item` (`dict_code`, `item_value`, `item_label`, `sort_order`) VALUES
+  ('fonds_no', '01',     '01',     1),
+  ('fonds_no', 'LK-001', 'LK-001', 2),
+  ('fonds_no', 'LK-002', 'LK-002', 3),
+  ('fonds_no', 'LK-003', 'LK-003', 4),
+  ('fonds_no', 'LK-004', 'LK-004', 5),
+  ('fonds_no', 'LK-005', 'LK-005', 6);
+
+-- 数据字典：设备代号 (equipment_code)
+INSERT INTO `sys_dict` (`dict_code`, `dict_name`) VALUES ('equipment_code', '设备代号');
+INSERT INTO `sys_dict_item` (`dict_code`, `item_value`, `item_label`, `sort_order`) VALUES
+  ('equipment_code', 'DJ-01', 'DJ-01', 1),
+  ('equipment_code', 'DJ-02', 'DJ-02', 2),
+  ('equipment_code', 'DQ-01', 'DQ-01', 3),
+  ('equipment_code', 'DQ-02', 'DQ-02', 4),
+  ('equipment_code', 'KT-01', 'KT-01', 5),
+  ('equipment_code', 'KT-02', 'KT-02', 6),
+  ('equipment_code', 'TJ-01', 'TJ-01', 7),
+  ('equipment_code', 'TJ-02', 'TJ-02', 8);
+
 -- ===========================================================
 -- 分区扩容示例（每年新增时执行，将 p_future 切分出新年度分区）
 -- 示例：扩容至 2028 年

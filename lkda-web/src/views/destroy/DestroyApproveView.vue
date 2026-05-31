@@ -164,7 +164,7 @@ const label = (code: string, value: string) =>
   dictStore.getDictLabel(code, value) || value || '—'
 
 const ACTION_META: Record<string, { text: string; bg: string; color: string }> = {
-  PASS:   { text: '通过',  bg: '#D1FAE5', color: '#065F46' },
+  PASS:   { text: '通过',  bg: 'var(--theme-border-light)', color: '#065F46' },
   REJECT: { text: '驳回',  bg: '#FEE2E2', color: '#991B1B' },
   BACK:   { text: '退回',  bg: '#DBEAFE', color: '#1D4ED8' },
   APPLY:  { text: '申请',  bg: '#EDE9FE', color: '#5B21B6' },
@@ -696,7 +696,7 @@ const goDetail = (row: ArchiveVolumeListVO) =>
 .destroy-table {
   :deep(.el-table__header) {
     th {
-      background: #FAFFFE;
+      background: var(--theme-bg-card);
       font-weight: 600;
       color: $color-text-title;
       border-bottom: 2px solid #E2E8F0;
@@ -704,7 +704,7 @@ const goDetail = (row: ArchiveVolumeListVO) =>
   }
 
   :deep(.el-table__row:hover > td) {
-    background-color: #ECFDF5 !important;
+    background-color: var(--theme-bg-light) !important;
   }
 
   :deep(td) { padding: 12px 8px; }
@@ -833,9 +833,9 @@ const goDetail = (row: ArchiveVolumeListVO) =>
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
   border-radius: 10px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   flex-wrap: wrap;
 
   &.destroy-banner {
@@ -876,7 +876,7 @@ const goDetail = (row: ArchiveVolumeListVO) =>
 
 // ── 详情分区 ──────────────────────────────────────────────────────
 .detail-section {
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border-radius: 10px;
   padding: 16px;
   border: 1px solid #E2E8F0;
@@ -1054,9 +1054,9 @@ const goDetail = (row: ArchiveVolumeListVO) =>
   align-items: flex-start;
   gap: 12px;
   padding: 12px 16px;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
   border-radius: 10px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   margin-bottom: 14px;
 
   &.danger {

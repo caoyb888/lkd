@@ -24,4 +24,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 权限指令 v-permission
 setupPermissionDirective(app)
 
+// 初始化主题（在挂载前应用，防止闪屏）
+import { useThemeStore } from '@/stores/theme'
+const themeStore = useThemeStore(pinia)
+themeStore.setTheme(themeStore.theme)
+
 app.mount('#app')

@@ -43,7 +43,7 @@ const router = useRouter()
   justify-content: space-between;
   margin-bottom: 12px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ECFDF5;
+  border-bottom: 1px solid var(--theme-bg-light);
 
   &__left {
     display: flex;

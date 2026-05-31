@@ -107,7 +107,7 @@ const STATUS_META: Record<number, { text: string; bg: string; color: string }> =
   0: { text: '草稿',   bg: '#F1F5F9', color: '#64748B' },
   1: { text: '待审核', bg: '#FEF9C3', color: '#854D0E' },
   2: { text: '待确认', bg: '#DBEAFE', color: '#1D4ED8' },
-  3: { text: '已归档', bg: '#D1FAE5', color: '#065F46' },
+  3: { text: '已归档', bg: 'var(--theme-border-light)', color: '#065F46' },
 }
 const statusMeta = computed(() =>
   volumeInfo.value ? (STATUS_META[volumeInfo.value.status] ?? STATUS_META[0]) : STATUS_META[0]
@@ -127,11 +127,11 @@ const statusMeta = computed(() =>
 
     <!-- ── 加载中骨架 ────────────────────────────────────────────── -->
     <template v-if="infoLoading">
-      <el-card class="info-card" shadow="never">
-        <el-skeleton :rows="4" animated />
-      </el-card>
       <el-card class="form-card" shadow="never">
         <el-skeleton :rows="6" animated />
+      </el-card>
+      <el-card class="info-card" shadow="never">
+        <el-skeleton :rows="4" animated />
       </el-card>
     </template>
 
@@ -147,6 +147,67 @@ const statusMeta = computed(() =>
     </el-card>
 
     <template v-else-if="volumeInfo">
+      <!-- ── 借阅申请表单 ─────────────────────────────────────────── -->
+      <el-card class="form-card" shadow="never" :class="{ 'is-disabled': isFullyBorrowed }">
+        <template #header>
+          <div class="card-header">
+            <span class="section-bar" />
+            <span class="section-title">借阅申请</span>
+          </div>
+        </template>
+
+        <el-form
+          ref="formRef"
+          :model="form"
+          :rules="rules"
+          label-position="top"
+          class="apply-form"
+          :disabled="isFullyBorrowed"
+        >
+          <div class="form-row">
+            <!-- 申请份数 -->
+            <el-form-item label="申请份数" prop="applyCount" class="form-item-narrow">
+              <el-input-number
+                v-model="form.applyCount"
+                :min="1"
+                :max="availableCopies"
+                :disabled="isFullyBorrowed"
+                controls-position="right"
+                class="count-input"
+              />
+              <span class="count-hint">
+                最多可借 <strong>{{ availableCopies }}</strong> 件
+              </span>
+            </el-form-item>
+
+            <!-- 计划归还日期 -->
+            <el-form-item label="计划归还日期" prop="planReturnDate" class="form-item-date">
+              <el-date-picker
+                v-model="form.planReturnDate"
+                type="date"
+                placeholder="请选择归还日期"
+                value-format="YYYY-MM-DD"
+                :disabled-date="disablePastDate"
+                class="date-picker"
+              />
+            </el-form-item>
+          </div>
+
+          <!-- 借阅原因 -->
+          <el-form-item label="借阅原因" prop="reason">
+            <el-input
+              v-model="form.reason"
+              type="textarea"
+              :rows="4"
+              placeholder="请说明借阅用途和目的（必填，至少 5 个字）"
+              maxlength="300"
+              show-word-limit
+              class="reason-textarea"
+            />
+          </el-form-item>
+        </el-form>
+      </el-card>
+
       <!-- ── 档案信息卡片（只读）─────────────────────────────────── -->
       <el-card class="info-card" shadow="never">
         <template #header>
@@ -224,67 +285,6 @@ const statusMeta = computed(() =>
         </el-alert>
       </el-card>
 
-      <!-- ── 借阅申请表单 ─────────────────────────────────────────── -->
-      <el-card class="form-card" shadow="never" :class="{ 'is-disabled': isFullyBorrowed }">
-        <template #header>
-          <div class="card-header">
-            <span class="section-bar" />
-            <span class="section-title">借阅申请</span>
-          </div>
-        </template>
-
-        <el-form
-          ref="formRef"
-          :model="form"
-          :rules="rules"
-          label-position="top"
-          class="apply-form"
-          :disabled="isFullyBorrowed"
-        >
-          <div class="form-row">
-            <!-- 申请份数 -->
-            <el-form-item label="申请份数" prop="applyCount" class="form-item-narrow">
-              <el-input-number
-                v-model="form.applyCount"
-                :min="1"
-                :max="availableCopies"
-                :disabled="isFullyBorrowed"
-                controls-position="right"
-                class="count-input"
-              />
-              <span class="count-hint">
-                最多可借 <strong>{{ availableCopies }}</strong> 件
-              </span>
-            </el-form-item>
-
-            <!-- 计划归还日期 -->
-            <el-form-item label="计划归还日期" prop="planReturnDate" class="form-item-date">
-              <el-date-picker
-                v-model="form.planReturnDate"
-                type="date"
-                placeholder="请选择归还日期"
-                value-format="YYYY-MM-DD"
-                :disabled-date="disablePastDate"
-                class="date-picker"
-              />
-            </el-form-item>
-          </div>
-
-          <!-- 借阅原因 -->
-          <el-form-item label="借阅原因" prop="reason">
-            <el-input
-              v-model="form.reason"
-              type="textarea"
-              :rows="4"
-              placeholder="请说明借阅用途和目的（必填，至少 5 个字）"
-              maxlength="300"
-              show-word-limit
-              class="reason-textarea"
-            />
-          </el-form-item>
-        </el-form>
-      </el-card>
-
       <!-- ── 底部操作栏 ──────────────────────────────────────────── -->
       <div class="action-bar">
         <el-button size="large" @click="router.back()">
@@ -313,7 +313,6 @@ const statusMeta = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 780px;
 }
 
 // ── 卡片通用 ──────────────────────────────────────────────────────
@@ -326,7 +325,7 @@ const statusMeta = computed(() =>
   :deep(.el-card__header) {
     padding: 14px 20px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 
@@ -374,9 +373,9 @@ const statusMeta = computed(() =>
   align-items: flex-start;
   gap: 14px;
   padding: 14px 18px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
   border-radius: 10px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   margin-bottom: 18px;
 }
 
@@ -503,7 +502,7 @@ const statusMeta = computed(() =>
 
     &:focus-within,
     &:focus {
-      box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2) !important;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
     }
   }
 

@@ -580,7 +580,7 @@ onMounted(loadTree)
     margin: 1px 4px;
     transition: background 0.15s;
 
-    &:hover { background: #ECFDF5; }
+    &:hover { background: var(--theme-bg-light); }
   }
 
   :deep(.el-tree-node.is-current > .el-tree-node__content) {
@@ -625,7 +625,7 @@ onMounted(loadTree)
 
 .node-badge {
   flex-shrink: 0;
-  background: #CCFBF1;
+  background: var(--theme-bg-lighter);
   color: $color-primary-dark;
   font-size: 10px;
   font-weight: 600;
@@ -699,7 +699,7 @@ onMounted(loadTree)
   width: 72px;
   height: 72px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -734,7 +734,7 @@ onMounted(loadTree)
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 }
 
@@ -847,8 +847,8 @@ onMounted(loadTree)
   transition: border-color 0.2s, background 0.2s, transform 0.15s;
 
   &:hover:not(.disabled) {
-    border-color: #A7F3D0;
-    background: #F0FDFA;
+    border-color: var(--theme-border-medium);
+    background: var(--theme-bg-soft);
     transform: translateX(2px);
   }
 
@@ -945,8 +945,8 @@ onMounted(loadTree)
     border-radius: 8px;
     box-shadow: 0 0 0 1px #E2E8F0;
 
-    &:hover   { box-shadow: 0 0 0 1px #5EEAD4; }
-    &.is-focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3); }
+    &:hover   { box-shadow: 0 0 0 1px var(--theme-accent-light); }
+    &.is-focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent); }
   }
 }
 
@@ -965,7 +965,7 @@ onMounted(loadTree)
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 }
 </style>

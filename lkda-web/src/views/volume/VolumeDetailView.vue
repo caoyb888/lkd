@@ -130,7 +130,7 @@ const goDestroy = () => router.push({
 
 // ── 审批动作样式 ─────────────────────────────────────────────────
 const ACTION_STYLE: Record<string, { label: string; bg: string; color: string }> = {
-  PASS:   { label: '通过', bg: '#D1FAE5', color: '#065F46' },
+  PASS:   { label: '通过', bg: 'var(--theme-border-light)', color: '#065F46' },
   REJECT: { label: '驳回', bg: '#FEE2E2', color: '#991B1B' },
   BACK:   { label: '退回', bg: '#DBEAFE', color: '#1D4ED8' },
 }
@@ -150,7 +150,7 @@ const STATUS_META: Record<number, { text: string; bg: string; color: string }> =
   0:  { text: '草稿',      bg: '#F1F5F9', color: '#64748B' },
   1:  { text: '待审核',    bg: '#FEF9C3', color: '#854D0E' },
   2:  { text: '待确认',    bg: '#DBEAFE', color: '#1D4ED8' },
-  3:  { text: '已归档',    bg: '#D1FAE5', color: '#065F46' },
+  3:  { text: '已归档',    bg: 'var(--theme-border-light)', color: '#065F46' },
   10: { text: '销毁待审批',bg: '#EDE9FE', color: '#5B21B6' },
   11: { text: '已销毁',    bg: '#FEE2E2', color: '#991B1B' },
 }
@@ -545,9 +545,9 @@ const statusMeta = computed(() => {
   gap: 12px;
   margin-top: 20px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
   border-radius: 10px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   flex-wrap: wrap;
 }
 
@@ -572,7 +572,7 @@ const statusMeta = computed(() => {
   color: $color-text-title;
   font-weight: 500;
   padding-left: 12px;
-  border-left: 2px solid #A7F3D0;
+  border-left: 2px solid var(--theme-border-medium);
   flex: 1;
   min-width: 0;
   line-height: 1.5;
@@ -594,7 +594,7 @@ const statusMeta = computed(() => {
   :deep(.el-tabs__header) {
     margin: 0;
     padding: 0 20px;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-bottom: 1px solid #F1F5F9;
   }
 
@@ -646,7 +646,7 @@ const statusMeta = computed(() => {
   :deep(.el-card__header) {
     padding: 14px 20px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
 
@@ -867,10 +867,10 @@ const statusMeta = computed(() => {
 .btn-edit {
   border-color: $color-primary;
   color: $color-primary;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
 
   &:hover {
-    background: #CCFBF1;
+    background: var(--theme-bg-lighter);
     border-color: $color-primary-dark;
     color: $color-primary-dark;
   }
@@ -879,10 +879,10 @@ const statusMeta = computed(() => {
 .btn-files {
   border-color: $color-primary;
   color: $color-primary;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
 
   &:hover {
-    background: #CCFBF1;
+    background: var(--theme-bg-lighter);
     border-color: $color-primary-dark;
     color: $color-primary-dark;
   }
@@ -895,7 +895,7 @@ const statusMeta = computed(() => {
   &:hover {
     border-color: $color-primary;
     color: $color-primary;
-    background: #F0FDFA;
+    background: var(--theme-bg-soft);
   }
 }
 

@@ -436,7 +436,7 @@ async function handleReturn() {
   &.mono {
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 13px;
-    color: #0F766E;
+    color: var(--color-primary-dark);
   }
 }
 

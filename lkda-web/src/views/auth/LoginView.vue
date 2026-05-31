@@ -103,12 +103,12 @@ onMounted(() => {
         <div class="logo-block">
           <!-- 档案卷宗图标 SVG -->
           <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="6" y="10" width="36" height="30" rx="4" fill="#CCFBF1" />
-            <rect x="10" y="6" width="28" height="30" rx="3" fill="#5EEAD4" />
-            <rect x="14" y="2" width="20" height="30" rx="3" fill="white" stroke="#14B8A6" stroke-width="1.5" />
-            <line x1="19" y1="11" x2="29" y2="11" stroke="#14B8A6" stroke-width="1.5" stroke-linecap="round" />
-            <line x1="19" y1="16" x2="29" y2="16" stroke="#14B8A6" stroke-width="1.5" stroke-linecap="round" />
-            <line x1="19" y1="21" x2="25" y2="21" stroke="#5EEAD4" stroke-width="1.5" stroke-linecap="round" />
+            <rect x="6" y="10" width="36" height="30" rx="4" fill="var(--theme-bg-lighter)" />
+            <rect x="10" y="6" width="28" height="30" rx="3" fill="var(--theme-accent-light)" />
+            <rect x="14" y="2" width="20" height="30" rx="3" fill="white" stroke="var(--color-primary)" stroke-width="1.5" />
+            <line x1="19" y1="11" x2="29" y2="11" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" />
+            <line x1="19" y1="16" x2="29" y2="16" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" />
+            <line x1="19" y1="21" x2="25" y2="21" stroke="var(--theme-accent-light)" stroke-width="1.5" stroke-linecap="round" />
           </svg>
         </div>
         <h1 class="system-name">莱矿-档案管理系统</h1>
@@ -220,7 +220,7 @@ onMounted(() => {
 }
 .blob-1 {
   width: 400px; height: 400px;
-  background: #5EEAD4;
+  background: var(--theme-accent-light);
   top: -100px; left: -100px;
   animation-delay: 0s;
 }
@@ -289,7 +289,7 @@ onMounted(() => {
   .logo-icon {
     width: 64px;
     height: 64px;
-    filter: drop-shadow(0 4px 12px rgba(20, 184, 166, 0.3));
+    filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-primary) 30%, transparent));
   }
 
   .system-name {
@@ -329,11 +329,11 @@ onMounted(() => {
     transition: box-shadow 0.2s;
 
     &:hover {
-      box-shadow: 0 0 0 1px #5EEAD4;
+      box-shadow: 0 0 0 1px var(--theme-accent-light);
     }
 
     &.is-focus {
-      box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
     }
   }
 
@@ -398,7 +398,7 @@ onMounted(() => {
 
   &:not(:disabled):hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(20, 184, 166, 0.45);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 45%, transparent);
   }
 
   &:not(:disabled):active {

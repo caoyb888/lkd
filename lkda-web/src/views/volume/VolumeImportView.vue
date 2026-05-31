@@ -213,7 +213,7 @@ function formatSize(bytes: number) {
   :deep(.el-card__header) {
     padding: 14px 24px;
     border-bottom: 1px solid #F1F5F9;
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     border-radius: var(--radius-card) var(--radius-card) 0 0;
   }
   :deep(.el-card__body) { padding: 24px; }
@@ -222,18 +222,18 @@ function formatSize(bytes: number) {
 .drop-zone {
   border: 2px dashed #CBD5E1; border-radius: 12px; padding: 48px 32px;
   display: flex; flex-direction: column; align-items: center; gap: 12px;
-  cursor: pointer; transition: border-color 0.2s, background 0.2s; background: #FAFFFE;
-  &:hover { border-color: $color-primary; background: #F0FDFA; }
-  &.dragging { border-color: $color-primary; background: #CCFBF1; }
+  cursor: pointer; transition: border-color 0.2s, background 0.2s; background: var(--theme-bg-card);
+  &:hover { border-color: $color-primary; background: var(--theme-bg-soft); }
+  &.dragging { border-color: $color-primary; background: var(--theme-bg-lighter); }
   &.has-file { cursor: default; border-style: solid; border-color: $color-primary;
-    background: linear-gradient(135deg, #F0FDFA, #ECFDF5); padding: 24px 32px; }
+    background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light)); padding: 24px 32px; }
 }
 
 .hidden { display: none; }
 
 .drop-icon-bg {
   width: 64px; height: 64px; border-radius: 16px;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex; align-items: center; justify-content: center;
 }
 .drop-icon { font-size: 30px; color: $color-primary-dark; }
@@ -246,7 +246,7 @@ function formatSize(bytes: number) {
 .file-row { display: flex; align-items: center; gap: 16px; width: 100%; }
 .file-icon-bg {
   width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex; align-items: center; justify-content: center;
 }
 .file-icon { font-size: 24px; color: $color-primary-dark; }
@@ -282,7 +282,7 @@ function formatSize(bytes: number) {
 .result-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
 .result-icon-bg {
   width: 72px; height: 72px; border-radius: 50%;
-  background: linear-gradient(135deg, #CCFBF1, #A7F3D0);
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
   display: flex; align-items: center; justify-content: center;
 }
 .result-icon { font-size: 44px; color: $color-primary; }

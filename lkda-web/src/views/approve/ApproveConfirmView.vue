@@ -153,7 +153,7 @@ const label = (code: string, value: string) =>
   dictStore.getDictLabel(code, value) || value || '—'
 
 const ACTION_META: Record<string, { text: string; bg: string; color: string }> = {
-  PASS:   { text: '通过', bg: '#D1FAE5', color: '#065F46' },
+  PASS:   { text: '通过', bg: 'var(--theme-border-light)', color: '#065F46' },
   REJECT: { text: '驳回', bg: '#FEE2E2', color: '#991B1B' },
   BACK:   { text: '退回', bg: '#DBEAFE', color: '#1D4ED8' },
 }
@@ -833,10 +833,10 @@ const goDetail = (row: ApproveQueueItemVO) =>
 .confirm-table {
   width: 100%;
 
-  :deep(.el-table__row:hover > td) { background: #ECFDF5 !important; }
+  :deep(.el-table__row:hover > td) { background: var(--theme-bg-light) !important; }
 
   :deep(th.el-table__cell) {
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     color: $color-text-body;
     font-weight: 600;
     font-size: 13px;
@@ -1043,7 +1043,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px 16px;
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border-radius: 10px;
   border: 1px solid #F1F5F9;
   padding: 14px 16px;
@@ -1270,7 +1270,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
 // 档案摘要卡片
 .summary-card {
   background: #F0FDF4;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   border-radius: 10px;
   padding: 12px 16px;
   display: grid;
@@ -1382,7 +1382,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
   padding: 1px 6px;
   border-radius: 4px;
   background: #1E293B;
-  color: #F0FDFA;
+  color: var(--theme-bg-soft);
   font-family: 'JetBrains Mono', Consolas, monospace;
   font-size: 13px;
   font-weight: 700;

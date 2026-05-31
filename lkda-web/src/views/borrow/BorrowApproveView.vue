@@ -511,10 +511,10 @@ function handleSizeChange(size: number) {
 .approve-table {
   width: 100%;
 
-  :deep(.el-table__row:hover > td) { background: #ECFDF5 !important; }
+  :deep(.el-table__row:hover > td) { background: var(--theme-bg-light) !important; }
 
   :deep(th.el-table__cell) {
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     color: $color-text-body;
     font-weight: 600;
     font-size: 13px;
@@ -604,7 +604,7 @@ function handleSizeChange(size: number) {
 
 .drawer-header {
   padding: 10px 20px 8px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
 }
 
 .drawer-title-row {
@@ -681,9 +681,9 @@ function handleSizeChange(size: number) {
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
   border-radius: 12px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
 }
 
 .applicant-avatar {
@@ -735,9 +735,9 @@ function handleSizeChange(size: number) {
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  background: #F0FDFA;
+  background: var(--theme-bg-soft);
   border-radius: 8px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
 }
 
 .banner-icon { font-size: 18px; color: $color-primary; }
@@ -753,7 +753,7 @@ function handleSizeChange(size: number) {
 
 // 字段行
 .detail-block {
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border: 1px solid #F1F5F9;
   border-radius: 10px;
   padding: 12px 14px;
@@ -821,7 +821,7 @@ function handleSizeChange(size: number) {
 }
 
 .reason-block {
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border: 1px solid #F1F5F9;
   border-radius: 10px;
   padding: 12px 14px;
@@ -860,7 +860,7 @@ function handleSizeChange(size: number) {
     line-height: 1.6;
     resize: vertical;
 
-    &:focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2) !important; }
+    &:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent) !important; }
   }
 }
 

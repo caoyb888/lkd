@@ -55,8 +55,8 @@ function handleReset() {
 
 onMounted(loadList)
 
-// ── Drawer 状态 ──────────────────────────────────────────────────
-const drawerVisible  = ref(false)
+// ── Dialog 状态 ──────────────────────────────────────────────────
+const dialogVisible  = ref(false)
 const detailLoading  = ref(false)
 const logsLoading    = ref(false)
 const detail         = ref<ArchiveVolumeDetailVO | null>(null)
@@ -68,7 +68,7 @@ async function openReview(row: ApproveQueueItemVO) {
   detail.value        = null
   logs.value          = []
   opinion.value       = ''
-  drawerVisible.value = true
+  dialogVisible.value = true
 
   detailLoading.value = true
   try {
@@ -117,7 +117,7 @@ async function handlePass() {
   try {
     await ApproveApi.pass(currentRow.value.recordId, currentRow.value.year, { opinion: opinion.value.trim() })
     ElMessage.success('已通过审核，案卷已进入待确认队列')
-    drawerVisible.value = false
+    dialogVisible.value = false
     loadList()
   } finally {
     submitting.value = false
@@ -141,7 +141,7 @@ async function handleReject() {
   try {
     await ApproveApi.reject(currentRow.value.recordId, currentRow.value.year, { opinion: opinion.value.trim() })
     ElMessage.success('已驳回，案卷已退回草稿状态')
-    drawerVisible.value = false
+    dialogVisible.value = false
     loadList()
   } finally {
     submitting.value = false
@@ -153,7 +153,7 @@ const label = (code: string, value: string) =>
   dictStore.getDictLabel(code, value) || value || '—'
 
 const ACTION_META: Record<string, { text: string; bg: string; color: string }> = {
-  PASS:   { text: '通过', bg: '#D1FAE5', color: '#065F46' },
+  PASS:   { text: '通过', bg: 'var(--theme-border-light)', color: '#065F46' },
   REJECT: { text: '驳回', bg: '#FEE2E2', color: '#991B1B' },
   BACK:   { text: '退回', bg: '#DBEAFE', color: '#1D4ED8' },
 }
@@ -354,29 +354,30 @@ const goDetail = (row: ApproveQueueItemVO) =>
     </el-card>
 
     <!-- ─────────────────────────────────────────────────────────── -->
-    <!-- 审核侧滑 Drawer                                             -->
+    <!-- 审核 Dialog                                                 -->
     <!-- ─────────────────────────────────────────────────────────── -->
-    <el-drawer
-      v-model="drawerVisible"
+    <el-dialog
+      v-model="dialogVisible"
       :title="drawerTitle"
-      direction="rtl"
-      size="780px"
-      :destroy-on-close="false"
-      class="review-drawer"
+      width="860px"
+      :close-on-click-modal="false"
+      class="review-dialog"
+      append-to-body
+      align-center
     >
       <template #header>
-        <div class="drawer-header">
-          <div class="drawer-title-row">
-            <span class="drawer-title-icon">
+        <div class="dialog-header">
+          <div class="dialog-title-row">
+            <span class="dialog-title-icon">
               <el-icon><Stamp /></el-icon>
             </span>
-            <span class="drawer-title-text">{{ drawerTitle }}</span>
+            <span class="dialog-title-text">{{ drawerTitle }}</span>
           </div>
-          <span v-if="currentRow" class="drawer-sub">{{ currentRow.volumeTitle }}</span>
+          <span v-if="currentRow" class="dialog-sub">{{ currentRow.volumeTitle }}</span>
         </div>
       </template>
 
-      <div v-loading="detailLoading" class="drawer-body">
+      <div v-loading="detailLoading" class="dialog-body">
         <template v-if="detail">
           <!-- 档号横幅 -->
           <div class="archive-banner">
@@ -553,7 +554,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
         <el-skeleton v-else-if="detailLoading" :rows="12" animated />
       </div>
 
-      <!-- ── 审批操作区（Drawer footer 固定底部）──────────────── -->
+      <!-- ── 审批操作区（Dialog footer）────────────────────────── -->
       <template #footer>
         <div class="approve-action-bar">
           <div class="opinion-wrap">
@@ -594,7 +595,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
           </div>
         </div>
       </template>
-    </el-drawer>
+    </el-dialog>
   </div>
 </template>
 
@@ -687,11 +688,11 @@ const goDetail = (row: ApproveQueueItemVO) =>
   width: 100%;
 
   :deep(.el-table__row:hover > td) {
-    background: #ECFDF5 !important;
+    background: var(--theme-bg-light) !important;
   }
 
   :deep(th.el-table__cell) {
-    background: #FAFFFE;
+    background: var(--theme-bg-card);
     color: $color-text-body;
     font-weight: 600;
     font-size: 13px;
@@ -776,37 +777,38 @@ const goDetail = (row: ApproveQueueItemVO) =>
   }
 }
 
-// ── Drawer ────────────────────────────────────────────────────────
-.review-drawer {
-  :deep(.el-drawer__header) {
+// ── Dialog ────────────────────────────────────────────────────────
+.review-dialog {
+  :deep(.el-dialog__header) {
     padding: 0;
     margin-bottom: 0;
     border-bottom: 1px solid #F1F5F9;
   }
 
-  :deep(.el-drawer__body) {
+  :deep(.el-dialog__body) {
     padding: 0;
     overflow-y: auto;
+    max-height: calc(80vh - 200px);
   }
 
-  :deep(.el-drawer__footer) {
+  :deep(.el-dialog__footer) {
     padding: 0;
     border-top: 1px solid #E2E8F0;
   }
 }
 
-.drawer-header {
+.dialog-header {
   padding: 16px 24px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
 }
 
-.drawer-title-row {
+.dialog-title-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.drawer-title-icon {
+.dialog-title-icon {
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -819,7 +821,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
   flex-shrink: 0;
 }
 
-.drawer-title-text {
+.dialog-title-text {
   font-size: 16px;
   font-weight: 700;
   color: $color-text-title;
@@ -827,7 +829,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
   letter-spacing: 0.3px;
 }
 
-.drawer-sub {
+.dialog-sub {
   display: block;
   margin-top: 4px;
   font-size: 13px;
@@ -838,8 +840,8 @@ const goDetail = (row: ApproveQueueItemVO) =>
   white-space: nowrap;
 }
 
-// Drawer 正文
-.drawer-body {
+// Dialog 正文
+.dialog-body {
   padding: 20px 24px 8px;
   min-height: 400px;
 }
@@ -850,9 +852,9 @@ const goDetail = (row: ApproveQueueItemVO) =>
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #F0FDFA, #ECFDF5);
+  background: linear-gradient(135deg, var(--theme-bg-soft), var(--theme-bg-light));
   border-radius: 10px;
-  border: 1px solid #A7F3D0;
+  border: 1px solid var(--theme-border-medium);
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
@@ -911,7 +913,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px 16px;
-  background: #FAFFFE;
+  background: var(--theme-bg-card);
   border-radius: 10px;
   border: 1px solid #F1F5F9;
   padding: 14px 16px;
@@ -1045,7 +1047,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
     line-height: 1.6;
     resize: vertical;
 
-    &:focus { border-color: $color-primary; box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15); }
+    &:focus { border-color: $color-primary; box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent); }
   }
 }
 
