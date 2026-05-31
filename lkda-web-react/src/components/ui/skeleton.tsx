@@ -6,10 +6,38 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-slate-200', className)}
+      className={cn('animate-pulse rounded-md bg-slate-200 dark:bg-slate-700', className)}
       {...props}
     />
   )
 }
 
-export { Skeleton }
+function SkeletonText({
+  lines = 3,
+  className,
+}: {
+  lines?: number
+  className?: string
+}) {
+  return (
+    <div className={cn('space-y-2', className)}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton
+          key={i}
+          className={cn('h-4', i === lines - 1 ? 'w-2/3' : 'w-full')}
+        />
+      ))}
+    </div>
+  )
+}
+
+function SkeletonCard({ className }: { className?: string }) {
+  return (
+    <div className={cn('rounded-card border border-[var(--color-border-light)] p-4 space-y-3', className)}>
+      <Skeleton className="h-5 w-1/3" />
+      <SkeletonText lines={2} />
+    </div>
+  )
+}
+
+export { Skeleton, SkeletonText, SkeletonCard }

@@ -3,6 +3,7 @@ import AppLayout from '@/components/layout/AppLayout'
 import DashboardView from '@/views/dashboard/DashboardView'
 import LoginView from '@/views/auth/LoginView'
 import NotFoundView from '@/views/auth/NotFoundView'
+import ComponentDemo from '@/views/demo/ComponentDemo'
 import { authLoader } from './loaders'
 
 export const router = createBrowserRouter([
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardView /> },
       { path: 'dashboard', element: <DashboardView /> },
+      { path: 'demo', element: <ComponentDemo /> },
       { path: 'volume/list', element: <div className="text-slate-title">案卷目录</div> },
       { path: 'volume/import', element: <div className="text-slate-title">Excel 导入</div> },
       { path: 'approve/review', element: <div className="text-slate-title">待审核队列</div> },
