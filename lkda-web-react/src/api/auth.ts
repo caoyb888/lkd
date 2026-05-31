@@ -1,12 +1,24 @@
-import http from '@/lib/http'
+import { Http } from '@/lib/http'
+import type { UserInfoVO } from '@/types/vo'
+
+export interface LoginDTO {
+  username: string
+  password: string
+}
+
+export interface LoginVO {
+  token: string
+  tokenName: string
+  userId: number
+  username: string
+  nickname: string
+  role: string
+}
 
 export const AuthApi = {
-  login: (data: { username: string; password: string }) =>
-    http.post('/auth/login', data),
-  logout: () => http.post('/auth/logout'),
-  getUserInfo: () => http.get('/auth/info'),
-  changePassword: (data: {
-    oldPassword: string
-    newPassword: string
-  }) => http.post('/auth/change-password', data),
+  login: (data: LoginDTO) => Http.post<LoginVO>('/auth/login', data),
+  logout: () => Http.post<void>('/auth/logout'),
+  getUserInfo: () => Http.get<UserInfoVO>('/auth/info'),
+  changePassword: (data: { oldPassword: string; newPassword: string }) =>
+    Http.put<void>('/user/password', data),
 }

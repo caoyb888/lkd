@@ -84,21 +84,35 @@ export const bottomNavItems = [
   { path: '/profile', title: '我的', icon: 'User' },
 ]
 
-export function canViewMenu(item: MenuItem, userRoles: string[]): boolean {
+/**
+ * 判断菜单项是否对用户可见
+ * @param item 菜单项
+ * @param userRole 用户角色（单角色字符串）
+ */
+export function canViewMenu(item: MenuItem, userRole?: string | null): boolean {
   if (item.roles.length === 0) return true
-  return item.roles.some((r) => userRoles.includes(r))
+  if (!userRole) return false
+  // company_leader 拥有全部菜单权限
+  if (userRole === 'company_leader') return true
+  return item.roles.includes(userRole)
 }
 
+/**
+ * 过滤菜单树
+ * @param tree 原始菜单树
+ * @param userRole 用户角色
+ */
 export function filterMenuTree(
   tree: MenuItem[],
-  userRoles: string[]
+  userRole?: string | null
 ): MenuItem[] {
   return tree
-    .filter((item) => canViewMenu(item, userRoles))
+    .filter((item) => canViewMenu(item, userRole))
     .map((item) => ({
       ...item,
       children: item.children?.filter((child) =>
-        canViewMenu(child, userRoles)
+        canViewMenu(child, userRole)
       ),
     }))
+    .filter((item) => !item.children || item.children.length > 0)
 }

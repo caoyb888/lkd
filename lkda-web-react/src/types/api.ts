@@ -1,3 +1,4 @@
+// 统一响应格式 Result<T>
 export interface Result<T = unknown> {
   code: number
   msg: string
@@ -5,10 +6,17 @@ export interface Result<T = unknown> {
   traceId?: string
 }
 
-export interface Page<T = unknown> {
+// 分页数据
+export interface Page<T> {
   records: T[]
   total: number
-  size: number
   current: number
+  size: number
   pages: number
+}
+
+// 分页查询基础参数
+export interface PageQuery {
+  current?: number
+  size?: number
 }

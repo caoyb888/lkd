@@ -50,10 +50,10 @@ export default function TopHeader({
   }
 
   const handleBellClick = () => {
-    const roles = userInfo?.roles ?? []
-    if (roles.includes('archive_admin')) {
+    const role = userInfo?.role
+    if (role === 'archive_admin') {
       navigate('/approve/review')
-    } else if (roles.includes('company_leader')) {
+    } else if (role === 'company_leader') {
       navigate('/approve/history')
     } else {
       navigate('/borrow/my')

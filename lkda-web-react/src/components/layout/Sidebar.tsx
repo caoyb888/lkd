@@ -54,8 +54,7 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const { userInfo } = useAuthStore()
-  const roles = userInfo?.roles ?? []
-  const menuTree = filterMenuTree(rawMenuTree, roles)
+  const menuTree = filterMenuTree(rawMenuTree, userInfo?.role)
   const [openedKeys, setOpenedKeys] = useState<string[]>([])
 
   const toggleSubMenu = (path: string) => {
