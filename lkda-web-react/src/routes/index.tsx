@@ -3,6 +3,8 @@ import AppLayout from '@/components/layout/AppLayout'
 import DashboardView from '@/views/dashboard/DashboardView'
 import LoginView from '@/views/auth/LoginView'
 import NotFoundView from '@/views/auth/NotFoundView'
+import ProfileView from '@/views/auth/ProfileView'
+import ChangePasswordView from '@/views/auth/ChangePasswordView'
 import ComponentDemo from '@/views/demo/ComponentDemo'
 import { authLoader } from './loaders'
 
@@ -28,8 +30,8 @@ export const router = createBrowserRouter([
       { path: 'system/dept', element: <div className="text-slate-title">部门管理</div> },
       { path: 'system/dict', element: <div className="text-slate-title">数据字典</div> },
       { path: 'audit/log', element: <div className="text-slate-title">审计日志</div> },
-      { path: 'profile', element: <div className="text-slate-title">个人中心</div> },
-      { path: 'profile/password', element: <div className="text-slate-title">修改密码</div> },
+      { path: 'profile', element: <ProfileView /> },
+      { path: 'profile/password', element: <ChangePasswordView /> },
     ],
   },
   {
