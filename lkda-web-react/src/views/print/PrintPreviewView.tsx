@@ -133,7 +133,7 @@ export default function PrintPreviewView() {
             onClick={handleDownload}
           >
             <Download size={16} className="mr-1.5" />
-            {downloading ? '下载中…' : '下载 Word'}
+            {downloading ? '下载中…' : '下载 PDF'}
           </Button>
           <Button disabled={!volume} onClick={() => window.print()}>
             <Printer size={16} className="mr-1.5" />
