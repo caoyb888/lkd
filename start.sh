@@ -22,7 +22,7 @@ CYAN='\033[36m'
 # ── 路径 ────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$SCRIPT_DIR"
-FRONTEND_DIR="$SCRIPT_DIR/lkda-web"
+FRONTEND_DIR="$SCRIPT_DIR/lkda-web-react"
 JAR_FILE="$BACKEND_DIR/target/archive-1.0.0.jar"
 LOG_DIR="$BACKEND_DIR/logs"
 

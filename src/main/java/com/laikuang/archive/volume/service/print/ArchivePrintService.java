@@ -11,11 +11,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface ArchivePrintService {
 
     /**
-     * 打印单个案卷的全套 Word 文档（封皮 + 侧脊 + 案卷信息 + 卷内目录）。
+     * 打印单个案卷的 Word 文档。
      *
      * @param recordId 案卷 record_id
      * @param year     案卷年度（分区键）
+     * @param type     打印类型：cover/spine/volume-catalogue/file-catalogue/all（默认 all）
      * @param response HTTP 响应，直接写入二进制文件流
      */
-    void printVolume(Long recordId, String year, HttpServletResponse response);
+    void printVolume(Long recordId, String year, String type, HttpServletResponse response);
 }

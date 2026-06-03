@@ -50,10 +50,14 @@ export const rawMenuTree: MenuItem[] = [
     ],
   },
   {
-    path: '/destroy/approve',
-    title: '销毁审批',
+    path: '/destroy',
+    title: '销毁管理',
     icon: 'Trash2',
-    roles: ['company_leader'],
+    roles: ['archive_admin', 'company_leader'],
+    children: [
+      { path: '/destroy/apply', title: '销毁申请', icon: 'Trash2', roles: ['archive_admin'] },
+      { path: '/destroy/approve', title: '销毁审批', icon: 'Gavel', roles: ['company_leader'] },
+    ],
   },
   {
     path: '/system',

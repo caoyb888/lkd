@@ -22,6 +22,7 @@ import {
   Building,
   Library,
   ScrollText,
+  Gavel,
   ChevronDown,
   X,
 } from 'lucide-react'
@@ -45,6 +46,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; size?: n
   Building,
   Library,
   ScrollText,
+  Gavel,
 }
 
 interface MobileDrawerProps {

@@ -147,7 +147,10 @@ export default function TopHeader({
           </button>
 
           {userMenuOpen && (
-            <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-slate-800 rounded-card shadow-lg border border-[var(--color-border-light)] py-1 z-50 overflow-hidden">
+            <div
+              className="absolute right-0 mt-2 w-44 rounded-card shadow-lg border border-[var(--color-border-light)] py-1 z-50 overflow-hidden"
+              style={{ backgroundColor: 'var(--color-bg-main)' }}
+            >
               <button
                 onClick={() => {
                   setUserMenuOpen(false)
@@ -171,7 +174,7 @@ export default function TopHeader({
               <div className="my-1 border-t border-[var(--color-border-light)]" />
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors"
               >
                 <LogOut size={16} />
                 退出登录

@@ -4,6 +4,8 @@
 
 莱矿档案管理系统是一个**前后端分离单体 MVC 架构**的企业级档案管理平台，实现"案卷-文件"两级传统档案的全生命周期管理。系统涵盖档案编目录入、借阅审批、生命周期流转、打印导出、安全审计等核心功能。
 
+> **前端目录约定**：当前系统使用的前端界面位于 `lkda-web-react/`（React 技术栈）。`lkda-web/`（Vue 技术栈）已弃用。今后所有页面修改均在 `lkda-web-react/` 目录下进行。
+
 ## 技术栈
 
 | 层级 | 选型 | 说明 |
@@ -12,7 +14,8 @@
 | 持久层 | MyBatis-Plus | CRUD 简化 + 分页 + 条件构造器 |
 | 权限框架 | Sa-Token + JWT | 轻量单体鉴权，HttpOnly Cookie 或 Header |
 | 数据库 | MySQL 8.0 (InnoDB) | RANGE COLUMNS 年度物理分区 |
-| 前端 | Vue 3 + Element Plus | 下拉框/表格/表单组件 |
+| 前端（当前） | React 19 + TypeScript + Vite + Tailwind CSS | 主界面，路径 `lkda-web-react/` |
+| 前端（旧） | Vue 3 + Element Plus | 已弃用，路径 `lkda-web/` |
 | 对象转换 | MapStruct | 高性能 Entity/DTO/VO 互转 |
 | Excel | EasyExcel | 批量导入，严格格式校验 |
 | Word 打印 | poi-tl | 占位符模板渲染，导出 .docx |

@@ -1,6 +1,5 @@
 package com.laikuang.archive.volume.service.print;
 
-import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.xwpf.NiceXWPFDocument;
 import com.laikuang.archive.common.constant.ResultCode;
 import com.laikuang.archive.common.exception.BusinessException;
@@ -11,7 +10,6 @@ import com.laikuang.archive.volume.mapper.ArchiveVolumeMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -20,23 +18,22 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.MDC;
 
 /**
  * 档案 Word 套打业务实现。
- *
- * <p>基于 poi-tl 引擎，动态生成 4 个模板（封皮、侧脊、案卷信息、卷内目录），
- * 分别渲染后合并为单个 Word 文档输出。</p>
+ * 支持按 type 参数分段或全量生成，布局与前端打印预览保持一致。
  */
 @Slf4j
 @Service
@@ -46,15 +43,18 @@ public class ArchivePrintServiceImpl implements ArchivePrintService {
     private final ArchiveVolumeMapper volumeMapper;
     private final ArchiveFileMapper   fileMapper;
 
+    private static final String TYPE_COVER          = "cover";
+    private static final String TYPE_SPINE          = "spine";
+    private static final String TYPE_VOL_CATALOGUE  = "volume-catalogue";
+    private static final String TYPE_FILE_CATALOGUE = "file-catalogue";
+
     @Override
-    public void printVolume(Long recordId, String year, HttpServletResponse response) {
-        // 1. 查询案卷
+    public void printVolume(Long recordId, String year, String type, HttpServletResponse response) {
         ArchiveVolume volume = volumeMapper.selectById(recordId);
         if (volume == null || !year.equals(volume.getYear())) {
             throw new BusinessException(ResultCode.PARAM_ERROR, "案卷不存在");
         }
 
-        // 2. 查询卷内文件（按 seq_no 排序）
         List<ArchiveFile> files = fileMapper.selectList(
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<ArchiveFile>()
                         .eq(ArchiveFile::getVolumeNo, volume.getVolumeNo())
@@ -62,345 +62,198 @@ public class ArchivePrintServiceImpl implements ArchivePrintService {
                         .eq(ArchiveFile::getDestroyFlag, 0)
                         .orderByAsc(ArchiveFile::getSeqNo));
 
-        // 3. 分别渲染 4 个模板
-        NiceXWPFDocument coverDoc  = renderCover(volume);
-        NiceXWPFDocument spineDoc  = renderSpine(volume);
-        NiceXWPFDocument catalogDoc = renderCatalog(volume);
-        NiceXWPFDocument fileDoc   = renderFileCatalog(volume, files);
-
-        // 4. 合并为单个文档（每个部分之间加分页符）
         try {
-            NiceXWPFDocument merged = coverDoc;
-            merged = appendWithPageBreak(merged, spineDoc);
-            merged = appendWithPageBreak(merged, catalogDoc);
-            merged = appendWithPageBreak(merged, fileDoc);
+            NiceXWPFDocument doc = buildDocument(volume, files, type);
 
-            // 5. 写入响应流
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            merged.write(out);
+            doc.write(out);
             byte[] bytes = out.toByteArray();
 
+            String suffix = typeSuffix(type);
             String fileName = URLEncoder.encode(
-                    volume.getArchiveNo() + "_打印.docx", StandardCharsets.UTF_8);
+                    volume.getArchiveNo() + suffix + ".docx", StandardCharsets.UTF_8);
             response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
             response.setContentLength(bytes.length);
             response.getOutputStream().write(bytes);
             response.getOutputStream().flush();
 
-            log.info("[AUDIT-PRINT] 案卷Word套打，recordId={}, year={}, archiveNo={}, 文件数={}, ip={}, traceId={}",
-                    recordId, year, volume.getArchiveNo(), files.size(), MDC.get("clientIP"), MDC.get("traceId"));
+            log.info("[AUDIT-PRINT] recordId={}, year={}, type={}, archiveNo={}, files={}, traceId={}",
+                    recordId, year, type, volume.getArchiveNo(), files.size(), MDC.get("traceId"));
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("[PRINT] Word渲染或合并失败", e);
+            log.error("[PRINT] Word生成失败", e);
             throw new BusinessException(ResultCode.SYSTEM_ERROR, "Word文档生成失败");
         }
     }
 
-    // ==================== 模板渲染 ====================
+    // ── 根据 type 组装文档 ────────────────────────────────────────
 
-    private NiceXWPFDocument renderCover(ArchiveVolume volume) {
-        XWPFDocument template = createCoverTemplate();
-        Map<String, Object> data = new HashMap<>();
-        data.put("fonds_no", orDefault(volume.getFondsNo()));
-        data.put("year", orDefault(volume.getYear()));
-        data.put("category_code", orDefault(volume.getCategoryCode()));
-        data.put("retention_period", orDefault(volume.getRetentionPeriod()));
-        data.put("security_level", orDefault(volume.getSecurityLevel()));
-        data.put("archive_no", orDefault(volume.getArchiveNo()));
-        data.put("volume_title", orDefault(volume.getVolumeTitle()));
-        return renderTemplate(template, data);
+    private NiceXWPFDocument buildDocument(ArchiveVolume v, List<ArchiveFile> files, String type) throws Exception {
+        return switch (type) {
+            case TYPE_COVER          -> buildCover(v);
+            case TYPE_SPINE          -> buildSpine(v);
+            case TYPE_VOL_CATALOGUE  -> buildVolCatalogue(v);
+            case TYPE_FILE_CATALOGUE -> buildFileCatalogue(v, files);
+            default -> {
+                NiceXWPFDocument merged = buildCover(v);
+                merged = appendWithPageBreak(merged, buildSpine(v));
+                merged = appendWithPageBreak(merged, buildVolCatalogue(v));
+                merged = appendWithPageBreak(merged, buildFileCatalogue(v, files));
+                yield merged;
+            }
+        };
     }
 
-    private NiceXWPFDocument renderSpine(ArchiveVolume volume) {
-        XWPFDocument template = createSpineTemplate();
-        Map<String, Object> data = new HashMap<>();
-        data.put("year", orDefault(volume.getYear()));
-        data.put("archive_no", orDefault(volume.getArchiveNo()));
-        data.put("volume_title", orDefault(volume.getVolumeTitle()));
-        return renderTemplate(template, data);
-    }
+    // ── 封皮 ──────────────────────────────────────────────────────
 
-    private NiceXWPFDocument renderCatalog(ArchiveVolume volume) {
-        XWPFDocument template = createCatalogTemplate();
-        Map<String, Object> data = new HashMap<>();
-        data.put("fonds_no", orDefault(volume.getFondsNo()));
-        data.put("year", orDefault(volume.getYear()));
-        data.put("category_code", orDefault(volume.getCategoryCode()));
-        data.put("archive_no", orDefault(volume.getArchiveNo()));
-        data.put("volume_title", orDefault(volume.getVolumeTitle()));
-        data.put("compile_unit", orDefault(volume.getCompileUnit()));
-        data.put("compiler", orDefault(volume.getCompiler()));
-        data.put("reviewer", orDefault(volume.getReviewer()));
-        data.put("compile_date", orDefault(volume.getCompileDate()));
-        data.put("total_pages", String.valueOf(volume.getTotalPages() == null ? 0 : volume.getTotalPages()));
-        return renderTemplate(template, data);
-    }
+    private NiceXWPFDocument buildCover(ArchiveVolume v) {
+        NiceXWPFDocument doc = new NiceXWPFDocument();
 
-    private NiceXWPFDocument renderFileCatalog(ArchiveVolume volume, List<ArchiveFile> files) {
-        XWPFDocument template = createFileCatalogTemplate();
+        addCenteredParagraph(doc, "莱矿集团档案盒", 28, true, 800, 0);
+        addBlank(doc, 600);
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("archive_no", orDefault(volume.getArchiveNo()));
-        data.put("volume_title", orDefault(volume.getVolumeTitle()));
+        addTwoColRow(doc, "全  宗  号", orDash(v.getFondsNo()),    "年      度", orDash(v.getYear()));
+        addTwoColRow(doc, "分  类  号", orDash(v.getCategoryCode()), "保管期限",   orDash(v.getRetentionPeriod()));
+        addTwoColRow(doc, "密      级", orDash(v.getSecurityLevel()), "",         "");
+        addTwoColRow(doc, "档      号", orDash(v.getArchiveNo()),   "",           "");
 
-        NiceXWPFDocument doc = renderTemplate(template, data);
+        addBlank(doc, 400);
 
-        // 使用 Apache POI 直接在文档末尾插入卷内文件目录表格
-        insertFileTable(doc, files);
-        return doc;
-    }
-
-    private void insertFileTable(NiceXWPFDocument doc, List<ArchiveFile> files) {
-        doc.createParagraph().setSpacingAfter(200);
-
-        XWPFTable table = doc.createTable(1 + files.size(), 7);
-        table.setWidth("100%");
-
-        // 表头
-        String[] headers = {"序号", "文件编号", "责任者", "文件标题", "日期", "页数", "备注"};
-        XWPFTableRow headerRow = table.getRow(0);
-        for (int i = 0; i < headers.length; i++) {
-            setTableCellText(headerRow.getCell(i), headers[i], true);
-        }
-
-        // 数据行
-        int seq = 1;
-        for (int i = 0; i < files.size(); i++) {
-            ArchiveFile f = files.get(i);
-            XWPFTableRow row = table.getRow(i + 1);
-            setTableCellText(row.getCell(0), String.valueOf(seq++), false);
-            setTableCellText(row.getCell(1), orDefault(f.getFileNo()), false);
-            setTableCellText(row.getCell(2), orDefault(f.getResponsible()), false);
-            setTableCellText(row.getCell(3), orDefault(f.getFileTitle()), false);
-            setTableCellText(row.getCell(4),
-                    f.getArchiveDate() != null
-                            ? f.getArchiveDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                            : "", false);
-            setTableCellText(row.getCell(5), f.getPages() == null ? "" : String.valueOf(f.getPages()), false);
-            setTableCellText(row.getCell(6), orDefault(f.getRemark()), false);
-        }
-    }
-
-    private void setTableCellText(XWPFTableCell cell, String text, boolean bold) {
-        cell.removeParagraph(0);
-        XWPFParagraph p = cell.addParagraph();
-        p.setAlignment(ParagraphAlignment.CENTER);
-        XWPFRun run = p.createRun();
-        run.setText(text);
-        run.setBold(bold);
-        run.setFontSize(10);
-        run.setFontFamily("宋体");
-    }
-
-    // ==================== 模板创建（Apache POI） ====================
-
-    private XWPFDocument createCoverTemplate() {
-        XWPFDocument doc = new XWPFDocument();
-
-        XWPFParagraph title = doc.createParagraph();
-        title.setAlignment(ParagraphAlignment.CENTER);
-        title.setSpacingBefore(800);
-        XWPFRun run = title.createRun();
-        run.setText("莱矿集团档案盒");
-        run.setBold(true);
-        run.setFontSize(28);
-        run.setFontFamily("宋体");
-
-        addBlankParagraph(doc, 600);
-
-        addCoverInfoRow(doc, "全  宗  号", "{{fonds_no}}", "年      度", "{{year}}");
-        addCoverInfoRow(doc, "分  类  号", "{{category_code}}", "保管期限", "{{retention_period}}");
-        addCoverInfoRow(doc, "密      级", "{{security_level}}", "", "");
-        addCoverInfoRow(doc, "档      号", "{{archive_no}}", "", "");
-
-        addBlankParagraph(doc, 400);
-
-        XWPFParagraph vp = doc.createParagraph();
-        vp.setAlignment(ParagraphAlignment.LEFT);
-        vp.setIndentationLeft(600);
-        XWPFRun vr = vp.createRun();
-        vr.setText("案卷题名：");
-        vr.setFontSize(14);
-        vr.setFontFamily("宋体");
-        vr = vp.createRun();
-        vr.setText("{{volume_title}}");
-        vr.setBold(true);
-        vr.setFontSize(14);
-        vr.setFontFamily("宋体");
-        vr.setUnderline(UnderlinePatterns.SINGLE);
-
-        return doc;
-    }
-
-    private void addCoverInfoRow(XWPFDocument doc, String label1, String val1, String label2, String val2) {
-        XWPFTable table = doc.createTable(1, 4);
-        table.setWidth("100%");
-        XWPFTableRow row = table.getRow(0);
-        setCellText(row.getCell(0), label1, true);
-        setCellText(row.getCell(1), val1, false);
-        setCellText(row.getCell(2), label2, true);
-        setCellText(row.getCell(3), val2, false);
-        addBlankParagraph(doc, 200);
-    }
-
-    private void setCellText(XWPFTableCell cell, String text, boolean bold) {
-        cell.removeParagraph(0);
-        XWPFParagraph p = cell.addParagraph();
-        p.setAlignment(ParagraphAlignment.CENTER);
-        XWPFRun run = p.createRun();
-        run.setText(text);
-        run.setBold(bold);
-        run.setFontSize(12);
-        run.setFontFamily("宋体");
-    }
-
-    private XWPFDocument createSpineTemplate() {
-        XWPFDocument doc = new XWPFDocument();
-
-        XWPFParagraph p = doc.createParagraph();
-        p.setAlignment(ParagraphAlignment.CENTER);
-        p.setSpacingBefore(1200);
-        XWPFRun run = p.createRun();
-        run.setText("年度：{{year}}");
-        run.setFontSize(14);
-        run.setFontFamily("宋体");
-
-        p = doc.createParagraph();
-        p.setAlignment(ParagraphAlignment.CENTER);
-        p.setSpacingBefore(400);
-        run = p.createRun();
-        run.setText("档号：{{archive_no}}");
-        run.setFontSize(14);
-        run.setFontFamily("宋体");
-
-        p = doc.createParagraph();
-        p.setAlignment(ParagraphAlignment.CENTER);
-        p.setSpacingBefore(400);
-        run = p.createRun();
-        run.setText("题名：{{volume_title}}");
-        run.setFontSize(14);
-        run.setFontFamily("宋体");
-
-        return doc;
-    }
-
-    private XWPFDocument createCatalogTemplate() {
-        XWPFDocument doc = new XWPFDocument();
-
-        XWPFParagraph title = doc.createParagraph();
-        title.setAlignment(ParagraphAlignment.CENTER);
-        title.setSpacingBefore(400);
-        XWPFRun run = title.createRun();
-        run.setText("案 卷 目 录");
-        run.setBold(true);
-        run.setFontSize(22);
-        run.setFontFamily("宋体");
-
-        addBlankParagraph(doc, 300);
-
-        addCatalogLine(doc, "全宗号：", "{{fonds_no}}", "年度：", "{{year}}", "分类号：", "{{category_code}}");
-        addCatalogLine(doc, "档号：", "{{archive_no}}", "", "", "", "");
-        addCatalogLine(doc, "案卷题名：", "{{volume_title}}", "", "", "", "");
-        addCatalogLine(doc, "编制单位：", "{{compile_unit}}", "", "", "", "");
-        addCatalogLine(doc, "立 卷 人：", "{{compiler}}", "", "", "", "");
-        addCatalogLine(doc, "审 核 人：", "{{reviewer}}", "", "", "", "");
-        addCatalogLine(doc, "编制日期：", "{{compile_date}}", "", "", "", "");
-        addCatalogLine(doc, "总 页 数：", "{{total_pages}}", "", "", "", "");
-
-        return doc;
-    }
-
-    private void addCatalogLine(XWPFDocument doc, String label1, String val1,
-                                 String label2, String val2,
-                                 String label3, String val3) {
         XWPFParagraph p = doc.createParagraph();
         p.setAlignment(ParagraphAlignment.LEFT);
         p.setIndentationLeft(600);
-        XWPFRun run = p.createRun();
-        run.setText(label1);
-        run.setFontSize(12);
-        run.setFontFamily("宋体");
-        run = p.createRun();
-        run.setText(val1);
-        run.setFontSize(12);
-        run.setFontFamily("宋体");
-        run.setUnderline(UnderlinePatterns.SINGLE);
-
-        if (StringUtils.hasText(label2)) {
-            run = p.createRun();
-            run.setText("    " + label2);
-            run.setFontSize(12);
-            run.setFontFamily("宋体");
-            run = p.createRun();
-            run.setText(val2);
-            run.setFontSize(12);
-            run.setFontFamily("宋体");
-            run.setUnderline(UnderlinePatterns.SINGLE);
-        }
-
-        if (StringUtils.hasText(label3)) {
-            run = p.createRun();
-            run.setText("    " + label3);
-            run.setFontSize(12);
-            run.setFontFamily("宋体");
-            run = p.createRun();
-            run.setText(val3);
-            run.setFontSize(12);
-            run.setFontFamily("宋体");
-            run.setUnderline(UnderlinePatterns.SINGLE);
-        }
-    }
-
-    private XWPFDocument createFileCatalogTemplate() {
-        XWPFDocument doc = new XWPFDocument();
-
-        XWPFParagraph title = doc.createParagraph();
-        title.setAlignment(ParagraphAlignment.CENTER);
-        title.setSpacingBefore(400);
-        XWPFRun run = title.createRun();
-        run.setText("卷 内 文 件 目 录");
-        run.setBold(true);
-        run.setFontSize(22);
-        run.setFontFamily("宋体");
-
-        addBlankParagraph(doc, 200);
-
-        XWPFParagraph info = doc.createParagraph();
-        info.setAlignment(ParagraphAlignment.LEFT);
-        XWPFRun ir = info.createRun();
-        ir.setText("档号：");
-        ir.setFontSize(12);
-        ir.setFontFamily("宋体");
-        ir = info.createRun();
-        ir.setText("{{archive_no}}");
-        ir.setFontSize(12);
-        ir.setFontFamily("宋体");
-        ir.setUnderline(UnderlinePatterns.SINGLE);
-        ir = info.createRun();
-        ir.setText("          案卷题名：");
-        ir.setFontSize(12);
-        ir.setFontFamily("宋体");
-        ir = info.createRun();
-        ir.setText("{{volume_title}}");
-        ir.setFontSize(12);
-        ir.setFontFamily("宋体");
-        ir.setUnderline(UnderlinePatterns.SINGLE);
-
-        addBlankParagraph(doc, 200);
+        addRun(p, "案卷题名：", 14, false, false);
+        addRun(p, orDash(v.getVolumeTitle()), 14, true, true);
 
         return doc;
     }
 
-    // ==================== 内部工具 ====================
-
-    private NiceXWPFDocument renderTemplate(XWPFDocument template, Map<String, Object> data) {
-        try {
-            XWPFTemplate xwpf = XWPFTemplate.compile(template).render(data);
-            return xwpf.getXWPFDocument();
-        } catch (Exception e) {
-            throw new BusinessException(ResultCode.SYSTEM_ERROR, "Word模板渲染失败");
-        }
+    private void addTwoColRow(NiceXWPFDocument doc, String l1, String v1, String l2, String v2) {
+        XWPFTable tbl = doc.createTable(1, 4);
+        setTableFullWidth(tbl);
+        XWPFTableRow row = tbl.getRow(0);
+        setCellBold(row.getCell(0), l1, 12);
+        setCellText(row.getCell(1), v1, 12);
+        setCellBold(row.getCell(2), l2, 12);
+        setCellText(row.getCell(3), v2, 12);
+        addBlank(doc, 200);
     }
+
+    // ── 侧脊 ──────────────────────────────────────────────────────
+
+    private NiceXWPFDocument buildSpine(ArchiveVolume v) {
+        NiceXWPFDocument doc = new NiceXWPFDocument();
+
+        addCenteredParagraph(doc, "年度：" + orDash(v.getYear()), 14, false, 1200, 0);
+        addCenteredParagraph(doc, "档号：" + orDash(v.getArchiveNo()), 14, false, 400, 0);
+        addCenteredParagraph(doc, "题名：" + orDash(v.getVolumeTitle()), 14, false, 400, 0);
+
+        return doc;
+    }
+
+    // ── 案卷目录（表格，与前端预览一致） ──────────────────────────
+
+    private NiceXWPFDocument buildVolCatalogue(ArchiveVolume v) {
+        NiceXWPFDocument doc = new NiceXWPFDocument();
+
+        addCenteredParagraph(doc, "案  卷  目  录", 22, true, 400, 300);
+
+        // 副标题
+        XWPFParagraph sub = doc.createParagraph();
+        sub.setAlignment(ParagraphAlignment.CENTER);
+        addRun(sub, "全宗号：" + orDash(v.getFondsNo())
+                + "    年度：" + orDash(v.getYear())
+                + "    一级类目：" + orDash(v.getCategoryL1()),
+                10, false, false);
+        addBlank(doc, 200);
+
+        // 表格：序号 | 档号 | 案卷题名 | 年度 | 件数 | 页数 | 保管期限 | 密级 | 备注
+        String[] headers = {"序号", "档号", "案卷题名", "年度", "件数", "页数", "保管期限", "密级", "备注"};
+        XWPFTable tbl = doc.createTable(2, headers.length);
+        setTableFullWidth(tbl);
+
+        XWPFTableRow hRow = tbl.getRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            setCellBold(hRow.getCell(i), headers[i], 10);
+        }
+
+        XWPFTableRow dRow = tbl.getRow(1);
+        setCellText(dRow.getCell(0), "1", 10);
+        setCellText(dRow.getCell(1), orDash(v.getArchiveNo()), 10);
+        setCellText(dRow.getCell(2), orDash(v.getVolumeTitle()), 10);
+        setCellText(dRow.getCell(3), orDash(v.getYear()), 10);
+        setCellText(dRow.getCell(4), v.getCopies() == null ? "—" : String.valueOf(v.getCopies()), 10);
+        setCellText(dRow.getCell(5), v.getTotalPages() == null ? "—" : String.valueOf(v.getTotalPages()), 10);
+        setCellText(dRow.getCell(6), orDash(v.getRetentionPeriod()), 10);
+        setCellText(dRow.getCell(7), orDash(v.getSecurityLevel()), 10);
+        setCellText(dRow.getCell(8), orDash(v.getNotes()), 10);
+
+        addBlank(doc, 400);
+
+        // 页脚
+        XWPFParagraph footer = doc.createParagraph();
+        footer.setAlignment(ParagraphAlignment.LEFT);
+        addRun(footer, "编制单位：" + orDash(v.getCompileUnit())
+                + "    立卷人：" + orDash(v.getCompiler())
+                + "    立卷日期：" + orDash(v.getCompileDate())
+                + "    审核人：" + orDash(v.getReviewer()),
+                10, false, false);
+
+        return doc;
+    }
+
+    // ── 卷内文件目录（与前端预览一致） ────────────────────────────
+
+    private NiceXWPFDocument buildFileCatalogue(ArchiveVolume v, List<ArchiveFile> files) {
+        NiceXWPFDocument doc = new NiceXWPFDocument();
+
+        addCenteredParagraph(doc, "卷  内  文  件  目  录", 22, true, 400, 300);
+
+        XWPFParagraph info = doc.createParagraph();
+        info.setAlignment(ParagraphAlignment.LEFT);
+        addRun(info, "档号：", 12, false, false);
+        addRun(info, orDash(v.getArchiveNo()), 12, false, true);
+        addRun(info, "    案卷题名：", 12, false, false);
+        addRun(info, orDash(v.getVolumeTitle()), 12, false, true);
+        addBlank(doc, 200);
+
+        // 表格：顺序号 | 文件编号 | 文件标题 | 责任者 | 归档日期 | 页数 | 密级 | 备注
+        String[] headers = {"顺序号", "文件编号", "文件标题", "责任者", "归档日期", "页数", "密级", "备注"};
+        XWPFTable tbl = doc.createTable(1 + files.size(), headers.length);
+        setTableFullWidth(tbl);
+
+        XWPFTableRow hRow = tbl.getRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            setCellBold(hRow.getCell(i), headers[i], 10);
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            ArchiveFile f = files.get(i);
+            XWPFTableRow row = tbl.getRow(i + 1);
+            setCellText(row.getCell(0), String.valueOf(f.getSeqNo() == null ? i + 1 : f.getSeqNo()), 10);
+            setCellText(row.getCell(1), orDash(f.getFileNo()), 10);
+            setCellText(row.getCell(2), orDash(f.getFileTitle()), 10);
+            setCellText(row.getCell(3), orDash(f.getResponsible()), 10);
+            setCellText(row.getCell(4),
+                    f.getArchiveDate() != null
+                            ? f.getArchiveDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                            : "—", 10);
+            setCellText(row.getCell(5), f.getPages() == null ? "—" : String.valueOf(f.getPages()), 10);
+            setCellText(row.getCell(6), orDash(f.getSecurityLevel()), 10);
+            setCellText(row.getCell(7), orDash(f.getRemark()), 10);
+        }
+
+        addBlank(doc, 400);
+        XWPFParagraph footer = doc.createParagraph();
+        footer.setAlignment(ParagraphAlignment.LEFT);
+        addRun(footer, "共 " + files.size() + " 件    立卷人：" + orDash(v.getCompiler()), 10, false, false);
+
+        return doc;
+    }
+
+    // ── 工具方法 ──────────────────────────────────────────────────
 
     private NiceXWPFDocument appendWithPageBreak(NiceXWPFDocument base, NiceXWPFDocument append) {
         try {
@@ -411,12 +264,71 @@ public class ArchivePrintServiceImpl implements ArchivePrintService {
         }
     }
 
-    private void addBlankParagraph(XWPFDocument doc, int spacingAfter) {
+    private void addCenteredParagraph(XWPFDocument doc, String text, int fontSize,
+                                      boolean bold, int spacingBefore, int spacingAfter) {
         XWPFParagraph p = doc.createParagraph();
+        p.setAlignment(ParagraphAlignment.CENTER);
+        p.setSpacingBefore(spacingBefore);
         p.setSpacingAfter(spacingAfter);
+        XWPFRun run = p.createRun();
+        run.setText(text);
+        run.setBold(bold);
+        run.setFontSize(fontSize);
+        run.setFontFamily("宋体");
     }
 
-    private String orDefault(String value) {
-        return StringUtils.hasText(value) ? value : "";
+    private void addBlank(XWPFDocument doc, int spacingAfter) {
+        doc.createParagraph().setSpacingAfter(spacingAfter);
+    }
+
+    private XWPFRun addRun(XWPFParagraph p, String text, int fontSize, boolean bold, boolean underline) {
+        XWPFRun run = p.createRun();
+        run.setText(text);
+        run.setFontSize(fontSize);
+        run.setFontFamily("宋体");
+        run.setBold(bold);
+        if (underline) run.setUnderline(UnderlinePatterns.SINGLE);
+        return run;
+    }
+
+    private void setCellText(XWPFTableCell cell, String text, int fontSize) {
+        cell.removeParagraph(0);
+        XWPFParagraph p = cell.addParagraph();
+        p.setAlignment(ParagraphAlignment.CENTER);
+        XWPFRun run = p.createRun();
+        run.setText(text);
+        run.setFontSize(fontSize);
+        run.setFontFamily("宋体");
+    }
+
+    private void setCellBold(XWPFTableCell cell, String text, int fontSize) {
+        cell.removeParagraph(0);
+        XWPFParagraph p = cell.addParagraph();
+        p.setAlignment(ParagraphAlignment.CENTER);
+        XWPFRun run = p.createRun();
+        run.setText(text);
+        run.setBold(true);
+        run.setFontSize(fontSize);
+        run.setFontFamily("宋体");
+    }
+
+    private void setTableFullWidth(XWPFTable tbl) {
+        CTTblWidth tblWidth = tbl.getCTTbl().addNewTblPr().addNewTblW();
+        tblWidth.setType(STTblWidth.PCT);
+        tblWidth.setW(BigInteger.valueOf(5000));
+    }
+
+    private String orDash(String value) {
+        return StringUtils.hasText(value) ? value : "—";
+    }
+
+    private String typeSuffix(String type) {
+        return switch (type) {
+            case TYPE_COVER          -> "_封皮";
+            case TYPE_SPINE          -> "_侧脊";
+            case TYPE_VOL_CATALOGUE  -> "_案卷目录";
+            case TYPE_FILE_CATALOGUE -> "_卷内文件目录";
+            default                  -> "_打印";
+        };
     }
 }

@@ -568,4 +568,27 @@ async function handleLogout() {
 .page-fade-leave-to {
   opacity: 0;
 }
+
+// ── 打印时隐藏导航 ────────────────────────────────────────────
+@media print {
+  .main-header,
+  .main-aside,
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .main-layout {
+    height: auto;
+    overflow: visible;
+  }
+
+  .body-container {
+    overflow: visible;
+  }
+
+  .main-content {
+    overflow: visible;
+    background: transparent;
+  }
+}
 </style>

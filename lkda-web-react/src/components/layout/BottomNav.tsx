@@ -10,7 +10,7 @@ import {
 const navItems = [
   { path: '/', title: '首页', icon: LayoutDashboard },
   { path: '/volume/list', title: '案卷', icon: FolderOpen },
-  { path: '/borrow', title: '借阅', icon: BookOpen },
+  { path: '/borrow/my', title: '借阅', icon: BookOpen },
   { path: '/profile', title: '我的', icon: User },
 ]
 
@@ -24,7 +24,7 @@ export default function BottomNav() {
   }
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-[var(--color-bg-main)] border-t border-[var(--color-border-light)] flex items-center justify-around z-50 safe-area-pb">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-[var(--color-bg-main)] border-t border-[var(--color-border-light)] flex items-center justify-around z-50 pb-[env(safe-area-inset-bottom)]">
       {navItems.map((item) => {
         const Icon = item.icon
         const active = isActive(item.path)

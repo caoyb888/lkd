@@ -22,6 +22,7 @@ import {
   Building,
   Library,
   ScrollText,
+  Gavel,
   ChevronDown,
 } from 'lucide-react'
 
@@ -44,6 +45,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; size?: n
   Building,
   Library,
   ScrollText,
+  Gavel,
 }
 
 interface SidebarProps {
@@ -74,7 +76,7 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
         collapsed ? 'w-[64px]' : 'w-[220px]'
       )}
     >
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-2 px-2 scrollbar-thin">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-2 px-2 ">
         {menuTree.map((item) => {
           const Icon = iconMap[item.icon]
           const hasChildren = item.children && item.children.length > 0

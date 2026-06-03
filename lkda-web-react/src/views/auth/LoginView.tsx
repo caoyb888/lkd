@@ -103,9 +103,9 @@ export default function LoginView() {
           <div
             className={cn(
               'md:p-8 md:rounded-card md:border md:border-white/30 md:shadow-xl',
-              'md:bg-white/80 md:backdrop-blur-md',
-              'dark:md:bg-slate-900/80'
+              'md:backdrop-blur-md'
             )}
+            style={{ backgroundColor: 'var(--color-login-card-bg)' }}
           >
             <div className="mb-6">
               <h2 className="text-xl font-bold text-[var(--color-slate-title)] mb-1">

@@ -36,7 +36,8 @@ public class ArchivePrintController {
     public void printVolume(
             @PathVariable Long recordId,
             @RequestParam @NotBlank(message = "年度不能为空") String year,
+            @RequestParam(defaultValue = "all") String type,
             HttpServletResponse response) {
-        printService.printVolume(recordId, year, response);
+        printService.printVolume(recordId, year, type, response);
     }
 }
