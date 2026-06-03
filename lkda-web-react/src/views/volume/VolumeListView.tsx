@@ -141,6 +141,15 @@ export default function VolumeListView() {
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: 'seq',
+        header: '序号',
+        cell: ({ row }) => (
+          <span className="text-xs text-slate-400 tabular-nums">
+            {((query.current ?? 1) - 1) * PAGE_SIZE + row.index + 1}
+          </span>
+        ),
+      }),
       columnHelper.accessor('archiveNo', {
         header: '档号',
         cell: (info) => (
@@ -270,7 +279,7 @@ export default function VolumeListView() {
         },
       }),
     ],
-    []
+    [query.current]
   )
 
   const table = useReactTable({
@@ -740,8 +749,13 @@ export default function VolumeListView() {
               >
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
-                      {vol.archiveNo}
+                    <div className="mb-0.5 flex items-center gap-2">
+                      <span className="inline-flex h-4 min-w-[1.25rem] items-center justify-center rounded bg-slate-100 px-1 text-[10px] font-medium tabular-nums text-slate-400">
+                        {((query.current ?? 1) - 1) * PAGE_SIZE + idx + 1}
+                      </span>
+                      <span className="font-mono text-[11px] text-slate-400 truncate">
+                        {vol.archiveNo}
+                      </span>
                     </div>
                     <div className="text-sm font-semibold text-slate-title line-clamp-2">
                       {vol.volumeTitle}

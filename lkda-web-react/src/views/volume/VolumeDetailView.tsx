@@ -426,7 +426,8 @@ export default function VolumeDetailView() {
       {/* ── Tabs ───────────────────────────────────────────────── */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div className="rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] shadow-card">
-          <TabsList className="w-full justify-start rounded-none rounded-t-card border-b border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] p-0 px-2">
+          <div className="overflow-x-auto scrollbar-hide">
+          <TabsList className="w-max min-w-full justify-start rounded-none rounded-t-card border-b border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] p-0 px-2">
             {[
               { value: 'location', label: '分类定位' },
               { value: 'description', label: '案卷描述' },
@@ -445,6 +446,7 @@ export default function VolumeDetailView() {
               </TabsTrigger>
             ))}
           </TabsList>
+          </div>
 
           <div className="p-4 md:p-5">
             {/* 分类定位 */}

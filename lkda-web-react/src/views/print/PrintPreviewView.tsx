@@ -95,11 +95,11 @@ export default function PrintPreviewView() {
     setDownloading(true)
     try {
       const printType = TAB_TO_PRINT_TYPE[activeTab]
-      const blob = await PrintApi.downloadDocx(id, volume.year, printType)
+      const blob = await PrintApi.downloadPdf(id, volume.year, printType)
       const url  = URL.createObjectURL(blob)
       const a    = document.createElement('a')
       a.href     = url
-      a.download = `档案_${volume.archiveNo}_${TAB_LABEL[activeTab]}.docx`
+      a.download = `档案_${volume.archiveNo}_${TAB_LABEL[activeTab]}.pdf`
       a.click()
       URL.revokeObjectURL(url)
     } finally {
