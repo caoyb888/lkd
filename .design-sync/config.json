@@ -1,0 +1,20 @@
+{
+  "projectId": "3969e2fe-7097-444f-a739-d32fa64a5213",
+  "shape": "package",
+  "pkg": "lkda-web-react",
+  "globalName": "LkdaDS",
+  "srcDir": "src",
+  "tsconfig": "./tsconfig.json",
+  "cssEntry": "./dist/assets/index-CvooIErZ.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "libOverrides": {
+    "source-kit.mjs": "Vite app (no lib entry): exclude main.tsx/App.tsx from synth-entry bundle and discovery"
+  },
+  "overrides": {
+    "DataTable": { "cardMode": "column" },
+    "Dialog": { "cardMode": "single", "viewport": "520x360" },
+    "Drawer": { "cardMode": "single", "viewport": "520x420" },
+    "Popover": { "cardMode": "single", "viewport": "420x240" },
+    "Tooltip": { "cardMode": "single", "viewport": "360x200" }
+  }
+}
