@@ -50,10 +50,10 @@ function PasswordStrength({ password }: { password: string }) {
 
   const label =
     score <= 1
-      ? { text: '弱', color: 'text-red-500', bar: 'bg-red-500' }
+      ? { text: '弱', color: 'text-red-400', bar: 'bg-red-500' }
       : score <= 3
-        ? { text: '中', color: 'text-orange-500', bar: 'bg-orange-500' }
-        : { text: '强', color: 'text-green-500', bar: 'bg-green-500' }
+        ? { text: '中', color: 'text-orange-400', bar: 'bg-orange-500' }
+        : { text: '强', color: 'text-green-400', bar: 'bg-green-500' }
 
   return (
     <div className="flex items-center gap-2.5 mt-2 animate-in fade-in slide-in-from-top-1">
@@ -63,7 +63,7 @@ function PasswordStrength({ password }: { password: string }) {
             key={i}
             className={cn(
               'w-8 h-1 rounded-sm transition-colors duration-300',
-              i < score ? label.bar : 'bg-slate-200'
+              i < score ? label.bar : 'bg-[var(--color-bg-soft)]'
             )}
           />
         ))}
@@ -114,7 +114,7 @@ export default function ChangePasswordView() {
 
   const inputWrapClass = 'relative'
   const eyeBtnClass =
-    'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
+    'absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)] hover:text-slate-body'
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -162,7 +162,7 @@ export default function ChangePasswordView() {
                   </button>
                 </div>
                 {errors.oldPassword && (
-                  <p className="text-xs text-red-500 flex items-center gap-1">
+                  <p className="text-xs text-red-400 flex items-center gap-1">
                     <AlertCircle size={12} />
                     {errors.oldPassword.message}
                   </p>
@@ -191,7 +191,7 @@ export default function ChangePasswordView() {
                 </div>
                 <PasswordStrength password={newPassword} />
                 {errors.newPassword && (
-                  <p className="text-xs text-red-500 flex items-center gap-1">
+                  <p className="text-xs text-red-400 flex items-center gap-1">
                     <AlertCircle size={12} />
                     {errors.newPassword.message}
                   </p>
@@ -219,7 +219,7 @@ export default function ChangePasswordView() {
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-xs text-red-500 flex items-center gap-1">
+                  <p className="text-xs text-red-400 flex items-center gap-1">
                     <AlertCircle size={12} />
                     {errors.confirmPassword.message}
                   </p>
@@ -227,8 +227,8 @@ export default function ChangePasswordView() {
               </div>
 
               {/* Rules Tip */}
-              <div className="flex items-start gap-2 p-3 rounded-btn bg-yellow-50 border border-yellow-200 text-xs text-yellow-800 leading-relaxed">
-                <Info size={14} className="text-yellow-500 mt-0.5 shrink-0" />
+              <div className="flex items-start gap-2 p-3 rounded-btn bg-yellow-500/15 border border-yellow-500/30 text-xs text-yellow-300 leading-relaxed">
+                <Info size={14} className="text-yellow-400 mt-0.5 shrink-0" />
                 <span>
                   密码须同时包含<strong>字母</strong>、<strong>数字</strong>、
                   <strong>特殊字符</strong>（$ @ ! % * # ? &），且长度不少于 6 位

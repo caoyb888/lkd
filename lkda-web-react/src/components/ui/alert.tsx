@@ -25,9 +25,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
           {
             'bg-[var(--color-bg-soft)] text-[var(--color-slate-title)] border-[var(--color-border-light)]':
               variant === 'default',
-            'bg-green-50 text-green-700 border-green-200': variant === 'success',
-            'bg-orange-50 text-orange-700 border-orange-200': variant === 'warning',
-            'bg-red-50 text-red-700 border-red-200': variant === 'destructive',
+            'bg-emerald-500/10 text-emerald-300 border-emerald-500/30': variant === 'success',
+            'bg-amber-500/10 text-amber-300 border-amber-500/30': variant === 'warning',
+            'bg-red-500/10 text-red-300 border-red-500/30': variant === 'destructive',
           },
           className
         )}

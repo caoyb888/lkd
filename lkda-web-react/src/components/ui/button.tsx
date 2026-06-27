@@ -19,13 +19,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'inline-flex items-center justify-center rounded-btn font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]',
+          'inline-flex items-center justify-center rounded-btn font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 ring-offset-[var(--color-bg-page)] disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]',
           {
-            'bg-primary text-white hover:bg-primary-dark shadow-sm':
+            'bg-primary text-[#06201c] font-semibold hover:bg-primary-dark shadow-sm':
               variant === 'primary',
-            'bg-transparent border border-slate-200 hover:bg-slate-50 text-slate-title':
+            'bg-transparent border border-[var(--color-border-medium)] hover:bg-[var(--color-bg-soft)] text-[var(--color-slate-title)]':
               variant === 'outline',
-            'bg-transparent hover:bg-slate-50 text-slate-title':
+            'bg-transparent hover:bg-[var(--color-bg-soft)] text-[var(--color-slate-title)]':
               variant === 'ghost',
             'bg-red-500 text-white hover:bg-red-600 shadow-sm':
               variant === 'danger',

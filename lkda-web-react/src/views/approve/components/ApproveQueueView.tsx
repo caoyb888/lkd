@@ -382,7 +382,7 @@ export default function ApproveQueueView({
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -423,7 +423,7 @@ export default function ApproveQueueView({
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-40 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description={emptyDesc} />
@@ -434,7 +434,7 @@ export default function ApproveQueueView({
                   >
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
+                        <div className="mb-0.5 font-mono text-[11px] text-[var(--text-faint)] truncate">
                           {vol.archiveNo}
                         </div>
                         <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -446,19 +446,19 @@ export default function ApproveQueueView({
 
                     <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">年度</span>
+                        <span className="text-[var(--text-faint)]">年度</span>
                         <span>{vol.year} 年</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">一级类目</span>
+                        <span className="text-[var(--text-faint)]">一级类目</span>
                         <span className="truncate text-right">{vol.categoryL1Label || vol.categoryL1 || '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">立卷人</span>
+                        <span className="text-[var(--text-faint)]">立卷人</span>
                         <span>{vol.compiler || '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">提交时间</span>
+                        <span className="text-[var(--text-faint)]">提交时间</span>
                         <span>{vol.createdAt?.slice(0, 16).replace('T', ' ') || '—'}</span>
                       </div>
                     </div>
@@ -530,9 +530,9 @@ export default function ApproveQueueView({
           <DrawerHeader>
             <DrawerTitle className="flex items-center gap-2">
               {queryKeyPrefix === 'approve-review' ? (
-                <Clock size={20} className="text-yellow-600" />
+                <Clock size={20} className="text-yellow-300" />
               ) : (
-                <UserCheck size={20} className="text-blue-600" />
+                <UserCheck size={20} className="text-blue-300" />
               )}
               {title}
             </DrawerTitle>
@@ -544,7 +544,7 @@ export default function ApproveQueueView({
               <>
                 {/* 案卷信息卡片 */}
                 <div className="rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-soft)] p-4">
-                  <div className="mb-2 font-mono text-xs text-slate-400">
+                  <div className="mb-2 font-mono text-xs text-[var(--text-faint)]">
                     {selected.archiveNo}
                   </div>
                   <div className="mb-3 text-sm font-semibold text-slate-title">
@@ -552,19 +552,19 @@ export default function ApproveQueueView({
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-body">
                     <div>
-                      <span className="text-slate-400">年度：</span>
+                      <span className="text-[var(--text-faint)]">年度：</span>
                       {selected.year} 年
                     </div>
                     <div>
-                      <span className="text-slate-400">类目：</span>
+                      <span className="text-[var(--text-faint)]">类目：</span>
                       {selected.categoryL1Label || selected.categoryL1 || '—'}
                     </div>
                     <div>
-                      <span className="text-slate-400">立卷人：</span>
+                      <span className="text-[var(--text-faint)]">立卷人：</span>
                       {selected.compiler || '—'}
                     </div>
                     <div>
-                      <span className="text-slate-400">密级：</span>
+                      <span className="text-[var(--text-faint)]">密级：</span>
                       {selected.securityLevelLabel || selected.securityLevel || '—'}
                     </div>
                   </div>
@@ -574,7 +574,7 @@ export default function ApproveQueueView({
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-slate-title">
                     审批意见
-                    <span className="ml-1 text-xs font-normal text-slate-400">（退回时必填）</span>
+                    <span className="ml-1 text-xs font-normal text-[var(--text-faint)]">（退回时必填）</span>
                   </label>
                   <textarea
                     value={opinion}
@@ -582,7 +582,7 @@ export default function ApproveQueueView({
                     placeholder="请填写审批意见..."
                     rows={4}
                     className={cn(
-                      'w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary'
+                      'w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary'
                     )}
                   />
                 </div>

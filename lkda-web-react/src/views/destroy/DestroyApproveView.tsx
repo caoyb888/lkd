@@ -209,7 +209,7 @@ export default function DestroyApproveView() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-red-600 hover:bg-red-50"
+                      className="h-7 w-7 text-red-300 hover:bg-red-500/15"
                       onClick={() => openConfirm(vol, 'approve')}
                     >
                       <CheckCircle2 size={14} />
@@ -222,7 +222,7 @@ export default function DestroyApproveView() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-slate-body hover:bg-slate-100"
+                      className="h-7 w-7 text-slate-body hover:bg-[var(--color-bg-soft)]"
                       onClick={() => openConfirm(vol, 'reject')}
                     >
                       <XCircle size={14} />
@@ -284,13 +284,13 @@ export default function DestroyApproveView() {
           <div
             className={cn(
               'rounded-card border p-4',
-              isApprove ? 'border-red-200 bg-red-50' : 'border-orange-200 bg-orange-50'
+              isApprove ? 'border-red-500/30 bg-red-500/15' : 'border-orange-500/30 bg-orange-500/15'
             )}
           >
             <div
               className={cn(
                 'mb-2 flex items-center gap-2',
-                isApprove ? 'text-red-700' : 'text-orange-700'
+                isApprove ? 'text-red-300' : 'text-orange-300'
               )}
             >
               {isApprove ? <AlertTriangle size={18} /> : <ShieldAlert size={18} />}
@@ -308,7 +308,7 @@ export default function DestroyApproveView() {
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-title">
                 请输入"确认销毁"以最终确认
-                <span className="ml-1 text-xs font-normal text-slate-400">（防止误操作）</span>
+                <span className="ml-1 text-xs font-normal text-[var(--text-faint)]">（防止误操作）</span>
               </label>
               <Input
                 value={confirmInput}
@@ -316,12 +316,12 @@ export default function DestroyApproveView() {
                 placeholder="输入：确认销毁"
                 className={
                   confirmInput && confirmInput.trim() !== '确认销毁'
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/30'
+                    ? 'border-red-500/40 focus:border-red-500 focus:ring-red-500/30'
                     : ''
                 }
               />
               {confirmInput && confirmInput.trim() !== '确认销毁' && (
-                <p className="mt-1 text-xs text-red-500">输入不正确，请输入"确认销毁"</p>
+                <p className="mt-1 text-xs text-red-400">输入不正确，请输入"确认销毁"</p>
               )}
             </div>
           )}
@@ -329,7 +329,7 @@ export default function DestroyApproveView() {
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-body">
               审批意见
-              <span className="ml-1 text-xs font-normal text-slate-400">
+              <span className="ml-1 text-xs font-normal text-[var(--text-faint)]">
                 {isApprove ? '（选填）' : '（驳回时必填）'}
               </span>
             </label>
@@ -338,7 +338,7 @@ export default function DestroyApproveView() {
               onChange={(e) => setOpinion(e.target.value)}
               placeholder={isApprove ? '可填写审批意见...' : '请填写驳回原因...'}
               rows={3}
-              className="w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              className="w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
             />
           </div>
         </>
@@ -351,7 +351,7 @@ export default function DestroyApproveView() {
       {/* ── 电脑端：标题 + 检索区合并 ──────────────────────────── */}
       <div className="mb-3 hidden md:block">
         <div className="mb-2 flex items-center gap-2">
-          <Gavel size={20} className="text-red-600" />
+          <Gavel size={20} className="text-red-300" />
           <h2 className="text-xl font-bold text-slate-title">销毁审批</h2>
         </div>
         <div className="rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-4 py-2.5">
@@ -373,7 +373,7 @@ export default function DestroyApproveView() {
 
       {/* ── 手机端标题 ─────────────────────────────────────────── */}
       <PageHeader
-        title={<span className="flex items-center gap-2"><Gavel size={22} className="text-red-600" />销毁审批</span>}
+        title={<span className="flex items-center gap-2"><Gavel size={22} className="text-red-300" />销毁审批</span>}
         className="md:hidden"
       />
 
@@ -408,7 +408,7 @@ export default function DestroyApproveView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -449,7 +449,7 @@ export default function DestroyApproveView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-44 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-44 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无待审批的销毁申请" />
@@ -460,7 +460,7 @@ export default function DestroyApproveView() {
                   >
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
+                        <div className="mb-0.5 font-mono text-[11px] text-[var(--text-faint)] truncate">
                           {vol.archiveNo}
                         </div>
                         <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -472,15 +472,15 @@ export default function DestroyApproveView() {
 
                     <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">年度</span>
+                        <span className="text-[var(--text-faint)]">年度</span>
                         <span>{vol.year} 年</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">一级类目</span>
+                        <span className="text-[var(--text-faint)]">一级类目</span>
                         <span className="truncate text-right">{vol.categoryL1Label || vol.categoryL1 || '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">立卷人</span>
+                        <span className="text-[var(--text-faint)]">立卷人</span>
                         <span>{vol.compiler || '—'}</span>
                       </div>
                     </div>
@@ -550,7 +550,7 @@ export default function DestroyApproveView() {
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className={cn('flex items-center gap-2', isApprove ? 'text-red-700' : 'text-orange-700')}>
+            <DialogTitle className={cn('flex items-center gap-2', isApprove ? 'text-red-300' : 'text-orange-300')}>
               {isApprove ? <AlertTriangle size={20} /> : <ShieldAlert size={20} />}
               {isApprove ? '确认批准销毁' : '确认驳回销毁申请'}
             </DialogTitle>
@@ -590,7 +590,7 @@ export default function DestroyApproveView() {
       <Drawer open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle className={cn('flex items-center gap-2', isApprove ? 'text-red-700' : 'text-orange-700')}>
+            <DrawerTitle className={cn('flex items-center gap-2', isApprove ? 'text-red-300' : 'text-orange-300')}>
               {isApprove ? <AlertTriangle size={20} /> : <ShieldAlert size={20} />}
               {isApprove ? '确认批准销毁' : '确认驳回销毁申请'}
             </DrawerTitle>

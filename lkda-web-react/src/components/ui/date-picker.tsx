@@ -29,7 +29,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
             disabled={disabled}
             className={cn(
               'w-full justify-start text-left font-normal h-10',
-              !value && 'text-slate-400',
+              !value && 'text-[var(--text-faint)]',
               className
             )}
           >
@@ -63,17 +63,17 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
               chevron: 'fill-[var(--color-slate-title)]',
               month_grid: 'w-full border-collapse',
               weekdays: 'flex',
-              weekday: 'text-slate-400 rounded-md w-9 font-normal text-[0.8rem] text-center',
+              weekday: 'text-[var(--text-faint)] rounded-md w-9 font-normal text-[0.8rem] text-center',
               weeks: 'space-y-1',
               week: 'flex w-full',
               day: 'text-center text-sm p-0 relative w-9 h-9',
               day_button: cn(
                 'h-9 w-9 p-0 font-normal inline-flex items-center justify-center rounded-btn hover:bg-[var(--color-bg-soft)] text-[var(--color-slate-title)] transition-colors'
               ),
-              selected: 'bg-primary text-white hover:bg-primary hover:text-white',
+              selected: 'bg-primary text-[#06201c] hover:bg-primary hover:text-[#06201c]',
               today: 'bg-accent/10 text-accent',
-              outside: 'text-slate-400 opacity-50',
-              disabled: 'text-slate-400 opacity-50',
+              outside: 'text-[var(--text-faint)] opacity-50',
+              disabled: 'text-[var(--text-faint)] opacity-50',
             }}
           />
         </PopoverContent>

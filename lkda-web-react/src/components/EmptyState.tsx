@@ -28,10 +28,10 @@ export default function EmptyState({
           alt={imageAlt}
           className="w-16 h-16 mb-3 rounded-full"
           imgClassName="object-contain"
-          placeholder={<div className="w-16 h-16 rounded-full bg-slate-100" />}
+          placeholder={<div className="w-16 h-16 rounded-full bg-[var(--color-bg-soft)]" />}
         />
       ) : (
-        <div className="w-16 h-16 rounded-full bg-slate-100 mb-3" />
+        <div className="w-16 h-16 rounded-full bg-[var(--color-bg-soft)] mb-3" />
       )}
       <p className="text-sm text-slate-body">{description}</p>
     </div>

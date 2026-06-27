@@ -46,7 +46,7 @@ export default function ProfileView() {
         )}
       >
         <div className="p-[3px] rounded-full bg-gradient-to-br from-primary to-primary-dark flex-shrink-0">
-          <div className="w-[72px] h-[72px] md:w-[76px] md:h-[76px] rounded-full bg-white flex items-center justify-center text-primary-dark text-[28px] md:text-[32px] font-bold">
+          <div className="w-[72px] h-[72px] md:w-[76px] md:h-[76px] rounded-full bg-[var(--color-bg-main)] flex items-center justify-center text-primary-dark text-[28px] md:text-[32px] font-bold">
             {avatarLetter}
           </div>
         </div>

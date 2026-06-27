@@ -34,8 +34,8 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
-          <div className="mb-4 rounded-full bg-red-50 p-4">
-            <AlertTriangle size={32} className="text-red-500" />
+          <div className="mb-4 rounded-full bg-red-500/15 p-4">
+            <AlertTriangle size={32} className="text-red-400" />
           </div>
           <h2 className="mb-2 text-lg font-semibold text-slate-title">
             页面出现了一些问题
@@ -44,7 +44,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             抱歉，当前页面发生异常。您可以点击下方按钮重试，或返回首页。
           </p>
           {this.state.error && (
-            <p className="mb-6 max-w-sm text-xs text-slate-400">
+            <p className="mb-6 max-w-sm text-xs text-[var(--text-faint)]">
               {this.state.error.message}
             </p>
           )}

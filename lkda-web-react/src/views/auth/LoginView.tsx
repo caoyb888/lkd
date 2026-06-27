@@ -4,11 +4,19 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/stores/authStore'
 import { useDictStore } from '@/stores/dictStore'
-import { AlertCircle, Eye, EyeOff, Archive } from 'lucide-react'
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  User,
+  Lock,
+  Gem,
+  ArrowRight,
+  KeyRound,
+  Check,
+} from 'lucide-react'
 
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{6,}$/
 
@@ -19,6 +27,8 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>
 
+const DEPTH_TICKS = ['-000', '-048', '-096', '-132', '-164', '-216']
+
 export default function LoginView() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -27,6 +37,7 @@ export default function LoginView() {
   const [loading, setLoading] = useState(false)
   const [shake, setShake] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
+  const [remember, setRemember] = useState(true)
 
   const {
     register,
@@ -46,7 +57,6 @@ export default function LoginView() {
       await login(data.username.trim(), data.password)
       // 一次性预加载全部字典（失败不阻塞登录）
       await loadAll().catch(() => {})
-      // 跳转
       const redirect = searchParams.get('redirect') || '/dashboard'
       navigate(redirect, { replace: true })
     } catch {
@@ -58,125 +68,156 @@ export default function LoginView() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden">
-      {/* ── 左侧/顶部品牌区 ───────────────────────────────────── */}
-      <div
-        className={cn(
-          'relative flex flex-col items-center justify-center text-white',
-          'md:w-[55%] md:min-h-screen',
-          'max-md:h-[35vh] max-md:shrink-0'
-        )}
-        style={{ background: 'var(--color-header-bg)' }}
-      >
-        {/* 装饰 */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-[10%] left-[15%] w-32 h-32 rounded-full border-2 border-white" />
-          <div className="absolute bottom-[20%] right-[10%] w-48 h-48 rounded-full border border-white" />
-          <div className="absolute top-[40%] right-[25%] w-16 h-16 rounded-full bg-white/20" />
-        </div>
-
-        <div className="relative z-10 text-center md:text-left md:px-12">
-          <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mx-auto md:mx-0 mb-4 md:mb-6">
-            <Archive size={36} className="text-white" />
-          </div>
-          <h1 className="text-2xl md:text-4xl font-bold tracking-wide mb-2 md:mb-3">
-            莱矿-档案管理系统
-          </h1>
-          <p className="text-sm md:text-base text-white/80 max-w-sm">
-            安全 · 高效 · 智能的档案数字化管理平台
-          </p>
-        </div>
-      </div>
-
-      {/* ── 右侧/底部登录表单区 ───────────────────────────────── */}
-      <div className="flex-1 flex items-end md:items-center justify-center relative">
-        {/* 手机端：底部卡片上滑效果 */}
-        <div
-          className={cn(
-            'w-full max-md:rounded-t-[24px] max-md:bg-white max-md:shadow-[0_-8px_32px_rgba(0,0,0,0.08)]',
-            'max-md:px-6 max-md:pt-8 max-md:pb-10',
-            'md:w-full md:max-w-md md:px-8',
-            'animate-in slide-in-from-bottom-4 duration-500'
-          )}
-        >
-          {/* 电脑端毛玻璃卡片 */}
+    <div className="strata login-page">
+      <div className="login">
+        {/* ── 左侧：岩层视觉区 ─────────────────────────────────── */}
+        <aside className="login-side">
+          <div className="login-side-bg strata-bands" />
+          <div className="login-side-bg sediment" style={{ opacity: 0.6 }} />
           <div
-            className={cn(
-              'md:p-8 md:rounded-card md:border md:border-white/30 md:shadow-xl',
-              'md:backdrop-blur-md'
-            )}
-            style={{ backgroundColor: 'var(--color-login-card-bg)' }}
-          >
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-[var(--color-slate-title)] mb-1">
-                欢迎登录
-              </h2>
-              <p className="text-sm text-slate-body">
-                请使用您的账号密码登录系统
-              </p>
+            className="login-side-bg contour"
+            style={{ ['--cx' as string]: '78%', ['--cy' as string]: '110%', opacity: 0.5 }}
+          />
+          <div className="login-side-bg vein" style={{ opacity: 0.7 }} />
+          <div className="scanline" />
+
+          <div className="login-ticks mono">
+            {DEPTH_TICKS.map((d) => (
+              <span key={d}>{d}</span>
+            ))}
+          </div>
+
+          <div className="login-side-copy">
+            <span className="eyebrow" style={{ color: 'rgba(255,255,255,.7)' }}>
+              莱矿集团 · 档案管理中心
+            </span>
+            <h1 className="login-vert">灵动智档</h1>
+            <p className="grotesk login-side-sub">LINGDONG · SMART ARCHIVES</p>
+          </div>
+
+          <div className="login-side-foot mono">
+            <span>地质 · 采矿 · 安全 · 设备 · 财务 · 行政</span>
+            <span>六大门类 · 全生命周期管理</span>
+          </div>
+        </aside>
+
+        {/* ── 右侧：登录表单 ───────────────────────────────────── */}
+        <main className="login-main">
+          <form className="login-card" onSubmit={handleSubmit(onSubmit)}>
+            <div className="brandmark">
+              <span className="bm-glyph">
+                <Gem size={20} />
+              </span>
+              <div className="col">
+                <strong className="bm-name">灵动智档</strong>
+                <span className="eyebrow">ARCHIVE COMMAND</span>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-[var(--color-slate-title)]">
-                  用户名
-                </label>
-                <Input
-                  placeholder="请输入用户名"
+            <div className="login-h">
+              <h2>欢迎回来</h2>
+              <p className="login-hint">请使用工号或账号登录档案管理系统</p>
+            </div>
+
+            <div className="field">
+              <label>工号 / 账号</label>
+              <div className="input-wrap">
+                <span className="ico">
+                  <User size={17} />
+                </span>
+                <input
+                  className="input"
                   autoComplete="username"
+                  placeholder="LK-0427"
                   {...register('username')}
                 />
-                {errors.username && (
-                  <p className="text-xs text-red-500 flex items-center gap-1">
-                    <AlertCircle size={12} />
-                    {errors.username.message}
-                  </p>
-                )}
               </div>
+              {errors.username && (
+                <p className="err mono">
+                  <AlertCircle size={12} />
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
 
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-[var(--color-slate-title)]">
-                  密码
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showPwd ? 'text' : 'password'}
-                    placeholder="请输入密码"
-                    autoComplete="current-password"
-                    {...register('password')}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPwd(!showPwd)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  >
-                    {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-xs text-red-500 flex items-center gap-1">
-                    <AlertCircle size={12} />
-                    {errors.password.message}
-                  </p>
-                )}
-                {pwdHintVisible && (
-                  <p className="text-xs text-orange-500">
-                    密码需包含字母、数字及特殊字符，至少6位
-                  </p>
-                )}
+            <div className="field">
+              <label>密码</label>
+              <div className="input-wrap">
+                <span className="ico">
+                  <Lock size={17} />
+                </span>
+                <input
+                  className="input"
+                  type={showPwd ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  placeholder="请输入密码"
+                  {...register('password')}
+                />
+                <button
+                  type="button"
+                  className="pwd-toggle"
+                  onClick={() => setShowPwd(!showPwd)}
+                  aria-label={showPwd ? '隐藏密码' : '显示密码'}
+                >
+                  {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
+              {errors.password && (
+                <p className="err mono">
+                  <AlertCircle size={12} />
+                  {errors.password.message}
+                </p>
+              )}
+              {pwdHintVisible && (
+                <p className="err mono" style={{ color: 'var(--c-ore)' }}>
+                  密码需包含字母、数字及特殊字符，至少6位
+                </p>
+              )}
+            </div>
 
-              <Button
-                type="submit"
-                className={cn('w-full mt-2', shake && 'animate-shake')}
-                size="lg"
-                loading={loading}
-              >
-                登录
-              </Button>
-            </form>
-          </div>
-        </div>
+            <div className="login-row">
+              <span className="check" onClick={() => setRemember(!remember)}>
+                <span className={cn('box', remember && 'on')}>
+                  {remember && <Check size={11} strokeWidth={3} />}
+                </span>
+                记住此设备
+              </span>
+              <span className="link mono">忘记密码?</span>
+            </div>
+
+            <button
+              type="submit"
+              className={cn('btn btn-primary login-go', loading && 'busy', shake && 'animate-shake')}
+            >
+              {loading ? (
+                <span className="spinner" />
+              ) : (
+                <>
+                  <span>进入指挥中心</span>
+                  <ArrowRight size={16} />
+                </>
+              )}
+            </button>
+
+            <div className="login-or">
+              <span>或</span>
+            </div>
+            <button type="button" className="btn btn-ghost login-sso" disabled>
+              <KeyRound size={16} /> 统一身份认证 (SSO)
+            </button>
+
+            <div className="login-foot mono">
+              <span>涉密系统 · 请妥善保管账号</span>
+              <span className="flex center" style={{ gap: 6 }}>
+                <span
+                  className="dot"
+                  style={{ background: 'var(--c-teal)', animation: 'strata-pulse 2s infinite' }}
+                />
+                系统在线
+              </span>
+            </div>
+          </form>
+        </main>
       </div>
     </div>
   )

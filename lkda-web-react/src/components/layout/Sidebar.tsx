@@ -91,8 +91,8 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
                     className={cn(
                       'w-full flex items-center gap-2 rounded-btn px-3 h-[42px] text-sm transition-colors',
                       (isOpen || isActive(item.path))
-                        ? 'text-[var(--color-primary-dark)] font-semibold'
-                        : 'text-[var(--color-slate-title)] hover:bg-[var(--color-bg-lighter)]'
+                        ? 'text-primary-light font-semibold'
+                        : 'text-[var(--color-slate-title)] hover:bg-[var(--color-bg-soft)]'
                     )}
                   >
                     {Icon && <Icon size={18} />}
@@ -118,10 +118,10 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
                             key={child.path}
                             onClick={() => navigate(child.path)}
                             className={cn(
-                              'w-full flex items-center gap-2 rounded-btn pl-9 pr-3 h-[38px] text-[13px] transition-colors',
+                              'w-full flex items-center gap-2 rounded-btn pl-9 pr-3 h-[38px] text-[13px] transition-colors border-l-2',
                               isActive(child.path)
-                                ? 'bg-gradient-to-r from-primary to-primary-dark text-white font-semibold'
-                                : 'text-[var(--color-slate-body)] hover:bg-[var(--color-bg-lighter)] hover:text-[var(--color-primary-dark)]'
+                                ? 'bg-[var(--c-teal-dim)] border-primary text-primary-light font-semibold'
+                                : 'border-transparent text-[var(--color-slate-body)] hover:bg-[var(--color-bg-soft)] hover:text-[var(--color-slate-title)]'
                             )}
                           >
                             {ChildIcon && <ChildIcon size={16} />}
@@ -136,10 +136,10 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
                 <button
                   onClick={() => navigate(item.path)}
                   className={cn(
-                    'w-full flex items-center gap-2 rounded-btn px-3 h-[42px] text-sm transition-colors',
+                    'w-full flex items-center gap-2 rounded-btn px-3 h-[42px] text-sm transition-colors border-l-2',
                     isActive(item.path)
-                      ? 'bg-gradient-to-r from-primary to-primary-dark text-white font-semibold'
-                      : 'text-[var(--color-slate-title)] hover:bg-[var(--color-bg-lighter)] hover:text-[var(--color-primary-dark)]'
+                      ? 'bg-[var(--c-teal-dim)] border-primary text-primary-light font-semibold'
+                      : 'border-transparent text-[var(--color-slate-title)] hover:bg-[var(--color-bg-soft)] hover:text-[var(--color-slate-title)]'
                   )}
                 >
                   {Icon && <Icon size={18} />}

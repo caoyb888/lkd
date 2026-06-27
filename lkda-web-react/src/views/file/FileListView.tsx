@@ -75,11 +75,11 @@ import { format, parseISO } from 'date-fns'
 
 /* ── 常量 ───────────────────────────────────────────────────── */
 const SECURITY_CLASS: Record<string, string> = {
-  public: 'bg-green-50 text-green-700',
-  internal: 'bg-blue-50 text-blue-700',
-  secret: 'bg-yellow-50 text-yellow-700',
-  confidential: 'bg-orange-50 text-orange-700',
-  topsecret: 'bg-red-50 text-red-700',
+  public: 'bg-green-500/15 text-green-300',
+  internal: 'bg-blue-500/15 text-blue-300',
+  secret: 'bg-yellow-500/15 text-yellow-300',
+  confidential: 'bg-orange-500/15 text-orange-300',
+  topsecret: 'bg-red-500/15 text-red-300',
 }
 
 /* ── Zod 校验 ───────────────────────────────────────────────── */
@@ -153,10 +153,10 @@ function KeywordInput({
             }
           }}
           placeholder={tags.length === 0 ? '输入后按 Enter 添加' : ''}
-          className="min-w-[100px] flex-1 bg-transparent px-1 py-1 text-sm outline-none placeholder:text-slate-400"
+          className="min-w-[100px] flex-1 bg-transparent px-1 py-1 text-sm outline-none placeholder:text-[var(--text-faint)]"
         />
       </div>
-      <p className="mt-1 text-[11px] text-slate-400">
+      <p className="mt-1 text-[11px] text-[var(--text-faint)]">
         多个主题词逐个添加，点击标签右侧 × 删除
       </p>
     </div>
@@ -224,7 +224,7 @@ function SortableTableRow({
           <div
             {...attributes}
             {...listeners}
-            className="inline-flex cursor-grab text-slate-300 hover:text-primary active:cursor-grabbing"
+            className="inline-flex cursor-grab text-[var(--text-faint)] hover:text-primary active:cursor-grabbing"
           >
             <GripVertical size={16} />
           </div>
@@ -244,7 +244,7 @@ function SortableTableRow({
           <span
             className={cn(
               'inline-flex items-center rounded-tag px-2 py-0.5 text-xs font-semibold',
-              SECURITY_CLASS[file.securityLevel] ?? 'bg-slate-100 text-slate-600'
+              SECURITY_CLASS[file.securityLevel] ?? 'bg-[var(--color-bg-soft)] text-slate-body'
             )}
           >
             {file.securityLevelLabel || file.securityLevel}
@@ -272,7 +272,7 @@ function SortableTableRow({
             <Button
               variant="link"
               size="sm"
-              className="h-7 px-1.5 text-red-500"
+              className="h-7 px-1.5 text-red-400"
               onClick={() => onDelete(file)}
             >
               <Trash2 size={13} className="mr-0.5" />
@@ -280,7 +280,7 @@ function SortableTableRow({
             </Button>
           </div>
         ) : (
-          <span className="text-slate-300">—</span>
+          <span className="text-[var(--text-faint)]">—</span>
         )}
       </TableCell>
     </tr>
@@ -328,7 +328,7 @@ function SortableCard({
             <div
               {...attributes}
               {...listeners}
-              className="shrink-0 cursor-grab text-slate-300 hover:text-primary active:cursor-grabbing"
+              className="shrink-0 cursor-grab text-[var(--text-faint)] hover:text-primary active:cursor-grabbing"
             >
               <GripVertical size={18} />
             </div>
@@ -340,7 +340,7 @@ function SortableCard({
             <div className="text-sm font-semibold text-slate-title">
               {file.fileTitle}
             </div>
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-[var(--text-faint)]">
               {file.fileNo || '无编号'}
             </div>
           </div>
@@ -349,7 +349,7 @@ function SortableCard({
           <span
             className={cn(
               'shrink-0 rounded-tag px-2 py-0.5 text-[10px] font-semibold',
-              SECURITY_CLASS[file.securityLevel] ?? 'bg-slate-100 text-slate-600'
+              SECURITY_CLASS[file.securityLevel] ?? 'bg-[var(--color-bg-soft)] text-slate-body'
             )}
           >
             {file.securityLevelLabel || file.securityLevel}
@@ -359,19 +359,19 @@ function SortableCard({
 
       <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
         <div className="flex justify-between">
-          <span className="text-slate-400">责任者</span>
+          <span className="text-[var(--text-faint)]">责任者</span>
           <span>{file.responsible || '—'}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-400">页数</span>
+          <span className="text-[var(--text-faint)]">页数</span>
           <span>{file.pages ?? '—'}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-400">主题词</span>
+          <span className="text-[var(--text-faint)]">主题词</span>
           <span className="truncate text-right">{file.keywords || '—'}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-400">归档日期</span>
+          <span className="text-[var(--text-faint)]">归档日期</span>
           <span>{file.archiveDate || '—'}</span>
         </div>
       </div>
@@ -390,7 +390,7 @@ function SortableCard({
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 h-8 text-xs border-red-200 text-red-500 hover:bg-red-50"
+            className="flex-1 h-8 text-xs border-red-500/30 text-red-400 hover:bg-red-500/15"
             onClick={() => onDelete(file)}
           >
             <Trash2 size={13} className="mr-1" />
@@ -686,7 +686,7 @@ export default function FileListView() {
         </div>
         <StatusTag type="archive" value={volume.status} />
         {!isDraft && (
-          <span className="hidden items-center gap-1 rounded-tag bg-slate-100 px-2 py-0.5 text-xs text-slate-500 sm:inline-flex">
+          <span className="hidden items-center gap-1 rounded-tag bg-[var(--color-bg-soft)] px-2 py-0.5 text-xs text-slate-body sm:inline-flex">
             <Lock size={10} />
             只读
           </span>
@@ -727,7 +727,7 @@ export default function FileListView() {
             {filesLoading ? (
               <div className="space-y-3 p-8">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                  <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
                 ))}
               </div>
             ) : fileList.length === 0 ? (
@@ -771,7 +771,7 @@ export default function FileListView() {
           <div className="grid grid-cols-1 gap-3 md:hidden">
             {filesLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-40 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             ) : fileList.length === 0 ? (
               <EmptyState description="暂无卷内文件，点击「新建文件」开始录入" />
@@ -830,7 +830,7 @@ export default function FileListView() {
                     )}
                   />
                   {form.formState.errors.seqNo && (
-                    <p className="mt-1 text-xs text-red-500">
+                    <p className="mt-1 text-xs text-red-400">
                       {form.formState.errors.seqNo.message}
                     </p>
                   )}
@@ -849,7 +849,7 @@ export default function FileListView() {
               {/* 文件标题 */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-body">
-                  文件标题 <span className="text-red-500">*</span>
+                  文件标题 <span className="text-red-400">*</span>
                 </label>
                 <Input
                   {...form.register('fileTitle')}
@@ -857,7 +857,7 @@ export default function FileListView() {
                   maxLength={200}
                 />
                 {form.formState.errors.fileTitle && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {form.formState.errors.fileTitle.message}
                   </p>
                 )}
@@ -980,7 +980,7 @@ export default function FileListView() {
                   rows={3}
                   maxLength={500}
                   placeholder="可选"
-                  className="w-full resize-y rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  className="w-full resize-y rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 />
               </div>
             </form>

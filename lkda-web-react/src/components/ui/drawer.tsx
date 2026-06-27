@@ -88,7 +88,7 @@ const DrawerCloseButton = ({
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <DrawerClose
     className={cn(
-      'rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+      'rounded-sm opacity-70 ring-offset-[var(--color-bg-page)] transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
       className
     )}
     {...props}

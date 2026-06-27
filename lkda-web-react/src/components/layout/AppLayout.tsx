@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { useState, useEffect, Suspense } from 'react'
 import { cn } from '@/lib/utils'
-import { useThemeStore } from '@/stores/themeStore'
 import TopHeader from './TopHeader'
 import Sidebar from './Sidebar'
 import MobileDrawer from './MobileDrawer'
@@ -10,7 +9,6 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import PageLoading from './PageLoading'
 
 export default function AppLayout() {
-  const { theme } = useThemeStore()
   const location = useLocation()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
@@ -19,13 +17,6 @@ export default function AppLayout() {
   useEffect(() => {
     setMobileDrawerOpen(false)
   }, [location.pathname])
-
-  // Apply theme class to html element on mount and theme change
-  useEffect(() => {
-    const root = document.documentElement
-    root.classList.remove('light', 'dark', 'ocean')
-    root.classList.add(theme)
-  }, [theme])
 
   const toggleSidebar = () => setSidebarCollapsed((prev) => !prev)
 

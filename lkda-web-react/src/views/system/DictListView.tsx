@@ -430,11 +430,11 @@ export default function DictListView() {
           <div className="flex flex-col gap-1 max-h-[520px] overflow-y-auto">
             {dictLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-14 animate-pulse rounded-lg bg-slate-100" />
+                <div key={i} className="h-14 animate-pulse rounded-lg bg-[var(--color-bg-soft)]" />
               ))
             ) : dictRecords.length === 0 ? (
-              <div className="flex flex-col items-center py-8 text-slate-400">
-                <Library size={28} className="mb-2 text-slate-300" />
+              <div className="flex flex-col items-center py-8 text-[var(--text-faint)]">
+                <Library size={28} className="mb-2 text-[var(--text-faint)]" />
                 <span className="text-xs">暂无字典数据</span>
               </div>
             ) : (
@@ -464,8 +464,8 @@ export default function DictListView() {
                         className={cn(
                           'rounded-tag px-1.5 py-0.5 text-[10px] font-semibold',
                           row.status === 1
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-red-50 text-red-700'
+                            ? 'bg-emerald-500/15 text-emerald-300'
+                            : 'bg-red-500/15 text-red-300'
                         )}
                       >
                         {row.status === 1 ? '启用' : '停用'}
@@ -485,7 +485,7 @@ export default function DictListView() {
                     {/* hover 操作 */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-inherit rounded">
                       <button
-                        className="p-1 text-slate-400 hover:text-primary transition-colors"
+                        className="p-1 text-[var(--text-faint)] hover:text-primary transition-colors"
                         onClick={(e) => openEditDict(row, e)}
                       >
                         <Edit3 size={13} />
@@ -494,8 +494,8 @@ export default function DictListView() {
                         className={cn(
                           'p-1 transition-colors',
                           row.status === 1
-                            ? 'text-slate-400 hover:text-red-500'
-                            : 'text-slate-400 hover:text-green-600'
+                            ? 'text-[var(--text-faint)] hover:text-red-400'
+                            : 'text-[var(--text-faint)] hover:text-green-300'
                         )}
                         onClick={(e) => handleDictStatus(row, e)}
                       >
@@ -541,8 +541,8 @@ export default function DictListView() {
               </Badge>
             </div>
           ) : (
-            <span className="flex items-center gap-1.5 text-sm font-semibold text-slate-400">
-              <BookOpen size={16} className="text-slate-300" />
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-[var(--text-faint)]">
+              <BookOpen size={16} className="text-[var(--text-faint)]" />
               字典项
             </span>
           )}
@@ -556,20 +556,20 @@ export default function DictListView() {
         <div className="p-0">
           {!selectedDict ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-bg-soft)] to-[var(--color-bg-soft)]">
                 <Library size={28} className="text-primary-dark" />
               </div>
               <p className="text-base font-semibold text-slate-title">
                 请在左侧选择字典
               </p>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-[var(--text-faint)]">
                 选中字典后查看并维护其字典项
               </p>
             </div>
           ) : itemsLoading ? (
             <div className="space-y-2 p-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : !itemsList || itemsList.length === 0 ? (
@@ -607,8 +607,8 @@ export default function DictListView() {
                           className={cn(
                             'rounded-tag px-2 py-0.5 text-[11px] font-medium',
                             row.status === 1
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : 'bg-slate-100 text-slate-500'
+                              ? 'bg-emerald-500/15 text-emerald-300'
+                              : 'bg-[var(--color-bg-soft)] text-slate-body'
                           )}
                         >
                           {row.status === 1 ? '启用' : '停用'}
@@ -631,8 +631,8 @@ export default function DictListView() {
                             className={cn(
                               'h-7 px-1.5',
                               row.status === 1
-                                ? 'text-orange-500'
-                                : 'text-green-600'
+                                ? 'text-orange-400'
+                                : 'text-green-300'
                             )}
                             onClick={() => handleItemStatus(row)}
                           >
@@ -641,7 +641,7 @@ export default function DictListView() {
                           <Button
                             variant="link"
                             size="sm"
-                            className="h-7 px-1.5 text-red-500"
+                            className="h-7 px-1.5 text-red-400"
                             onClick={() => handleDeleteItem(row)}
                           >
                             <Trash2 size={13} className="mr-0.5" />
@@ -701,7 +701,7 @@ export default function DictListView() {
             {dictLoading ? (
               <div className="space-y-2">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-100" />
+                  <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--color-bg-soft)]" />
                 ))}
               </div>
             ) : dictRecords.length === 0 ? (
@@ -730,7 +730,7 @@ export default function DictListView() {
                         {row.dictName}
                       </div>
                     </div>
-                    <ArrowRight size={16} className="text-slate-300 shrink-0" />
+                    <ArrowRight size={16} className="text-[var(--text-faint)] shrink-0" />
                   </div>
                 ))}
               </div>
@@ -785,7 +785,7 @@ export default function DictListView() {
           {itemsLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-32 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-32 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : !itemsList || itemsList.length === 0 ? (
@@ -825,7 +825,7 @@ export default function DictListView() {
                       size="sm"
                       className={cn(
                         'flex-1',
-                        row.status === 1 && 'border-orange-300 text-orange-600'
+                        row.status === 1 && 'border-orange-500/40 text-orange-300'
                       )}
                       onClick={() => handleItemStatus(row)}
                     >
@@ -842,7 +842,7 @@ export default function DictListView() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 text-red-500 border-red-200"
+                      className="flex-1 text-red-400 border-red-500/30"
                       onClick={() => handleDeleteItem(row)}
                     >
                       <Trash2 size={14} className="mr-1" /> 删除
@@ -881,7 +881,7 @@ export default function DictListView() {
               <label className="mb-1.5 block text-sm font-semibold text-slate-body">
                 字典编码{' '}
                 {isDictEdit && (
-                  <span className="text-xs font-normal text-slate-400">
+                  <span className="text-xs font-normal text-[var(--text-faint)]">
                     （不可修改）
                   </span>
                 )}
@@ -892,7 +892,7 @@ export default function DictListView() {
                 disabled={isDictEdit}
               />
               {dictForm.formState.errors.dictCode && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {dictForm.formState.errors.dictCode.message}
                 </p>
               )}
@@ -906,7 +906,7 @@ export default function DictListView() {
                 placeholder="如 密级"
               />
               {dictForm.formState.errors.dictName && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {dictForm.formState.errors.dictName.message}
                 </p>
               )}
@@ -919,7 +919,7 @@ export default function DictListView() {
                 {...dictForm.register('remark')}
                 placeholder="选填，说明该字典的用途"
                 rows={2}
-                className="w-full rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none"
+                className="w-full rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none"
               />
             </div>
             <div>
@@ -988,7 +988,7 @@ export default function DictListView() {
                 <label className="mb-1.5 block text-sm font-semibold text-slate-body">
                   字典值{' '}
                   {isItemEdit && (
-                    <span className="text-xs font-normal text-slate-400">
+                    <span className="text-xs font-normal text-[var(--text-faint)]">
                       （不可修改）
                     </span>
                   )}
@@ -999,7 +999,7 @@ export default function DictListView() {
                   disabled={isItemEdit}
                 />
                 {itemForm.formState.errors.itemValue && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {itemForm.formState.errors.itemValue.message}
                   </p>
                 )}
@@ -1013,7 +1013,7 @@ export default function DictListView() {
                   placeholder="如 机密"
                 />
                 {itemForm.formState.errors.itemLabel && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {itemForm.formState.errors.itemLabel.message}
                   </p>
                 )}
@@ -1035,7 +1035,7 @@ export default function DictListView() {
                   max={999}
                 />
                 {itemForm.formState.errors.sortOrder && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {itemForm.formState.errors.sortOrder.message}
                   </p>
                 )}
@@ -1070,8 +1070,8 @@ export default function DictListView() {
                 </div>
               </div>
             </div>
-            <div className="flex items-start gap-2 rounded-btn bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
-              <Info size={14} className="mt-0.5 shrink-0 text-amber-500" />
+            <div className="flex items-start gap-2 rounded-btn bg-amber-500/15 border border-amber-500/30 p-3 text-xs text-amber-300">
+              <Info size={14} className="mt-0.5 shrink-0 text-amber-400" />
               停用的字典项不会出现在业务下拉框中（如密级、保管期限选项）
             </div>
           </form>

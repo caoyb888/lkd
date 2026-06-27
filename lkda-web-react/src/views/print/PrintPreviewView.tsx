@@ -269,7 +269,7 @@ export default function PrintPreviewView() {
                     </div>
                   ))}
                 </div>
-                <p className="no-print mt-3 text-center text-xs text-slate-400">
+                <p className="no-print mt-3 text-center text-xs text-[var(--text-faint)]">
                   档案盒侧脊（每页可印多份，此处预览 2 份）
                 </p>
               </div>

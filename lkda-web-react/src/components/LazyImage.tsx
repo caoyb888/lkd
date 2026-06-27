@@ -69,7 +69,7 @@ export function LazyImage({
       {!loaded && !error && (
         <div className="absolute inset-0 flex items-center justify-center">
           {placeholder ?? (
-            <div className="h-full w-full animate-pulse rounded bg-slate-100" />
+            <div className="h-full w-full animate-pulse rounded bg-[var(--color-bg-soft)]" />
           )}
         </div>
       )}

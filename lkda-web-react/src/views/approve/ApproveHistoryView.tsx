@@ -73,9 +73,9 @@ const ACTION_OPTIONS = [
 ]
 
 const ACTION_STYLE: Record<string, { label: string; className: string }> = {
-  PASS: { label: '通过', className: 'bg-emerald-50 text-emerald-700' },
-  REJECT: { label: '驳回', className: 'bg-red-50 text-red-700' },
-  BACK: { label: '退回', className: 'bg-blue-50 text-blue-700' },
+  PASS: { label: '通过', className: 'bg-emerald-500/15 text-emerald-300' },
+  REJECT: { label: '驳回', className: 'bg-red-500/15 text-red-300' },
+  BACK: { label: '退回', className: 'bg-blue-500/15 text-blue-300' },
 }
 
 const BIZ_TYPE_LABEL: Record<number, string> = {
@@ -169,7 +169,7 @@ export default function ApproveHistoryView() {
         cell: (info) => {
           const style = ACTION_STYLE[info.getValue()] ?? {
             label: info.getValue(),
-            className: 'bg-slate-100 text-slate-600',
+            className: 'bg-[var(--color-bg-soft)] text-slate-body',
           }
           return (
             <span
@@ -327,7 +327,7 @@ export default function ApproveHistoryView() {
           onClick={() => setDateDrawerOpen(true)}
           className={cn(
             'flex h-10 w-full items-center justify-between rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm',
-            !dateRange?.from && 'text-slate-400'
+            !dateRange?.from && 'text-[var(--text-faint)]'
           )}
         >
           <span className="flex items-center gap-2 min-w-0">
@@ -336,7 +336,7 @@ export default function ApproveHistoryView() {
           </span>
           {dateRange?.from && (
             <span
-              className="ml-1 shrink-0 text-xs text-slate-400 hover:text-red-500"
+              className="ml-1 shrink-0 text-xs text-[var(--text-faint)] hover:text-red-400"
               onClick={(e) => { e.stopPropagation(); clearDateRange() }}
             >
               清除
@@ -421,7 +421,7 @@ export default function ApproveHistoryView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -466,7 +466,7 @@ export default function ApproveHistoryView() {
                             className="bg-[var(--color-bg-soft)]"
                           >
                             <div className="py-2">
-                              <span className="mb-1.5 block text-xs font-medium text-slate-400">
+                              <span className="mb-1.5 block text-xs font-medium text-[var(--text-faint)]">
                                 审批意见
                               </span>
                               <p className="text-sm leading-relaxed text-slate-body">
@@ -488,7 +488,7 @@ export default function ApproveHistoryView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-36 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-36 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无审批历史记录" />
@@ -496,7 +496,7 @@ export default function ApproveHistoryView() {
                   const isExpanded = expandedRows.has(log.logId)
                   const actionStyle = ACTION_STYLE[log.action] ?? {
                     label: log.action,
-                    className: 'bg-slate-100 text-slate-600',
+                    className: 'bg-[var(--color-bg-soft)] text-slate-body',
                   }
                   return (
                     <div
@@ -521,33 +521,33 @@ export default function ApproveHistoryView() {
                               {actionStyle.label}
                             </span>
                           </div>
-                          <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
+                          <div className="mb-0.5 font-mono text-[11px] text-[var(--text-faint)] truncate">
                             {log.targetArchiveNo || '—'}
                           </div>
                         </div>
                         <div className="shrink-0 pt-0.5">
                           {isExpanded ? (
-                            <ChevronUp size={16} className="text-slate-400" />
+                            <ChevronUp size={16} className="text-[var(--text-faint)]" />
                           ) : (
-                            <ChevronDown size={16} className="text-slate-400" />
+                            <ChevronDown size={16} className="text-[var(--text-faint)]" />
                           )}
                         </div>
                       </div>
 
                       <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-body">
                         <div className="flex justify-between">
-                          <span className="text-slate-400">审批人</span>
+                          <span className="text-[var(--text-faint)]">审批人</span>
                           <span>{log.approverName || '—'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">审批时间</span>
+                          <span className="text-[var(--text-faint)]">审批时间</span>
                           <span>{log.createdAt?.slice(0, 16).replace('T', ' ') || '—'}</span>
                         </div>
                       </div>
 
                       {isExpanded && log.opinion && (
                         <div className="mt-3 rounded-lg bg-[var(--color-bg-soft)] p-3">
-                          <span className="mb-1 block text-xs font-medium text-slate-400">
+                          <span className="mb-1 block text-xs font-medium text-[var(--text-faint)]">
                             审批意见
                           </span>
                           <p className="text-sm leading-relaxed text-slate-body">
@@ -629,7 +629,7 @@ export default function ApproveHistoryView() {
                   chevron: 'fill-[var(--color-slate-title)]',
                   month_grid: 'w-full border-collapse',
                   weekdays: 'flex',
-                  weekday: 'text-slate-400 rounded-md w-9 font-normal text-[0.8rem] text-center',
+                  weekday: 'text-[var(--text-faint)] rounded-md w-9 font-normal text-[0.8rem] text-center',
                   weeks: 'space-y-1',
                   week: 'flex w-full',
                   day: 'text-center text-sm p-0 relative w-9 h-9',
@@ -641,8 +641,8 @@ export default function ApproveHistoryView() {
                   range_end: 'bg-primary text-white hover:bg-primary hover:text-white',
                   range_middle: 'bg-primary/20 text-primary-dark',
                   today: 'bg-accent/10 text-accent',
-                  outside: 'text-slate-400 opacity-50',
-                  disabled: 'text-slate-400 opacity-50',
+                  outside: 'text-[var(--text-faint)] opacity-50',
+                  disabled: 'text-[var(--text-faint)] opacity-50',
                 }}
               />
             </div>

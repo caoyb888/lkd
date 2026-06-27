@@ -1,75 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* ============================================================
+     灵动智档 · 岩层 (STRATA) — global tokens (single theme)
+     Dark/basalt is the one and only theme. The old light/dark/
+     ocean theme switcher (themeStore) has been removed; these
+     tokens on :root apply unconditionally.
+     ============================================================ */
   :root {
-    /* Brand colors */
-    --color-primary: #14B8A6;
-    --color-primary-light: #5EEAD4;
-    --color-primary-dark: #0F766E;
-    --color-accent: #FB923C;
+    /* ---- STRATA raw tokens ---- */
+    --c-teal:     oklch(0.74 0.122 182);
+    --c-teal-dim: oklch(0.74 0.122 182 / 0.16);
+    --c-teal-light: oklch(0.82 0.10 182);
+    --c-teal-dark:  oklch(0.62 0.12 182);
+    --c-ore:      oklch(0.74 0.122 64);
+    --c-ore-dim:  oklch(0.74 0.122 64 / 0.16);
+    --c-flux:     oklch(0.74 0.122 22);
+    --c-flux-dim: oklch(0.74 0.122 22 / 0.16);
 
-    /* Light theme (default) */
-    --color-bg-main: #FFFFFF;
-    --color-bg-aside: #ECFDF5;
-    --color-bg-soft: #F0FDFA;
-    --color-bg-page: #F8FAFC;
-    --color-bg-lighter: #F1F5F9;
-    --color-slate-title: #1E293B;
-    --color-slate-body: #475569;
-    --color-border-light: #E2E8F0;
-    --color-border-medium: #CBD5E1;
-    --color-header-bg: linear-gradient(135deg, #14B8A6 0%, #0F766E 100%);
-    --color-header-text: #FFFFFF;
-    --color-skeleton: #E2E8F0;
-    --color-login-card-bg: rgba(255, 255, 255, 0.8);
-  }
+    /* strata earth ramp (decorative rock layers) */
+    --s1: #cdb99a; --s2: #b29a76; --s3: #957a57;
+    --s4: #75603f; --s5: #5a4a36; --s6: #423629; --s7: #2c241b;
 
-  .dark {
-    --color-bg-main: #0F172A;
-    --color-bg-aside: #064E3B;
-    --color-bg-soft: #1E293B;
-    --color-bg-page: #020617;
-    --color-bg-lighter: #1E293B;
-    --color-slate-title: #F1F5F9;
-    --color-slate-body: #94A3B8;
-    --color-border-light: #334155;
-    --color-border-medium: #475569;
-    --color-header-bg: linear-gradient(135deg, #0F766E 0%, #064E3B 100%);
-    --color-header-text: #F1F5F9;
-    --color-skeleton: #334155;
-    --color-login-card-bg: rgba(15, 23, 42, 0.8);
-  }
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-  .ocean {
-    --color-bg-main: #F0F9FF;
-    --color-bg-aside: #E0F2FE;
-    --color-bg-soft: #F0F9FF;
-    --color-bg-page: #F8FAFC;
-    --color-bg-lighter: #E0F2FE;
-    --color-slate-title: #0C4A6E;
-    --color-slate-body: #0369A1;
-    --color-border-light: #BAE6FD;
-    --color-border-medium: #7DD3FC;
-    --color-header-bg: linear-gradient(135deg, #0284C7 0%, #0C4A6E 100%);
-    --color-header-text: #FFFFFF;
-    --color-skeleton: #BAE6FD;
-    --color-login-card-bg: rgba(240, 249, 255, 0.8);
+    /* corner radius (consumed by the STRATA component classes) */
+    --radius: 4px;
+    --radius-lg: 10px;
+
+    /* surfaces / lines / text (dark basalt) */
+    --bg:          oklch(0.165 0.006 170);
+    --bg-grain:    oklch(0.20 0.008 170);
+    --surface:     oklch(0.205 0.008 168);
+    --surface-2:   oklch(0.245 0.009 168);
+    --surface-hi:  oklch(0.285 0.010 168);
+    --line:        oklch(0.32 0.010 168);
+    --line-soft:   oklch(0.27 0.009 168 / 0.7);
+    --text:        oklch(0.955 0.008 150);
+    --text-dim:    oklch(0.74 0.010 160);
+    --text-faint:  oklch(0.55 0.010 165);
+    --glass-bg:    oklch(0.22 0.01 168 / 0.55);
+    --glass-line:  oklch(0.85 0.02 170 / 0.10);
+    --shadow:      0 1px 0 oklch(1 0 0 / 0.04) inset, 0 18px 40px -24px oklch(0 0 0 / 0.8);
+
+    /* ---- legacy --color-* aliases (kept so existing components
+       that reference these names adapt automatically) ---- */
+    --color-primary:       var(--c-teal);
+    --color-primary-light: var(--c-teal-light);
+    --color-primary-dark:  var(--c-teal-dark);
+    --color-accent:        var(--c-ore);
+
+    --color-bg-main:    var(--surface);
+    --color-bg-aside:   var(--surface);
+    --color-bg-soft:    var(--surface-2);
+    --color-bg-page:    var(--bg);
+    --color-bg-lighter: var(--surface-2);
+    --color-slate-title: var(--text);
+    --color-slate-body:  var(--text-dim);
+    --color-border-light:  var(--line-soft);
+    --color-border-medium: var(--line);
+    --color-header-bg:   linear-gradient(135deg, var(--surface-hi) 0%, var(--surface) 100%);
+    --color-header-text: var(--text);
+    --color-skeleton:    var(--surface-2);
+    --color-login-card-bg: var(--glass-bg);
   }
 
   html {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-      Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol', 'Noto Color Emoji';
+    color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Noto Serif SC', 'Noto Sans SC', serif;
+    letter-spacing: -0.01em;
   }
 
   body {
     @apply text-slate-body;
     background-color: var(--color-bg-page);
   }
+
+  ::selection { background: var(--c-teal); color: #06201c; }
 }
 
 @layer utilities {
@@ -81,6 +100,25 @@
 
   .animate-shake {
     animation: shake 0.5s ease-in-out;
+  }
+
+  /* ---- geological texture utilities (reusable app-wide) ---- */
+  .strata-bands {
+    background: linear-gradient(var(--s1) 0 14.2%, var(--s2) 14.2% 28%,
+      var(--s3) 28% 44%, var(--s4) 44% 60%, var(--s5) 60% 76%,
+      var(--s6) 76% 90%, var(--s7) 90% 100%);
+  }
+  .sediment {
+    background-image: repeating-linear-gradient(180deg, transparent 0 6px, oklch(0 0 0 / 0.10) 6px 7px);
+  }
+  .vein {
+    background-image:
+      linear-gradient(74deg, transparent 0 48%, color-mix(in oklch, var(--c-teal) 60%, transparent) 49% 49.6%, transparent 51%),
+      linear-gradient(64deg, transparent 0 67%, color-mix(in oklch, var(--c-ore) 55%, transparent) 68% 68.5%, transparent 70%);
+  }
+  .contour {
+    background-image: repeating-radial-gradient(circle at var(--cx, 30%) var(--cy, 120%),
+      transparent 0 34px, color-mix(in oklch, var(--text-faint) 22%, transparent) 34px 35px);
   }
 }
 

@@ -96,7 +96,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       >
         {/* Header */}
         <div className="h-[60px] flex items-center justify-between px-4 border-b border-[var(--color-border-light)]">
-          <span className="font-bold text-[var(--color-slate-title)]">莱矿-档案管理系统</span>
+          <span className="font-bold text-[var(--color-slate-title)]">莱矿·灵动智档</span>
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-bg-lighter)] transition-colors"
@@ -121,7 +121,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                       className={cn(
                         'w-full flex items-center gap-3 rounded-btn px-3 h-[44px] text-sm transition-colors',
                         (isOpen || isActive(item.path))
-                          ? 'text-[var(--color-primary-dark)] font-semibold'
+                          ? 'text-primary-light font-semibold'
                           : 'text-[var(--color-slate-title)]'
                       )}
                     >
@@ -143,7 +143,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                               className={cn(
                                 'w-full flex items-center gap-3 rounded-btn pl-10 pr-3 h-[40px] text-sm transition-colors',
                                 isActive(child.path)
-                                  ? 'bg-primary text-white font-semibold'
+                                  ? 'bg-[var(--c-teal-dim)] text-primary-light font-semibold'
                                   : 'text-[var(--color-slate-body)]'
                               )}
                             >
@@ -161,7 +161,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     className={cn(
                       'w-full flex items-center gap-3 rounded-btn px-3 h-[44px] text-sm transition-colors',
                       isActive(item.path)
-                        ? 'bg-primary text-white font-semibold'
+                        ? 'bg-[var(--c-teal-dim)] text-primary-light font-semibold'
                         : 'text-[var(--color-slate-title)]'
                     )}
                   >

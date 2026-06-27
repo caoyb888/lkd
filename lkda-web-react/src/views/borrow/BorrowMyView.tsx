@@ -85,7 +85,7 @@ function getBorrowVisual(
     return {
       label: '待审批',
       subLabel: '等待管理员审批',
-      className: 'bg-slate-100 text-slate-600',
+      className: 'bg-[var(--color-bg-soft)] text-slate-body',
       icon: <Clock size={14} />,
       accent: false,
     }
@@ -122,7 +122,7 @@ function getBorrowVisual(
     return {
       label: '已驳回',
       subLabel: '申请未被批准',
-      className: 'bg-slate-200 text-slate-500 line-through',
+      className: 'bg-[var(--color-bg-soft)] text-slate-body line-through',
       icon: <X size={14} />,
       accent: false,
     }
@@ -148,7 +148,7 @@ function getBorrowVisual(
   return {
     label: String(status),
     subLabel: '',
-    className: 'bg-slate-100 text-slate-600',
+    className: 'bg-[var(--color-bg-soft)] text-slate-body',
     icon: null,
     accent: false,
   }
@@ -377,7 +377,7 @@ export default function BorrowMyView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -418,7 +418,7 @@ export default function BorrowMyView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-48 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-48 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无借阅记录" />
@@ -432,7 +432,7 @@ export default function BorrowMyView() {
                       key={borrow.borrowId}
                       className={cn(
                         'rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] p-4 shadow-card active:scale-[0.99] transition-transform',
-                        visual.accent && 'ring-1 ring-red-200'
+                        visual.accent && 'ring-1 ring-red-500/40'
                       )}
                     >
                       {/* 状态横幅 */}
@@ -451,7 +451,7 @@ export default function BorrowMyView() {
 
                       {/* 档案信息 */}
                       <div className="mb-3 space-y-1">
-                        <div className="font-mono text-[11px] text-slate-400 truncate">
+                        <div className="font-mono text-[11px] text-[var(--text-faint)] truncate">
                           {borrow.archiveNo}
                         </div>
                         <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -462,15 +462,15 @@ export default function BorrowMyView() {
                       {/* 明细 */}
                       <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                         <div className="flex justify-between">
-                          <span className="text-slate-400">申请份数</span>
+                          <span className="text-[var(--text-faint)]">申请份数</span>
                           <span>{borrow.applyCount} 份</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">计划归还</span>
+                          <span className="text-[var(--text-faint)]">计划归还</span>
                           <span>{borrow.planReturnDate?.slice(0, 10) || '—'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">申请时间</span>
+                          <span className="text-[var(--text-faint)]">申请时间</span>
                           <span>{borrow.createdAt?.slice(0, 16).replace('T', ' ') || '—'}</span>
                         </div>
                       </div>
@@ -568,24 +568,24 @@ export default function BorrowMyView() {
                 {/* 申请信息 */}
                 <div className="space-y-2.5 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">申请份数</span>
+                    <span className="text-[var(--text-faint)]">申请份数</span>
                     <span className="text-slate-title">{selected.applyCount} 份</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">申请时间</span>
+                    <span className="text-[var(--text-faint)]">申请时间</span>
                     <span className="text-slate-title">
                       {selected.createdAt?.slice(0, 16).replace('T', ' ')}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">计划归还</span>
+                    <span className="text-[var(--text-faint)]">计划归还</span>
                     <span className="text-slate-title">
                       {selected.planReturnDate?.slice(0, 10) || '—'}
                     </span>
                   </div>
                   {selected.actualReturnDate && (
                     <div className="flex justify-between">
-                      <span className="text-slate-400">实际归还</span>
+                      <span className="text-[var(--text-faint)]">实际归还</span>
                       <span className="text-slate-title">
                         {selected.actualReturnDate.slice(0, 10)}
                       </span>
@@ -596,7 +596,7 @@ export default function BorrowMyView() {
                 {/* 借阅原因 */}
                 {selected.reason && (
                   <div>
-                    <span className="mb-1.5 block text-xs font-medium text-slate-400">
+                    <span className="mb-1.5 block text-xs font-medium text-[var(--text-faint)]">
                       借阅原因
                     </span>
                     <p className="rounded-lg bg-[var(--color-bg-soft)] p-3 text-sm leading-relaxed text-slate-body">

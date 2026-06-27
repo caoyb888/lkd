@@ -63,7 +63,7 @@ export default function Pagination({
 
       {pages.map((page, idx) =>
         page === '...' ? (
-          <span key={`ellipsis-${idx}`} className="px-2 text-slate-400 text-sm">
+          <span key={`ellipsis-${idx}`} className="px-2 text-[var(--text-faint)] text-sm">
             ...
           </span>
         ) : (

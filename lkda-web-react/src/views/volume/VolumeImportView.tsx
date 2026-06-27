@@ -59,18 +59,18 @@ const TEMPLATE_FIELDS = [
 
 const TIPS = [
   {
-    icon: <Hash size={15} className="text-blue-500" />,
-    bg: 'bg-blue-50',
+    icon: <Hash size={15} className="text-blue-400" />,
+    bg: 'bg-blue-500/15',
     text: '第 1 行为表头，数据从第 2 行开始填写',
   },
   {
-    icon: <BookOpen size={15} className="text-amber-500" />,
-    bg: 'bg-amber-50',
+    icon: <BookOpen size={15} className="text-amber-400" />,
+    bg: 'bg-amber-500/15',
     text: '字典字段须填写实际值（如 internal），而非中文标签',
   },
   {
-    icon: <CalendarDays size={15} className="text-emerald-500" />,
-    bg: 'bg-emerald-50',
+    icon: <CalendarDays size={15} className="text-emerald-400" />,
+    bg: 'bg-emerald-500/15',
     text: '日期格式统一为 YYYY-MM-DD',
   },
   {
@@ -100,7 +100,7 @@ function TipsGrid() {
           )}
         >
           <span className="mt-0.5 shrink-0">{tip.icon}</span>
-          <p className="text-xs leading-relaxed text-slate-600">{tip.text}</p>
+          <p className="text-xs leading-relaxed text-slate-body">{tip.text}</p>
         </div>
       ))}
     </div>
@@ -122,7 +122,7 @@ function DesktopStepper({ currentStep }: { currentStep: number }) {
                   'flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold',
                   isCompleted && 'bg-primary text-white',
                   isActive && 'border-2 border-primary bg-primary/10 text-primary',
-                  !isActive && !isCompleted && 'border-2 border-slate-200 text-slate-400'
+                  !isActive && !isCompleted && 'border-2 border-[var(--color-border-light)] text-[var(--text-faint)]'
                 )}
               >
                 {isCompleted ? <CheckCircle2 size={16} /> : step.id}
@@ -132,7 +132,7 @@ function DesktopStepper({ currentStep }: { currentStep: number }) {
                   'text-sm font-medium',
                   isActive && 'font-semibold text-primary',
                   isCompleted && 'text-slate-title',
-                  !isActive && !isCompleted && 'text-slate-400'
+                  !isActive && !isCompleted && 'text-[var(--text-faint)]'
                 )}
               >
                 {step.title}
@@ -142,7 +142,7 @@ function DesktopStepper({ currentStep }: { currentStep: number }) {
               <div
                 className={cn(
                   'mx-4 h-0.5 flex-1 rounded-full',
-                  isCompleted ? 'bg-primary' : 'bg-slate-200'
+                  isCompleted ? 'bg-primary' : 'bg-[var(--color-bg-soft)]'
                 )}
               />
             )}
@@ -172,7 +172,7 @@ function MobileStepper({ currentStep }: { currentStep: number }) {
             key={s.id}
             className={cn(
               'h-1.5 rounded-full transition-all',
-              s.id === currentStep ? 'w-6 bg-primary' : 'w-1.5 bg-slate-200'
+              s.id === currentStep ? 'w-6 bg-primary' : 'w-1.5 bg-[var(--color-bg-soft)]'
             )}
           />
         ))}
@@ -319,21 +319,21 @@ export default function VolumeImportView() {
           <div className="rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-main)] shadow-card">
             <div className="border-b border-[var(--color-border-light)] px-4 py-3">
               <p className="text-sm font-semibold text-slate-title">模板字段说明</p>
-              <p className="mt-0.5 text-xs text-slate-400">共 {TEMPLATE_FIELDS.length} 个字段，带 <span className="text-red-500">*</span> 为必填</p>
+              <p className="mt-0.5 text-xs text-[var(--text-faint)]">共 {TEMPLATE_FIELDS.length} 个字段，带 <span className="text-red-400">*</span> 为必填</p>
             </div>
             <div className="divide-y divide-[var(--color-border-light)]">
               {TEMPLATE_FIELDS.map((f) => (
                 <div key={f.field} className="flex items-center justify-between px-4 py-2.5">
                   <div className="flex items-center gap-2">
-                    <code className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500">
+                    <code className="rounded bg-[var(--color-bg-soft)] px-1.5 py-0.5 text-[11px] text-slate-body">
                       {f.field}
                     </code>
                     <span className="text-sm text-slate-title">{f.label}</span>
                   </div>
                   {f.required ? (
-                    <span className="text-xs font-medium text-red-500">必填</span>
+                    <span className="text-xs font-medium text-red-400">必填</span>
                   ) : (
-                    <span className="text-xs text-slate-400">可选</span>
+                    <span className="text-xs text-[var(--text-faint)]">可选</span>
                   )}
                 </div>
               ))}
@@ -378,7 +378,7 @@ export default function VolumeImportView() {
                   拖拽文件到此处，或
                   <span className="ml-1 text-primary underline">点击选择</span>
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[var(--text-faint)]">
                   支持 .xlsx 格式，最大 10 MB
                 </p>
               </div>
@@ -391,14 +391,14 @@ export default function VolumeImportView() {
                   <p className="truncate text-sm font-semibold text-slate-title">
                     {selectedFile.name}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[var(--text-faint)]">
                     {formatSize(selectedFile.size)}
                   </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 text-slate-400 hover:text-red-500"
+                  className="h-8 w-8 shrink-0 text-[var(--text-faint)] hover:text-red-400"
                   onClick={(e) => {
                     e.stopPropagation()
                     clearFile()
@@ -414,7 +414,7 @@ export default function VolumeImportView() {
           <div className="space-y-3">
             <p className="text-sm font-semibold text-slate-title">上传注意事项</p>
             <TipsGrid />
-            <div className="rounded-xl border border-dashed border-[var(--color-border-medium)] bg-[var(--color-bg-lighter)] px-4 py-3 text-xs text-slate-400">
+            <div className="rounded-xl border border-dashed border-[var(--color-border-medium)] bg-[var(--color-bg-lighter)] px-4 py-3 text-xs text-[var(--text-faint)]">
               如未下载模板，请先返回上一步获取标准格式文件
             </div>
           </div>
@@ -427,16 +427,16 @@ export default function VolumeImportView() {
           {/* 结果概览：数字卡片横排 */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-main)] py-5 shadow-card">
-              <p className="text-xs text-slate-400">读取总数</p>
+              <p className="text-xs text-[var(--text-faint)]">读取总数</p>
               <p className="text-3xl font-bold text-slate-title">{importResult.totalCount}</p>
             </div>
-            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 py-5 shadow-card">
-              <p className="text-xs text-emerald-600">成功导入</p>
-              <p className="text-3xl font-bold text-emerald-600">{importResult.successCount}</p>
+            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 py-5 shadow-card">
+              <p className="text-xs text-emerald-300">成功导入</p>
+              <p className="text-3xl font-bold text-emerald-300">{importResult.successCount}</p>
             </div>
-            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 py-5 shadow-card">
-              <p className="text-xs text-red-500">失败记录</p>
-              <p className="text-3xl font-bold text-red-500">
+            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/15 py-5 shadow-card">
+              <p className="text-xs text-red-400">失败记录</p>
+              <p className="text-3xl font-bold text-red-400">
                 {importResult.errorList?.length ?? 0}
               </p>
             </div>
@@ -444,8 +444,8 @@ export default function VolumeImportView() {
 
           {/* 结果摘要 */}
           <div className="flex items-center gap-3 rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-4 py-3 shadow-card">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50">
-              <CheckCircle2 size={22} className="text-emerald-500" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15">
+              <CheckCircle2 size={22} className="text-emerald-400" />
             </div>
             <div>
               <p className="text-sm font-semibold text-slate-title">导入完成</p>
@@ -459,7 +459,7 @@ export default function VolumeImportView() {
           {importResult.errorList && importResult.errorList.length > 0 && (
             <div className="rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-main)] shadow-card">
               <div className="flex items-center gap-2 border-b border-[var(--color-border-light)] px-4 py-3">
-                <AlertCircle size={15} className="text-red-500" />
+                <AlertCircle size={15} className="text-red-400" />
                 <div>
                   <p className="text-sm font-semibold text-slate-title">错误明细</p>
                   <p className="text-xs text-slate-body">
@@ -480,16 +480,16 @@ export default function VolumeImportView() {
                     {importResult.errorList.map((err, idx) => (
                       <TableRow key={idx}>
                         <TableCell className="text-center">
-                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-50 text-xs font-bold text-red-600">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-xs font-bold text-red-300">
                             {err.row}
                           </span>
                         </TableCell>
                         <TableCell>
-                          <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
+                          <code className="rounded bg-[var(--color-bg-soft)] px-1.5 py-0.5 text-xs text-slate-body">
                             {err.column}
                           </code>
                         </TableCell>
-                        <TableCell className="text-sm text-red-600">
+                        <TableCell className="text-sm text-red-300">
                           {err.message}
                         </TableCell>
                       </TableRow>
@@ -579,7 +579,7 @@ export default function VolumeImportView() {
           <span className="text-sm font-semibold text-slate-title">
             {STEPS.find((s) => s.id === step)?.title}
           </span>
-          <ChevronRight size={14} className="text-slate-300" />
+          <ChevronRight size={14} className="text-[var(--text-faint)]" />
         </div>
 
         {stepContent}

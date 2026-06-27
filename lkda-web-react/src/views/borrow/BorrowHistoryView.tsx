@@ -235,7 +235,7 @@ export default function BorrowHistoryView() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-emerald-600 hover:bg-emerald-50"
+                        className="h-7 w-7 text-emerald-300 hover:bg-emerald-500/15"
                         onClick={() => openReturnDialog(borrow)}
                       >
                         <RotateCcw size={14} />
@@ -375,7 +375,7 @@ export default function BorrowHistoryView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -416,7 +416,7 @@ export default function BorrowHistoryView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-48 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-48 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无借阅历史记录" />
@@ -429,7 +429,7 @@ export default function BorrowHistoryView() {
                     >
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
+                          <div className="mb-0.5 font-mono text-[11px] text-[var(--text-faint)] truncate">
                             {borrow.archiveNo}
                           </div>
                           <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -445,24 +445,24 @@ export default function BorrowHistoryView() {
 
                       <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                         <div className="flex justify-between">
-                          <span className="text-slate-400">借阅人</span>
+                          <span className="text-[var(--text-faint)]">借阅人</span>
                           <span>{borrow.borrowerName || '—'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">部门</span>
+                          <span className="text-[var(--text-faint)]">部门</span>
                           <span className="truncate text-right">{borrow.borrowerDept || '—'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">份数</span>
+                          <span className="text-[var(--text-faint)]">份数</span>
                           <span>{borrow.applyCount} 份</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">计划归还</span>
+                          <span className="text-[var(--text-faint)]">计划归还</span>
                           <span>{borrow.planReturnDate?.slice(0, 10) || '—'}</span>
                         </div>
                         {borrow.actualReturnDate && (
                           <div className="flex justify-between col-span-2">
-                            <span className="text-slate-400">实际归还</span>
+                            <span className="text-[var(--text-faint)]">实际归还</span>
                             <span>{borrow.actualReturnDate.slice(0, 10)}</span>
                           </div>
                         )}
@@ -553,39 +553,39 @@ export default function BorrowHistoryView() {
 
                 <div className="space-y-2.5 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">借阅人</span>
+                    <span className="text-[var(--text-faint)]">借阅人</span>
                     <span className="text-slate-title">{selected.borrowerName || '—'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">部门</span>
+                    <span className="text-[var(--text-faint)]">部门</span>
                     <span className="text-slate-title">{selected.borrowerDept || '—'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">申请份数</span>
+                    <span className="text-[var(--text-faint)]">申请份数</span>
                     <span className="text-slate-title">{selected.applyCount} 份</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">申请时间</span>
+                    <span className="text-[var(--text-faint)]">申请时间</span>
                     <span className="text-slate-title">
                       {selected.createdAt?.slice(0, 16).replace('T', ' ')}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">计划归还</span>
+                    <span className="text-[var(--text-faint)]">计划归还</span>
                     <span className="text-slate-title">
                       {selected.planReturnDate?.slice(0, 10) || '—'}
                     </span>
                   </div>
                   {selected.actualReturnDate && (
                     <div className="flex justify-between">
-                      <span className="text-slate-400">实际归还</span>
+                      <span className="text-[var(--text-faint)]">实际归还</span>
                       <span className="text-slate-title">
                         {selected.actualReturnDate.slice(0, 10)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-slate-400">状态</span>
+                    <span className="text-[var(--text-faint)]">状态</span>
                     <StatusTag
                       type="borrow"
                       value={selected.status}
@@ -596,7 +596,7 @@ export default function BorrowHistoryView() {
 
                 {selected.reason && (
                   <div>
-                    <span className="mb-1.5 block text-xs font-medium text-slate-400">
+                    <span className="mb-1.5 block text-xs font-medium text-[var(--text-faint)]">
                       借阅原因
                     </span>
                     <p className="rounded-lg bg-[var(--color-bg-soft)] p-3 text-sm leading-relaxed text-slate-body">

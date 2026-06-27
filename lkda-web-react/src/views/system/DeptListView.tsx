@@ -337,7 +337,7 @@ export default function DeptListView() {
               <span
                 className={cn(
                   'shrink-0 transition-transform',
-                  isSelected ? 'text-white/80' : 'text-slate-400'
+                  isSelected ? 'text-white/80' : 'text-[var(--text-faint)]'
                 )}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -396,7 +396,7 @@ export default function DeptListView() {
             <span
               className={cn(
                 'shrink-0 cursor-grab opacity-0 group-hover:opacity-100 transition-opacity',
-                isSelected ? 'text-white/60' : 'text-slate-300'
+                isSelected ? 'text-white/60' : 'text-[var(--text-faint)]'
               )}
             >
               <GripVertical size={14} />
@@ -427,7 +427,7 @@ export default function DeptListView() {
           >
             {hasChildren && (
               <span
-                className="shrink-0 text-slate-400"
+                className="shrink-0 text-[var(--text-faint)]"
                 onClick={(e) => {
                   e.stopPropagation()
                   toggleExpand(node.deptId)
@@ -469,13 +469,13 @@ export default function DeptListView() {
     if (!selected) {
       return (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-bg-soft)] to-[var(--color-bg-soft)]">
             <Building2 size={28} className="text-primary-dark" />
           </div>
           <p className="text-base font-semibold text-slate-title">
             请在左侧选择部门节点
           </p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-[var(--text-faint)]">
             选中节点后可查看详情、新增子部门、编辑或删除
           </p>
           <Button className="mt-4" onClick={openAddRoot}>
@@ -494,7 +494,7 @@ export default function DeptListView() {
             <Building2 size={20} className="text-primary" />
             {selected.deptName}
           </div>
-          <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-[var(--text-faint)]">
             <span>{parentNode?.deptName ?? '顶层部门'}</span>
             {parentNode && (
               <>
@@ -515,26 +515,26 @@ export default function DeptListView() {
           )}
         >
           <div className="rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] p-3">
-            <div className="text-[11px] text-slate-400">部门名称</div>
+            <div className="text-[11px] text-[var(--text-faint)]">部门名称</div>
             <div className="mt-1 text-sm font-semibold text-slate-title">
               {selected.deptName}
             </div>
           </div>
           <div className="rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] p-3">
-            <div className="text-[11px] text-slate-400">上级部门</div>
+            <div className="text-[11px] text-[var(--text-faint)]">上级部门</div>
             <div className="mt-1 text-sm font-semibold text-slate-title">
               {parentNode?.deptName ?? '—（顶层）'}
             </div>
           </div>
           <div className="rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] p-3">
-            <div className="text-[11px] text-slate-400">排序编号</div>
+            <div className="text-[11px] text-[var(--text-faint)]">排序编号</div>
             <div className="mt-1 text-sm font-semibold text-slate-title">
               {selected.sortOrder}
             </div>
           </div>
           {!inDrawer && (
             <div className="rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] p-3">
-              <div className="text-[11px] text-slate-400">子部门数</div>
+              <div className="text-[11px] text-[var(--text-faint)]">子部门数</div>
               <div className="mt-1 text-sm font-semibold text-primary">
                 {selected.children?.length ?? 0}
               </div>
@@ -544,7 +544,7 @@ export default function DeptListView() {
 
         {/* 操作区 */}
         <div className="mb-5">
-          <div className="mb-2 pl-0.5 text-xs font-semibold tracking-wide text-slate-400">
+          <div className="mb-2 pl-0.5 text-xs font-semibold tracking-wide text-[var(--text-faint)]">
             操作
           </div>
           <div className="flex flex-col gap-2">
@@ -552,36 +552,36 @@ export default function DeptListView() {
               className="flex items-center gap-3.5 rounded-xl border border-[var(--color-border-light)] p-3 text-left transition-all hover:border-[var(--color-border-medium)] hover:bg-[var(--color-bg-soft)] hover:translate-x-0.5 active:scale-[0.99]"
               onClick={openAddChild}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-green-50">
-                <FolderPlus size={16} className="text-green-600" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-green-500/15">
+                <FolderPlus size={16} className="text-green-300" />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-semibold text-slate-title">
                   新增子部门
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-[var(--text-faint)]">
                   在「{selected.deptName}」下添加
                 </div>
               </div>
-              <ChevronRight size={14} className="text-slate-300" />
+              <ChevronRight size={14} className="text-[var(--text-faint)]" />
             </button>
 
             <button
               className="flex items-center gap-3.5 rounded-xl border border-[var(--color-border-light)] p-3 text-left transition-all hover:border-[var(--color-border-medium)] hover:bg-[var(--color-bg-soft)] hover:translate-x-0.5 active:scale-[0.99]"
               onClick={openEdit}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-50">
-                <Edit3 size={16} className="text-blue-600" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-500/15">
+                <Edit3 size={16} className="text-blue-300" />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-semibold text-slate-title">
                   编辑部门
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-[var(--text-faint)]">
                   修改名称和排序编号
                 </div>
               </div>
-              <ChevronRight size={14} className="text-slate-300" />
+              <ChevronRight size={14} className="text-[var(--text-faint)]" />
             </button>
 
             <button
@@ -593,23 +593,23 @@ export default function DeptListView() {
               )}
               onClick={isLeaf ? handleDelete : undefined}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-red-50">
-                <Trash2 size={16} className="text-red-500" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-red-500/15">
+                <Trash2 size={16} className="text-red-400" />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-semibold text-slate-title">
                   删除部门
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-[var(--text-faint)]">
                   {isLeaf
                     ? '无子部门时可删除'
                     : '请先删除所有子部门'}
                 </div>
               </div>
               {isLeaf ? (
-                <ChevronRight size={14} className="text-slate-300" />
+                <ChevronRight size={14} className="text-[var(--text-faint)]" />
               ) : (
-                <span className="shrink-0 rounded-tag border border-slate-200 px-2 py-0.5 text-[10px] text-slate-400">
+                <span className="shrink-0 rounded-tag border border-[var(--color-border-light)] px-2 py-0.5 text-[10px] text-[var(--text-faint)]">
                   不可删除
                 </span>
               )}
@@ -619,8 +619,8 @@ export default function DeptListView() {
 
         {/* 拖拽提示（仅电脑端） */}
         {!inDrawer && (
-          <div className="flex items-center gap-2 rounded-lg border border-dashed border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] px-3 py-2 text-[11px] text-slate-400">
-            <GripVertical size={14} className="text-slate-300" />
+          <div className="flex items-center gap-2 rounded-lg border border-dashed border-[var(--color-border-light)] bg-[var(--color-bg-lighter)] px-3 py-2 text-[11px] text-[var(--text-faint)]">
+            <GripVertical size={14} className="text-[var(--text-faint)]" />
             可在左侧树中拖拽节点调整同级顺序
           </div>
         )}
@@ -670,13 +670,13 @@ export default function DeptListView() {
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-8 animate-pulse rounded bg-slate-100"
+                    className="h-8 animate-pulse rounded bg-[var(--color-bg-soft)]"
                   />
                 ))}
               </div>
             ) : !treeData || treeData.length === 0 ? (
-              <div className="flex flex-col items-center py-10 text-slate-400">
-                <Building2 size={36} className="mb-2 text-slate-300" />
+              <div className="flex flex-col items-center py-10 text-[var(--text-faint)]">
+                <Building2 size={36} className="mb-2 text-[var(--text-faint)]" />
                 <p className="text-sm mb-3">暂无部门数据</p>
                 <Button size="sm" onClick={openAddRoot}>
                   <Plus size={14} /> 新增根部门
@@ -711,7 +711,7 @@ export default function DeptListView() {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-12 animate-pulse rounded bg-slate-100"
+                  className="h-12 animate-pulse rounded bg-[var(--color-bg-soft)]"
                 />
               ))}
             </div>
@@ -773,7 +773,7 @@ export default function DeptListView() {
                 autoFocus
               />
               {addForm.formState.errors.deptName && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {addForm.formState.errors.deptName.message}
                 </p>
               )}
@@ -788,11 +788,11 @@ export default function DeptListView() {
                 min={1}
                 max={999}
               />
-              <p className="mt-1 text-[11px] text-slate-400">
+              <p className="mt-1 text-[11px] text-[var(--text-faint)]">
                 数字越小越靠前
               </p>
               {addForm.formState.errors.sortOrder && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {addForm.formState.errors.sortOrder.message}
                 </p>
               )}
@@ -832,7 +832,7 @@ export default function DeptListView() {
                 autoFocus
               />
               {editForm.formState.errors.deptName && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {editForm.formState.errors.deptName.message}
                 </p>
               )}
@@ -847,11 +847,11 @@ export default function DeptListView() {
                 min={1}
                 max={999}
               />
-              <p className="mt-1 text-[11px] text-slate-400">
+              <p className="mt-1 text-[11px] text-[var(--text-faint)]">
                 数字越小越靠前
               </p>
               {editForm.formState.errors.sortOrder && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {editForm.formState.errors.sortOrder.message}
                 </p>
               )}

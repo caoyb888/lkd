@@ -48,9 +48,9 @@ const STEPS = [
 ]
 
 const ACTION_STYLE: Record<string, { label: string; className: string }> = {
-  PASS: { label: '通过', className: 'bg-emerald-50 text-emerald-700' },
-  REJECT: { label: '驳回', className: 'bg-red-50 text-red-700' },
-  BACK: { label: '退回', className: 'bg-blue-50 text-blue-700' },
+  PASS: { label: '通过', className: 'bg-emerald-500/15 text-emerald-300' },
+  REJECT: { label: '驳回', className: 'bg-red-500/15 text-red-300' },
+  BACK: { label: '退回', className: 'bg-blue-500/15 text-blue-300' },
 }
 
 const BIZ_TYPE: Record<number, string> = {
@@ -62,12 +62,12 @@ const BIZ_TYPE: Record<number, string> = {
 
 /* ── 状态元数据 ─────────────────────────────────────────────── */
 const STATUS_META: Record<number, { text: string; className: string }> = {
-  0: { text: '草稿', className: 'bg-slate-100 text-slate-600' },
-  1: { text: '待审核', className: 'bg-yellow-50 text-yellow-700' },
-  2: { text: '待确认', className: 'bg-blue-50 text-blue-700' },
-  3: { text: '已归档', className: 'bg-emerald-50 text-emerald-700' },
-  10: { text: '销毁待审批', className: 'bg-violet-50 text-violet-700' },
-  11: { text: '已销毁', className: 'bg-red-50 text-red-700' },
+  0: { text: '草稿', className: 'bg-[var(--color-bg-soft)] text-slate-body' },
+  1: { text: '待审核', className: 'bg-yellow-500/15 text-yellow-300' },
+  2: { text: '待确认', className: 'bg-blue-500/15 text-blue-300' },
+  3: { text: '已归档', className: 'bg-emerald-500/15 text-emerald-300' },
+  10: { text: '销毁待审批', className: 'bg-violet-500/15 text-violet-300' },
+  11: { text: '已销毁', className: 'bg-red-500/15 text-red-300' },
 }
 
 function resolveStatusMeta(detail: ArchiveVolumeDetailVO | null) {
@@ -95,7 +95,7 @@ function Stepper({ activeIndex }: { activeIndex: number }) {
                   'flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition-colors md:h-10 md:w-10',
                   isCompleted && 'border-primary bg-primary text-white',
                   isCurrent && 'border-primary bg-primary/10 text-primary',
-                  isPending && 'border-slate-200 bg-white text-slate-400'
+                  isPending && 'border-[var(--color-border-light)] bg-[var(--color-bg-main)] text-[var(--text-faint)]'
                 )}
               >
                 {isCompleted ? (
@@ -109,7 +109,7 @@ function Stepper({ activeIndex }: { activeIndex: number }) {
                   'text-xs font-medium md:text-sm',
                   isCompleted && 'text-primary-dark',
                   isCurrent && 'text-primary font-semibold',
-                  isPending && 'text-slate-400'
+                  isPending && 'text-[var(--text-faint)]'
                 )}
               >
                 {step.label}
@@ -119,7 +119,7 @@ function Stepper({ activeIndex }: { activeIndex: number }) {
               <div
                 className={cn(
                   'mx-1 h-0.5 flex-1 rounded-full md:mx-2',
-                  idx < activeIndex ? 'bg-primary' : 'bg-slate-200'
+                  idx < activeIndex ? 'bg-primary' : 'bg-[var(--color-bg-soft)]'
                 )}
               />
             )}
@@ -142,7 +142,7 @@ function InfoItem({
 }) {
   return (
     <div className={cn('flex flex-col gap-1', className)}>
-      <span className="text-xs font-medium text-slate-400">{label}</span>
+      <span className="text-xs font-medium text-[var(--text-faint)]">{label}</span>
       <span className="break-words text-sm text-slate-title">
         {children ?? '—'}
       </span>
@@ -156,7 +156,7 @@ function ApprovalTimeline({ logs, loading }: { logs: ApproveLogVO[]; loading: bo
     return (
       <div className="space-y-4 py-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-card bg-slate-100" />
+          <div key={i} className="h-20 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
         ))}
       </div>
     )
@@ -175,14 +175,14 @@ function ApprovalTimeline({ logs, loading }: { logs: ApproveLogVO[]; loading: bo
         {logs.map((log) => {
           const action = ACTION_STYLE[log.action] ?? {
             label: log.action,
-            className: 'bg-slate-100 text-slate-600',
+            className: 'bg-[var(--color-bg-soft)] text-slate-body',
           }
           return (
             <div key={log.logId} className="relative flex gap-4 pl-1 md:gap-5">
               {/* 圆点 */}
               <div
                 className={cn(
-                  'z-10 mt-1.5 h-3 w-3 shrink-0 rounded-full border-2 border-white shadow-sm md:h-4 md:w-4',
+                  'z-10 mt-1.5 h-3 w-3 shrink-0 rounded-full border-2 border-[var(--color-bg-main)] shadow-sm md:h-4 md:w-4',
                   log.action === 'PASS'
                     ? 'bg-emerald-500'
                     : log.action === 'REJECT'
@@ -206,7 +206,7 @@ function ApprovalTimeline({ logs, loading }: { logs: ApproveLogVO[]; loading: bo
                     {action.label}
                   </span>
                   <span className="ml-auto flex items-center gap-1 text-xs text-slate-title">
-                    <UserCheck size={12} className="text-slate-400" />
+                    <UserCheck size={12} className="text-[var(--text-faint)]" />
                     {log.approverName}
                   </span>
                 </div>
@@ -215,7 +215,7 @@ function ApprovalTimeline({ logs, loading }: { logs: ApproveLogVO[]; loading: bo
                     {log.opinion}
                   </p>
                 )}
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-[var(--text-faint)]">
                   {log.createdAt?.slice(0, 16).replace('T', ' ')}
                 </p>
               </div>
@@ -326,9 +326,9 @@ export default function VolumeDetailView() {
       <div className="p-3 md:p-4">
         <PageHeader title="案卷详情" />
         <div className="space-y-4">
-          <div className="h-32 animate-pulse rounded-card bg-slate-100" />
-          <div className="h-48 animate-pulse rounded-card bg-slate-100" />
-          <div className="h-16 animate-pulse rounded-card bg-slate-100" />
+          <div className="h-32 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
+          <div className="h-48 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
+          <div className="h-16 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
         </div>
       </div>
     )
@@ -494,7 +494,7 @@ export default function VolumeDetailView() {
                 </InfoItem>
                 <InfoItem label="密级">
                   {detail.securityLevel ? (
-                    <span className="inline-flex items-center rounded-tag bg-yellow-50 px-2 py-0.5 text-xs font-semibold text-yellow-700">
+                    <span className="inline-flex items-center rounded-tag bg-yellow-500/15 px-2 py-0.5 text-xs font-semibold text-yellow-300">
                       {detail.securityLevelLabel || detail.securityLevel}
                     </span>
                   ) : (
@@ -628,7 +628,7 @@ export default function VolumeDetailView() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="justify-start text-red-300 hover:text-red-300 hover:bg-red-500/15"
                       onClick={goDestroy}
                     >
                       <Trash2 size={14} className="mr-2" />

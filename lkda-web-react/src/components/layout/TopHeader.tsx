@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
-import { useThemeStore } from '@/stores/themeStore'
 import { useNotifyStore } from '@/stores/notifyStore'
 import {
   PanelLeftOpen,
   PanelLeftClose,
-  Sun,
-  Moon,
+  Gem,
   Bell,
   LogOut,
   Lock,
@@ -29,7 +27,6 @@ export default function TopHeader({
 }: TopHeaderProps) {
   const navigate = useNavigate()
   const { userInfo, logout } = useAuthStore()
-  const { theme, toggleTheme } = useThemeStore()
   const { todoCount } = useNotifyStore()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -63,67 +60,53 @@ export default function TopHeader({
   return (
     <header
       className={cn(
-        'h-[60px] flex-shrink-0 flex items-center justify-between px-4 sticky top-0 z-50 transition-colors duration-300'
+        'h-[60px] flex-shrink-0 flex items-center justify-between px-4 sticky top-0 z-50 transition-colors duration-300 backdrop-blur-md border-b border-[var(--color-border-light)] text-[var(--color-slate-title)]'
       )}
       style={{
-        background: 'var(--color-header-bg)',
-        color: 'var(--color-header-text)',
+        background: 'color-mix(in oklch, var(--bg) 82%, transparent)',
       }}
     >
       {/* Left */}
       <div className="flex items-center gap-3">
-        {/* Logo */}
-        <div className="w-[34px] h-[34px] bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
-          <span className="font-bold text-sm">矿</span>
+        {/* Brand glyph */}
+        <div className="w-[34px] h-[34px] rounded-btn flex items-center justify-center flex-shrink-0 text-primary bg-[var(--c-teal-dim)] border border-primary/35">
+          <Gem size={18} />
         </div>
 
         {/* Toggle Sidebar (desktop) */}
         <button
           onClick={onToggleSidebar}
-          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-white/15 transition-colors"
+          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-btn text-[var(--color-slate-body)] hover:bg-[var(--color-bg-soft)] hover:text-[var(--color-slate-title)] transition-colors"
         >
           {sidebarCollapsed ? (
-            <PanelLeftOpen size={20} className="opacity-90" />
+            <PanelLeftOpen size={20} />
           ) : (
-            <PanelLeftClose size={20} className="opacity-90" />
+            <PanelLeftClose size={20} />
           )}
         </button>
 
         {/* Hamburger (mobile) */}
         <button
           onClick={onOpenMobileMenu}
-          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-white/15 transition-colors"
+          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-btn text-[var(--color-slate-body)] hover:bg-[var(--color-bg-soft)] hover:text-[var(--color-slate-title)] transition-colors"
         >
-          <PanelLeftOpen size={20} className="opacity-90" />
+          <PanelLeftOpen size={20} />
         </button>
 
         {/* Title */}
-        <span className="hidden sm:block text-[17px] font-semibold tracking-wide">
-          莱矿-档案管理系统
+        <span className="hidden sm:block font-serif text-[17px] font-bold tracking-wide">
+          莱矿·灵动智档
         </span>
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-4">
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-white/15 transition-colors"
-          title="切换主题"
-        >
-          {theme === 'ocean' ? (
-            <Sun size={20} className="opacity-90" />
-          ) : (
-            <Moon size={20} className="opacity-90" />
-          )}
-        </button>
-
+      <div className="flex items-center gap-2">
         {/* Notification bell */}
         <button
           onClick={handleBellClick}
-          className="relative flex items-center justify-center w-8 h-8 rounded-lg hover:bg-white/15 transition-colors"
+          className="relative flex items-center justify-center w-9 h-9 rounded-btn text-[var(--color-slate-body)] hover:bg-[var(--color-bg-soft)] hover:text-[var(--color-slate-title)] transition-colors"
         >
-          <Bell size={20} className="opacity-90" />
+          <Bell size={19} />
           {todoCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
               {todoCount > 99 ? '99+' : todoCount}
@@ -135,9 +118,9 @@ export default function TopHeader({
         <div className="relative" ref={userMenuRef}>
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-2 cursor-pointer py-1 px-2 rounded-full hover:bg-white/15 transition-colors"
+            className="flex items-center gap-2 cursor-pointer py-1 px-2 rounded-btn hover:bg-[var(--color-bg-soft)] transition-colors"
           >
-            <div className="w-[30px] h-[30px] rounded-full bg-white/25 flex items-center justify-center text-xs font-bold flex-shrink-0">
+            <div className="w-[30px] h-[30px] rounded-btn bg-primary text-[#06201c] flex items-center justify-center text-xs font-bold flex-shrink-0">
               {userInfo?.nickname?.[0] ?? 'U'}
             </div>
             <span className="hidden md:block text-sm font-medium max-w-[90px] truncate">

@@ -355,7 +355,7 @@ export default function BorrowApproveView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -396,7 +396,7 @@ export default function BorrowApproveView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-44 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-44 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无待审批的借阅申请" />
@@ -407,7 +407,7 @@ export default function BorrowApproveView() {
                   >
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
+                        <div className="mb-0.5 font-mono text-[11px] text-[var(--text-faint)] truncate">
                           {borrow.archiveNo}
                         </div>
                         <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -423,19 +423,19 @@ export default function BorrowApproveView() {
 
                     <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">申请人</span>
+                        <span className="text-[var(--text-faint)]">申请人</span>
                         <span>{borrow.borrowerName || '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">部门</span>
+                        <span className="text-[var(--text-faint)]">部门</span>
                         <span className="truncate text-right">{borrow.borrowerDept || '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">申请份数</span>
+                        <span className="text-[var(--text-faint)]">申请份数</span>
                         <span>{borrow.applyCount} 份</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">申请时间</span>
+                        <span className="text-[var(--text-faint)]">申请时间</span>
                         <span>{borrow.createdAt?.slice(0, 16).replace('T', ' ') || '—'}</span>
                       </div>
                     </div>
@@ -511,16 +511,16 @@ export default function BorrowApproveView() {
                   <h4 className="mb-3 text-sm font-semibold text-slate-title">申请人信息</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-slate-body">
-                      <User size={14} className="text-slate-400" />
+                      <User size={14} className="text-[var(--text-faint)]" />
                       <span>{selected.borrowerName || '—'}</span>
                     </div>
                     <div className="flex items-center gap-2 text-slate-body">
-                      <Building size={14} className="text-slate-400" />
+                      <Building size={14} className="text-[var(--text-faint)]" />
                       <span>{selected.borrowerDept || '—'}</span>
                     </div>
                     {selected.borrowerPhone && (
                       <div className="flex items-center gap-2 text-slate-body">
-                        <Phone size={14} className="text-slate-400" />
+                        <Phone size={14} className="text-[var(--text-faint)]" />
                         <span>{selected.borrowerPhone}</span>
                       </div>
                     )}
@@ -556,7 +556,7 @@ export default function BorrowApproveView() {
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-slate-title">
                     审批意见
-                    <span className="ml-1 text-xs font-normal text-slate-400">（驳回时必填）</span>
+                    <span className="ml-1 text-xs font-normal text-[var(--text-faint)]">（驳回时必填）</span>
                   </label>
                   <textarea
                     value={opinion}
@@ -564,7 +564,7 @@ export default function BorrowApproveView() {
                     placeholder="请填写审批意见..."
                     rows={3}
                     className={cn(
-                      'w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary'
+                      'w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary'
                     )}
                   />
                 </div>

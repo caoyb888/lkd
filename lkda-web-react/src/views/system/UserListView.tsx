@@ -84,9 +84,9 @@ const ROLE_LABEL: Record<string, string> = {
 }
 
 const ROLE_BADGE_CLASS: Record<string, string> = {
-  ROLE_ADMIN: 'bg-slate-100 text-emerald-700',
-  ROLE_USER: 'bg-blue-50 text-blue-700',
-  ROLE_LEADER: 'bg-violet-50 text-violet-700',
+  ROLE_ADMIN: 'bg-[var(--color-bg-soft)] text-emerald-300',
+  ROLE_USER: 'bg-blue-500/15 text-blue-300',
+  ROLE_LEADER: 'bg-violet-500/15 text-violet-300',
 }
 
 const PASSWORD_REGEX =
@@ -263,7 +263,7 @@ export default function UserListView() {
                 key={r}
                 className={cn(
                   'inline-flex items-center rounded-tag px-2 py-0.5 text-xs font-medium',
-                  ROLE_BADGE_CLASS[r] ?? 'bg-slate-100 text-slate-600'
+                  ROLE_BADGE_CLASS[r] ?? 'bg-[var(--color-bg-soft)] text-slate-body'
                 )}
               >
                 {ROLE_LABEL[r] ?? r}
@@ -319,8 +319,8 @@ export default function UserListView() {
                       className={cn(
                         'h-7 w-7',
                         user.status === 1
-                          ? 'text-red-500 hover:bg-red-50'
-                          : 'text-green-600 hover:bg-green-50'
+                          ? 'text-red-400 hover:bg-red-500/15'
+                          : 'text-green-300 hover:bg-green-500/15'
                       )}
                       onClick={() => handleToggleStatus(user)}
                     >
@@ -590,7 +590,7 @@ export default function UserListView() {
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-10 animate-pulse rounded bg-slate-100"
+                  className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]"
                 />
               ))}
             </div>
@@ -640,7 +640,7 @@ export default function UserListView() {
             Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="h-40 animate-pulse rounded-card bg-slate-100"
+                className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]"
               />
             ))
           ) : records.length === 0 ? (
@@ -684,7 +684,7 @@ export default function UserListView() {
                           className={cn(
                             'inline-flex items-center rounded-tag px-2 py-0.5 text-xs font-medium',
                             ROLE_BADGE_CLASS[r] ??
-                              'bg-slate-100 text-slate-600'
+                              'bg-[var(--color-bg-soft)] text-slate-body'
                           )}
                         >
                           {ROLE_LABEL[r] ?? r}
@@ -774,7 +774,7 @@ export default function UserListView() {
                 <label className="mb-1.5 block text-sm font-semibold text-slate-body">
                   用户名{' '}
                   {isEdit && (
-                    <span className="text-xs font-normal text-slate-400">
+                    <span className="text-xs font-normal text-[var(--text-faint)]">
                       （不可修改）
                     </span>
                   )}
@@ -785,7 +785,7 @@ export default function UserListView() {
                   disabled={isEdit}
                 />
                 {drawerForm.formState.errors.username && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {drawerForm.formState.errors.username.message}
                   </p>
                 )}
@@ -800,7 +800,7 @@ export default function UserListView() {
                   placeholder="请输入显示昵称"
                 />
                 {drawerForm.formState.errors.nickname && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {drawerForm.formState.errors.nickname.message}
                   </p>
                 )}
@@ -816,7 +816,7 @@ export default function UserListView() {
                   maxLength={11}
                 />
                 {drawerForm.formState.errors.phone && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {drawerForm.formState.errors.phone.message}
                   </p>
                 )}
@@ -851,7 +851,7 @@ export default function UserListView() {
                   </SelectContent>
                 </Select>
                 {drawerForm.formState.errors.deptId && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {drawerForm.formState.errors.deptId.message}
                   </p>
                 )}
@@ -897,7 +897,7 @@ export default function UserListView() {
                             'flex h-4 w-4 items-center justify-center rounded border',
                             checked
                               ? 'border-primary bg-primary'
-                              : 'border-slate-300'
+                              : 'border-[var(--color-border-medium)]'
                           )}
                         >
                           {checked && (
@@ -921,7 +921,7 @@ export default function UserListView() {
                   })}
                 </div>
                 {drawerForm.formState.errors.roles && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-400">
                     {drawerForm.formState.errors.roles.message}
                   </p>
                 )}
@@ -937,7 +937,7 @@ export default function UserListView() {
                     type="password"
                     placeholder="字母 + 数字 + 特殊字符，长度 ≥ 6 位"
                   />
-                  <div className="mt-2 flex items-start gap-2 rounded-btn border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                  <div className="mt-2 flex items-start gap-2 rounded-btn border border-amber-500/30 bg-amber-500/15 p-3 text-xs text-amber-300">
                     <svg
                       width="14"
                       height="14"
@@ -947,7 +947,7 @@ export default function UserListView() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="mt-0.5 shrink-0 text-amber-500"
+                      className="mt-0.5 shrink-0 text-amber-400"
                     >
                       <circle cx="12" cy="12" r="10" />
                       <line x1="12" y1="16" x2="12" y2="12" />
@@ -957,7 +957,7 @@ export default function UserListView() {
                     &），且长度 ≥ 6 位
                   </div>
                   {drawerForm.formState.errors.password && (
-                    <p className="mt-1 text-xs text-red-500">
+                    <p className="mt-1 text-xs text-red-400">
                       {drawerForm.formState.errors.password.message}
                     </p>
                   )}
@@ -985,7 +985,7 @@ export default function UserListView() {
           <DialogHeader>
             <DialogTitle>重置密码</DialogTitle>
           </DialogHeader>
-          <div className="mb-4 flex items-center gap-2 rounded-btn border border-orange-200 bg-orange-50 p-3 text-sm text-orange-800">
+          <div className="mb-4 flex items-center gap-2 rounded-btn border border-orange-500/30 bg-orange-500/15 p-3 text-sm text-orange-300">
             <svg
               width="16"
               height="16"
@@ -1020,7 +1020,7 @@ export default function UserListView() {
                 placeholder="字母 + 数字 + 特殊字符，长度 ≥ 6 位"
               />
               {resetPwdForm.formState.errors.password && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {resetPwdForm.formState.errors.password.message}
                 </p>
               )}
@@ -1035,7 +1035,7 @@ export default function UserListView() {
                 placeholder="请再次输入新密码"
               />
               {resetPwdForm.formState.errors.confirm && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-400">
                   {resetPwdForm.formState.errors.confirm.message}
                 </p>
               )}

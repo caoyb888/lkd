@@ -1,0 +1,225 @@
+/* ============================================================
+   灵动智档 · 岩层 (STRATA) — page component classes
+   for LoginView + DashboardView.
+
+   Tokens (--c-teal, --bg, --surface, --radius, fonts, textures…)
+   are now defined globally in index.css :root — this file only
+   carries the bespoke component classes for the two richest
+   pages, scoped under `.strata` to avoid clashing with the
+   generic class names (.panel/.btn/.input/.tag/.field…).
+   ============================================================ */
+
+.strata {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- typography helpers ---- */
+.strata .mono { font-family: "Space Mono", "Space Grotesk", monospace; }
+.strata .grotesk { font-family: "Space Grotesk", sans-serif; }
+.strata .tnum { font-variant-numeric: tabular-nums; }
+.strata ::selection { background: var(--c-teal); color: #06201c; }
+
+/* ---- surfaces ---- */
+.strata .panel {
+  position: relative; border-radius: var(--radius-lg);
+  background: var(--surface); border: 1px solid var(--line);
+  box-shadow: var(--shadow); overflow: hidden;
+}
+.strata .panel::before {
+  content: ""; position: absolute; top: 9px; left: 9px;
+  width: 9px; height: 9px;
+  border-top: 1.5px solid var(--c-teal); border-left: 1.5px solid var(--c-teal);
+  opacity: 0.55; pointer-events: none; z-index: 2;
+}
+.strata .eyebrow {
+  font-family: "Space Mono", monospace; font-size: 10.5px;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-faint);
+}
+
+/* ---- buttons ---- */
+.strata .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: var(--radius); padding: 11px 18px; font-size: 14px; font-weight: 500;
+  border: 1px solid transparent; transition: all 0.18s var(--ease);
+  font-family: "Noto Sans SC", sans-serif; white-space: nowrap;
+}
+.strata .btn-primary {
+  background: var(--c-teal); color: #06201c; font-weight: 700;
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--c-teal) 60%, transparent), 0 10px 24px -12px var(--c-teal);
+}
+.strata .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.strata .btn-ghost { background: transparent; color: var(--text-dim); border-color: var(--line); }
+.strata .btn-ghost:hover { color: var(--text); border-color: var(--text-faint); background: var(--surface-2); }
+
+/* ---- form ---- */
+.strata .field { display: flex; flex-direction: column; gap: 8px; }
+.strata .field > label {
+  font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.12em;
+  color: var(--text-faint); text-transform: uppercase;
+}
+.strata .input-wrap { position: relative; display: flex; align-items: center; }
+.strata .input {
+  width: 100%; background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 13px 14px 13px 40px; font-size: 15px; font-family: inherit;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.strata .input:focus { outline: none; border-color: var(--c-teal); box-shadow: 0 0 0 3px var(--c-teal-dim); }
+.strata .input::placeholder { color: var(--text-faint); }
+.strata .input-wrap > .ico { position: absolute; left: 13px; color: var(--text-faint); display: flex; }
+
+/* ---- tags ---- */
+.strata .tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.04em;
+  padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line);
+  color: var(--text-dim); background: var(--surface-2);
+}
+.strata .tag.teal { color: var(--c-teal); border-color: color-mix(in oklch,var(--c-teal) 40%,transparent); background: var(--c-teal-dim); }
+.strata .tag.ore  { color: var(--c-ore);  border-color: color-mix(in oklch,var(--c-ore) 40%,transparent);  background: var(--c-ore-dim); }
+.strata .tag.flux { color: var(--c-flux); border-color: color-mix(in oklch,var(--c-flux) 40%,transparent); background: color-mix(in oklch,var(--c-flux) 14%,transparent); }
+.strata .dot { width: 7px; height: 7px; border-radius: 999px; display: inline-block; }
+
+/* ---- helpers ---- */
+.strata .flex { display: flex; }
+.strata .col { display: flex; flex-direction: column; }
+.strata .between { justify-content: space-between; }
+.strata .center { align-items: center; }
+.strata .link { font-size: 12px; color: var(--text-faint); text-decoration: none; cursor: pointer; }
+.strata .link:hover { color: var(--c-teal); }
+
+/* ---- scrollbars ---- */
+.strata *::-webkit-scrollbar { width: 9px; height: 9px; }
+.strata *::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; border: 2px solid var(--bg); }
+.strata *::-webkit-scrollbar-track { background: transparent; }
+
+/* ---- animations ---- */
+@keyframes strata-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(2200%); } }
+@keyframes strata-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes strata-sweep { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+@keyframes strata-pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes strata-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: no-preference) {
+  .strata .rise { animation: strata-rise 0.6s var(--ease) both; }
+  .strata .sweep { animation: strata-sweep 0.9s var(--ease) both; }
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+.strata.login-page { min-height: 100vh; }
+.strata .login { min-height: 100vh; display: grid; grid-template-columns: 0.92fr 1.08fr; }
+.strata .login-side { position: relative; overflow: hidden; }
+.strata .login-side-bg { position: absolute; inset: 0; }
+.strata .scanline { position: absolute; left: 0; right: 0; height: 80px; z-index: 4;
+  background: linear-gradient(180deg, transparent, color-mix(in oklch,var(--c-teal) 50%, transparent), transparent);
+  mix-blend-mode: screen; animation: strata-scan 7s linear infinite; opacity: .55; }
+.strata .login-ticks { position: absolute; right: 18px; top: 0; bottom: 0; z-index: 5;
+  display: flex; flex-direction: column; justify-content: space-between; padding: 40px 0;
+  font-size: 11px; color: rgba(255,255,255,.55); text-align: right; }
+.strata .login-ticks span { position: relative; padding-right: 14px; }
+.strata .login-ticks span::after { content: ""; position: absolute; right: 0; top: 50%; width: 8px; height: 1px; background: rgba(255,255,255,.5); }
+.strata .login-side-copy { position: absolute; left: 44px; top: 0; bottom: 0; z-index: 6; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+.strata .login-vert { font-size: clamp(48px, 7vw, 92px); line-height: 0.92; color: #fff; font-weight: 900;
+  text-shadow: 0 6px 30px rgba(0,0,0,.45); letter-spacing: -0.02em; }
+.strata .login-side-sub { color: rgba(255,255,255,.78); letter-spacing: 0.36em; font-size: 12px; }
+.strata .login-side-foot { position: absolute; left: 44px; bottom: 30px; z-index: 6; display: flex; flex-direction: column; gap: 5px;
+  font-size: 11px; color: rgba(255,255,255,.62); }
+.strata .login-main { display: grid; place-items: center; padding: 32px; background: var(--bg); position: relative; }
+.strata .login-card { width: 100%; max-width: 392px; display: flex; flex-direction: column; gap: 16px; }
+.strata .brandmark { display: flex; align-items: center; gap: 11px; margin-bottom: 6px; }
+.strata .bm-glyph { display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--radius);
+  color: var(--c-teal); background: var(--c-teal-dim); border: 1px solid color-mix(in oklch, var(--c-teal) 35%, transparent); }
+.strata .bm-name { font-family: "Noto Serif SC", serif; font-weight: 700; font-size: 16px; line-height: 1; }
+.strata .login-h h2 { font-size: 30px; }
+.strata .login-hint { color: var(--text-dim); font-size: 14px; margin: 6px 0 0; }
+.strata .login-row { display: flex; align-items: center; justify-content: space-between; margin-top: -2px; }
+.strata .check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-dim); cursor: pointer; user-select: none; }
+.strata .check .box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--line); display: grid; place-items: center; color: #06201c; transition: all .16s; }
+.strata .check .box.on { background: var(--c-teal); border-color: var(--c-teal); }
+.strata .login-go { width: 100%; padding: 14px; font-size: 15px; }
+.strata .login-go.busy { opacity: .8; pointer-events: none; }
+.strata .spinner { width: 18px; height: 18px; border: 2px solid rgba(6,32,28,.3); border-top-color: #06201c; border-radius: 99px; animation: strata-spin .7s linear infinite; }
+.strata .err { color: var(--c-flux); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.strata .login-foot { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+.strata .pwd-toggle { position: absolute; right: 12px; background: none; border: none; color: var(--text-faint); display: flex; }
+.strata .pwd-toggle:hover { color: var(--text-dim); }
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.strata.dash-page { min-height: 100%; }
+.strata .dash-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.strata .dash-title { font-size: 26px; margin-top: 4px; }
+.strata .dash-head-r { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.strata .dash-clock { font-size: 11px; color: var(--text-faint); margin-right: 4px; }
+
+.strata .panel-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 18px 18px 12px; }
+.strata .panel-h h3 { font-size: 18px; margin-top: 3px; }
+
+.strata .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+.strata .kpi { padding: 18px 18px 16px; }
+.strata .kpi-edge { position: absolute; top: 0; left: 0; right: 0; height: 3px; opacity: .9; z-index: 2; }
+.strata .kpi-edge.teal { background: var(--c-teal); }
+.strata .kpi-edge.ore { background: var(--c-ore); }
+.strata .kpi-edge.flux { background: var(--c-flux); }
+.strata .kpi-num { font-size: 36px; font-weight: 700; line-height: 1; display: flex; align-items: baseline; gap: 5px; color: var(--text); }
+.strata .kpi-num small { font-size: 13px; color: var(--text-faint); font-family: "Noto Sans SC"; }
+.strata .kpi-trend { font-size: 11px; color: var(--text-faint); letter-spacing: .04em; align-self: flex-end; }
+.strata .kpi-spark { height: 4px; margin-top: 14px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.strata .kpi-spark span { display: block; height: 100%; background: linear-gradient(90deg, var(--c-teal), color-mix(in oklch,var(--c-teal) 30%, transparent)); }
+
+.strata .dash-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: 16px;
+}
+.strata .core-panel { display: flex; flex-direction: column; }
+.strata .trend-panel { display: flex; flex-direction: column; }
+
+/* core sample */
+.strata .core { display: grid; grid-template-columns: 38px 1fr; gap: 12px; padding: 6px 18px 18px; flex: 1; min-height: 0; }
+.strata .core-ruler { position: relative; font-size: 10px; color: var(--text-faint); }
+.strata .core-ruler span { position: absolute; right: 0; transform: translateY(-50%); white-space: nowrap; }
+.strata .core-col { display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); min-height: 300px; }
+.strata .core-band { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; cursor: pointer; transition: filter .2s; overflow: hidden; }
+.strata .core-seam { position: absolute; inset: 0; background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(0,0,0,.10) 3px 4px); pointer-events: none; }
+.strata .core-info { display: flex; align-items: center; gap: 10px; z-index: 2; }
+.strata .core-code { font-size: 11px; font-weight: 700; color: rgba(0,0,0,.55); background: rgba(255,255,255,.45); padding: 2px 6px; border-radius: 4px; }
+.strata .core-name { font-family: "Noto Serif SC", serif; font-weight: 700; font-size: 16px; color: #1c150c; text-shadow: 0 1px 0 rgba(255,255,255,.25); }
+.strata .core-count { z-index: 2; color: #241a0e; font-size: 15px; font-weight: 700; display: flex; align-items: baseline; gap: 7px; }
+.strata .core-count small { font-size: 10px; opacity: .65; }
+.strata .core-read { grid-column: 1 / -1; margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.strata .core-total { font-size: 30px; font-weight: 700; display: flex; align-items: baseline; gap: 9px; margin-top: 6px; color: var(--text); }
+.strata .core-total small { font-size: 12px; color: var(--text-faint); font-family: "Noto Sans SC"; }
+.strata .core-note { color: var(--text-dim); font-size: 13px; margin: 8px 0 0; }
+
+/* trend */
+.strata .trend { padding: 4px 18px 16px; }
+.strata .trend-svg { width: 100%; height: 220px; display: block; }
+.strata .trend-x { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-faint); margin-top: 6px; }
+.strata .legend { display: flex; gap: 14px; font-size: 11px; color: var(--text-dim); }
+.strata .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+
+/* states */
+.strata .dash-skeleton { height: 100%; border-radius: var(--radius-lg); background: var(--surface-2); animation: strata-pulse 1.4s ease-in-out infinite; }
+.strata .dash-error { border-color: color-mix(in oklch,var(--c-flux) 40%,transparent); }
+.strata .dash-error p { color: var(--c-flux); padding: 24px; text-align: center; font-size: 14px; }
+
+/* ---- responsive ---- */
+@media (max-width: 1100px) {
+  .strata .kpi-row { grid-template-columns: 1fr 1fr; }
+  .strata .dash-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .strata .login { grid-template-columns: 1fr; grid-template-rows: 200px 1fr; }
+  .strata .login-vert { font-size: 46px; }
+  .strata .login-side-copy { left: 28px; }
+  .strata .login-side-foot, .strata .login-ticks { display: none; }
+}
+@media (max-width: 560px) {
+  .strata .kpi-row { grid-template-columns: 1fr 1fr; gap: 11px; }
+}

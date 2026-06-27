@@ -6,7 +6,7 @@ export default function PendingAuditView() {
   return (
     <ApproveQueueView
       title="待审核队列"
-      pageIcon={<Clock size={22} className="text-yellow-600" />}
+      pageIcon={<Clock size={22} className="text-yellow-300" />}
       queryKeyPrefix="approve-review"
       fetchList={ApproveApi.pendingReview}
       doApprove={ApproveApi.review}

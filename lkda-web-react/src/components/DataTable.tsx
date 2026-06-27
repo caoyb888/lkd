@@ -8,7 +8,7 @@ export default function DataTable({ className }: DataTableProps) {
   return (
     <div className={cn('w-full overflow-auto', className)}>
       <table className="w-full text-sm">
-        <thead className="bg-slate-50">
+        <thead className="bg-[var(--color-bg-lighter)]">
           <tr>
             <th className="px-4 py-3 text-left font-medium text-slate-title">列1</th>
             <th className="px-4 py-3 text-left font-medium text-slate-title">列2</th>

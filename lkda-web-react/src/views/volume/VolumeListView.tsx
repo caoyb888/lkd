@@ -86,11 +86,11 @@ const STOCK_OPTIONS = [
 ]
 
 const SECURITY_CLASS: Record<string, string> = {
-  public: 'bg-green-50 text-green-700',
-  internal: 'bg-blue-50 text-blue-700',
-  secret: 'bg-yellow-50 text-yellow-700',
-  confidential: 'bg-orange-50 text-orange-700',
-  topsecret: 'bg-red-50 text-red-700',
+  public: 'bg-green-500/15 text-green-300',
+  internal: 'bg-blue-500/15 text-blue-300',
+  secret: 'bg-yellow-500/15 text-yellow-300',
+  confidential: 'bg-orange-500/15 text-orange-300',
+  topsecret: 'bg-red-500/15 text-red-300',
 }
 
 /* ── 年度选项（2018 - 当前年）────────────────────────────────── */
@@ -145,7 +145,7 @@ export default function VolumeListView() {
         id: 'seq',
         header: '序号',
         cell: ({ row }) => (
-          <span className="text-xs text-slate-400 tabular-nums">
+          <span className="text-xs text-[var(--text-faint)] tabular-nums">
             {((query.current ?? 1) - 1) * PAGE_SIZE + row.index + 1}
           </span>
         ),
@@ -187,7 +187,7 @@ export default function VolumeListView() {
             <span
               className={cn(
                 'inline-flex items-center rounded-tag px-2 py-0.5 text-xs font-medium whitespace-nowrap',
-                SECURITY_CLASS[val] ?? 'bg-slate-100 text-slate-600'
+                SECURITY_CLASS[val] ?? 'bg-[var(--color-bg-soft)] text-slate-body'
               )}
             >
               {label}
@@ -264,7 +264,7 @@ export default function VolumeListView() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-green-600 hover:bg-green-50"
+                        className="h-7 w-7 text-green-300 hover:bg-green-500/15"
                         onClick={() => goBorrow(vol)}
                       >
                         <BookOpen size={14} />
@@ -610,7 +610,7 @@ export default function VolumeListView() {
             {isLoading ? (
               <div className="space-y-3 p-8">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                  <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
                 ))}
               </div>
             ) : records.length === 0 ? (
@@ -657,7 +657,7 @@ export default function VolumeListView() {
           <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
             {isLoading
               ? Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-48 animate-pulse rounded-card bg-slate-100" />
+                  <div key={i} className="h-48 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
                 ))
               : records.length === 0
                 ? <EmptyState description="暂无案卷数据，试试调整检索条件" />
@@ -669,7 +669,7 @@ export default function VolumeListView() {
                     >
                       <div className="mb-3 flex items-start justify-between">
                         <div>
-                          <div className="mb-1 font-mono text-xs text-slate-400">
+                          <div className="mb-1 font-mono text-xs text-[var(--text-faint)]">
                             {vol.archiveNo}
                           </div>
                           <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -704,7 +704,7 @@ export default function VolumeListView() {
                           <Button
                             variant="link"
                             size="sm"
-                            className="h-7 px-1 text-green-600"
+                            className="h-7 px-1 text-green-300"
                             onClick={(e) => {
                               e.stopPropagation()
                               goBorrow(vol)
@@ -734,7 +734,7 @@ export default function VolumeListView() {
             loadingSkeleton={
               <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-44 animate-pulse rounded-card bg-slate-100" />
+                  <div key={i} className="h-44 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
                 ))}
               </div>
             }
@@ -750,10 +750,10 @@ export default function VolumeListView() {
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="mb-0.5 flex items-center gap-2">
-                      <span className="inline-flex h-4 min-w-[1.25rem] items-center justify-center rounded bg-slate-100 px-1 text-[10px] font-medium tabular-nums text-slate-400">
+                      <span className="inline-flex h-4 min-w-[1.25rem] items-center justify-center rounded bg-[var(--color-bg-soft)] px-1 text-[10px] font-medium tabular-nums text-[var(--text-faint)]">
                         {((query.current ?? 1) - 1) * PAGE_SIZE + idx + 1}
                       </span>
-                      <span className="font-mono text-[11px] text-slate-400 truncate">
+                      <span className="font-mono text-[11px] text-[var(--text-faint)] truncate">
                         {vol.archiveNo}
                       </span>
                     </div>
@@ -766,23 +766,23 @@ export default function VolumeListView() {
 
                 <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">年度</span>
+                    <span className="text-[var(--text-faint)]">年度</span>
                     <span>{vol.year} 年</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">在库</span>
+                    <span className="text-[var(--text-faint)]">在库</span>
                     <StatusTag type="stock" value={vol.inStock} />
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">一级类目</span>
+                    <span className="text-[var(--text-faint)]">一级类目</span>
                     <span className="truncate text-right">{vol.categoryL1Label || vol.categoryL1 || '—'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">密级</span>
+                    <span className="text-[var(--text-faint)]">密级</span>
                     <span className="truncate text-right">{vol.securityLevelLabel || vol.securityLevel || '—'}</span>
                   </div>
                   <div className="flex justify-between col-span-2">
-                    <span className="text-slate-400">保管期限</span>
+                    <span className="text-[var(--text-faint)]">保管期限</span>
                     <span>{vol.retentionPeriodLabel || vol.retentionPeriod || '—'}</span>
                   </div>
                 </div>

@@ -6,7 +6,7 @@ export default function PendingConfirmView() {
   return (
     <ApproveQueueView
       title="待确认队列"
-      pageIcon={<UserCheck size={22} className="text-blue-600" />}
+      pageIcon={<UserCheck size={22} className="text-blue-300" />}
       queryKeyPrefix="approve-confirm"
       fetchList={ApproveApi.pendingConfirm}
       doApprove={ApproveApi.confirm}

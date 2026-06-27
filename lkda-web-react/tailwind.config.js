@@ -5,29 +5,35 @@ export default {
   theme: {
     extend: {
       colors: {
+        // 灵动智档 · 岩层 (STRATA) — brand teal as the single accent
         primary: {
-          DEFAULT: '#14B8A6',
-          light: '#5EEAD4',
-          dark: '#0F766E',
+          DEFAULT: 'oklch(0.74 0.122 182 / <alpha-value>)',
+          light: 'oklch(0.82 0.10 182 / <alpha-value>)',
+          dark: 'oklch(0.62 0.12 182 / <alpha-value>)',
         },
-        accent: '#FB923C',
+        accent: 'oklch(0.74 0.122 64 / <alpha-value>)', // ore / copper
         background: {
-          main: '#FFFFFF',
-          aside: '#ECFDF5',
-          soft: '#F0FDFA',
+          main: 'oklch(0.205 0.008 168 / <alpha-value>)',
+          aside: 'oklch(0.205 0.008 168 / <alpha-value>)',
+          soft: 'oklch(0.245 0.009 168 / <alpha-value>)',
         },
+        // merges into Tailwind's built-in slate scale (50..950 stay available)
         slate: {
-          title: '#1E293B',
-          body: '#475569',
+          title: 'oklch(0.955 0.008 150 / <alpha-value>)',
+          body: 'oklch(0.74 0.010 160 / <alpha-value>)',
         },
       },
+      fontFamily: {
+        serif: ['"Noto Serif SC"', '"Noto Sans SC"', 'serif'],
+        mono: ['"Space Mono"', '"Space Grotesk"', 'monospace'],
+      },
       borderRadius: {
-        card: '16px',
-        btn: '8px',
+        card: '10px',
+        btn: '4px',
         tag: '999px',
       },
       boxShadow: {
-        card: '0 2px 12px rgba(20, 184, 166, 0.08)',
+        card: '0 1px 0 oklch(1 0 0 / 0.04) inset, 0 18px 40px -24px oklch(0 0 0 / 0.8)',
       },
     },
   },

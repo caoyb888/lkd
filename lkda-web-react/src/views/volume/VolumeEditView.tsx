@@ -43,10 +43,10 @@ const YEAR_OPTIONS = Array.from(
 )
 
 const STATUS_TAG: Record<number, { text: string; className: string }> = {
-  0: { text: '草稿', className: 'bg-slate-100 text-slate-600' },
-  1: { text: '待审核', className: 'bg-yellow-50 text-yellow-700' },
-  2: { text: '待确认', className: 'bg-blue-50 text-blue-700' },
-  3: { text: '已归档', className: 'bg-emerald-50 text-emerald-700' },
+  0: { text: '草稿', className: 'bg-[var(--color-bg-soft)] text-slate-body' },
+  1: { text: '待审核', className: 'bg-yellow-500/15 text-yellow-300' },
+  2: { text: '待确认', className: 'bg-blue-500/15 text-blue-300' },
+  3: { text: '已归档', className: 'bg-emerald-500/15 text-emerald-300' },
 }
 
 /* ── Zod 校验 ───────────────────────────────────────────────── */
@@ -113,7 +113,7 @@ function FormSection({
           <div className="h-4 w-1 rounded-full bg-gradient-to-b from-primary to-primary-dark" />
           <CardTitle className="text-base">{title}</CardTitle>
           {subtitle && (
-            <span className="text-xs text-slate-400">{subtitle}</span>
+            <span className="text-xs text-[var(--text-faint)]">{subtitle}</span>
           )}
         </div>
       </CardHeader>
@@ -133,14 +133,14 @@ function FieldLabel({
   return (
     <label className="mb-1.5 block text-sm font-medium text-slate-body">
       {children}
-      {required && <span className="ml-0.5 text-red-500">*</span>}
+      {required && <span className="ml-0.5 text-red-400">*</span>}
     </label>
   )
 }
 
 function ErrorText({ message }: { message?: string }) {
   if (!message) return null
-  return <p className="mt-1 text-xs text-red-500">{message}</p>
+  return <p className="mt-1 text-xs text-red-400">{message}</p>
 }
 
 /* ── 页面组件 ───────────────────────────────────────────────── */
@@ -609,7 +609,7 @@ export default function VolumeEditView() {
               {previewLoading ? (
                 <>
                   <Loader2 size={18} className="animate-spin text-primary" />
-                  <span className="text-sm text-slate-400">
+                  <span className="text-sm text-[var(--text-faint)]">
                     正在生成档号…
                   </span>
                 </>
@@ -622,8 +622,8 @@ export default function VolumeEditView() {
                 </>
               ) : (
                 <>
-                  <FileText size={18} className="text-slate-400" />
-                  <span className="text-sm text-slate-400">
+                  <FileText size={18} className="text-[var(--text-faint)]" />
+                  <span className="text-sm text-[var(--text-faint)]">
                     填写全宗号、年度、一级类目、设备代号后自动生成
                   </span>
                 </>
@@ -824,7 +824,7 @@ export default function VolumeEditView() {
                 placeholder="请输入备考说明（选填）"
                 disabled={readonly}
                 className={cn(
-                  'w-full resize-y rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:cursor-not-allowed disabled:opacity-50'
+                  'w-full resize-y rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:cursor-not-allowed disabled:opacity-50'
                 )}
               />
             </div>
@@ -839,7 +839,7 @@ export default function VolumeEditView() {
                 placeholder="请输入备注（选填）"
                 disabled={readonly}
                 className={cn(
-                  'w-full resize-y rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:cursor-not-allowed disabled:opacity-50'
+                  'w-full resize-y rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:cursor-not-allowed disabled:opacity-50'
                 )}
               />
             </div>

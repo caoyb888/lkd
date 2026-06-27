@@ -178,7 +178,7 @@ export default function DestroyApplyView() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 text-red-600 hover:bg-red-50"
+                    className="h-7 w-7 text-red-300 hover:bg-red-500/15"
                     onClick={() => openConfirm(vol)}
                   >
                     <Trash2 size={14} />
@@ -237,13 +237,13 @@ export default function DestroyApplyView() {
     <div className="space-y-4">
       {confirmTarget && (
         <>
-          <div className="rounded-card border border-red-200 bg-red-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-red-700">
+          <div className="rounded-card border border-red-500/30 bg-red-500/15 p-4">
+            <div className="mb-2 flex items-center gap-2 text-red-300">
               <AlertTriangle size={18} />
               <span className="text-sm font-semibold">高危操作确认</span>
             </div>
             <div className="space-y-1 text-sm text-slate-body">
-              <div className="font-mono text-xs text-red-600">{confirmTarget.archiveNo}</div>
+              <div className="font-mono text-xs text-red-300">{confirmTarget.archiveNo}</div>
               <div className="font-medium text-slate-title">{confirmTarget.volumeTitle}</div>
             </div>
           </div>
@@ -251,30 +251,30 @@ export default function DestroyApplyView() {
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-title">
               请输入档号以确认销毁申请
-              <span className="ml-1 text-xs font-normal text-slate-400">（防止误操作）</span>
+              <span className="ml-1 text-xs font-normal text-[var(--text-faint)]">（防止误操作）</span>
             </label>
             <Input
               value={confirmInput}
               onChange={(e) => setConfirmInput(e.target.value)}
               placeholder={`输入：${confirmTarget.archiveNo}`}
-              className={confirmInput && confirmInput !== confirmTarget.archiveNo ? 'border-red-300 focus:border-red-500 focus:ring-red-500/30' : ''}
+              className={confirmInput && confirmInput !== confirmTarget.archiveNo ? 'border-red-500/40 focus:border-red-500 focus:ring-red-500/30' : ''}
             />
             {confirmInput && confirmInput !== confirmTarget.archiveNo && (
-              <p className="mt-1 text-xs text-red-500">档号输入不一致</p>
+              <p className="mt-1 text-xs text-red-400">档号输入不一致</p>
             )}
           </div>
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-body">
               销毁原因
-              <span className="ml-1 text-xs font-normal text-slate-400">（选填）</span>
+              <span className="ml-1 text-xs font-normal text-[var(--text-faint)]">（选填）</span>
             </label>
             <textarea
               value={confirmOpinion}
               onChange={(e) => setConfirmOpinion(e.target.value)}
               placeholder="请说明销毁原因..."
               rows={3}
-              className="w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              className="w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
             />
           </div>
         </>
@@ -287,7 +287,7 @@ export default function DestroyApplyView() {
       {/* ── 电脑端：标题 + 检索区合并 ──────────────────────────── */}
       <div className="mb-3 hidden md:block">
         <div className="mb-2 flex items-center gap-2">
-          <FileX size={20} className="text-red-600" />
+          <FileX size={20} className="text-red-300" />
           <h2 className="text-xl font-bold text-slate-title">销毁申请</h2>
         </div>
         <div className="rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-4 py-2.5">
@@ -309,7 +309,7 @@ export default function DestroyApplyView() {
 
       {/* ── 手机端标题 ─────────────────────────────────────────── */}
       <PageHeader
-        title={<span className="flex items-center gap-2"><FileX size={22} className="text-red-600" />销毁申请</span>}
+        title={<span className="flex items-center gap-2"><FileX size={22} className="text-red-300" />销毁申请</span>}
         className="md:hidden"
       />
 
@@ -344,7 +344,7 @@ export default function DestroyApplyView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -385,7 +385,7 @@ export default function DestroyApplyView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-40 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无可申请销毁的已归档案卷" />
@@ -396,7 +396,7 @@ export default function DestroyApplyView() {
                   >
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="mb-0.5 font-mono text-[11px] text-slate-400 truncate">
+                        <div className="mb-0.5 font-mono text-[11px] text-[var(--text-faint)] truncate">
                           {vol.archiveNo}
                         </div>
                         <div className="text-sm font-semibold text-slate-title line-clamp-2">
@@ -408,15 +408,15 @@ export default function DestroyApplyView() {
 
                     <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-body">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">年度</span>
+                        <span className="text-[var(--text-faint)]">年度</span>
                         <span>{vol.year} 年</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">一级类目</span>
+                        <span className="text-[var(--text-faint)]">一级类目</span>
                         <span className="truncate text-right">{vol.categoryL1Label || vol.categoryL1 || '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">立卷人</span>
+                        <span className="text-[var(--text-faint)]">立卷人</span>
                         <span>{vol.compiler || '—'}</span>
                       </div>
                     </div>
@@ -483,7 +483,7 @@ export default function DestroyApplyView() {
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-700">
+            <DialogTitle className="flex items-center gap-2 text-red-300">
               <AlertTriangle size={20} />
               确认申请销毁
             </DialogTitle>
@@ -512,7 +512,7 @@ export default function DestroyApplyView() {
       <Drawer open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle className="flex items-center gap-2 text-red-700">
+            <DrawerTitle className="flex items-center gap-2 text-red-300">
               <AlertTriangle size={20} />
               确认申请销毁
             </DrawerTitle>

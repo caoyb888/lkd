@@ -51,7 +51,7 @@ function InfoItem({
 }) {
   return (
     <div className="flex justify-between gap-2 text-sm">
-      <span className="text-slate-400">{label}</span>
+      <span className="text-[var(--text-faint)]">{label}</span>
       <span className="text-right text-slate-title">{children}</span>
     </div>
   )
@@ -136,8 +136,8 @@ export default function BorrowApplyView() {
       <div className="p-4 md:p-6">
         <PageHeader title="发起借阅申请" />
         <div className="space-y-4">
-          <div className="h-40 animate-pulse rounded-card bg-slate-100" />
-          <div className="h-72 animate-pulse rounded-card bg-slate-100" />
+          <div className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
+          <div className="h-72 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
         </div>
       </div>
     )
@@ -223,7 +223,7 @@ export default function BorrowApplyView() {
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-body">
                   申请份数
-                  <span className="ml-2 text-xs font-normal text-slate-400">
+                  <span className="ml-2 text-xs font-normal text-[var(--text-faint)]">
                     （剩余 {availableCopies} 份）
                   </span>
                 </label>
@@ -241,10 +241,10 @@ export default function BorrowApplyView() {
                   )}
                 />
                 {countError && (
-                  <p className="mt-1.5 text-xs text-red-500">{countError}</p>
+                  <p className="mt-1.5 text-xs text-red-400">{countError}</p>
                 )}
                 {form.formState.errors.applyCount && !countError && (
-                  <p className="mt-1.5 text-xs text-red-500">
+                  <p className="mt-1.5 text-xs text-red-400">
                     {form.formState.errors.applyCount.message}
                   </p>
                 )}
@@ -253,7 +253,7 @@ export default function BorrowApplyView() {
               {/* 计划归还日期 */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-body">
-                  计划归还日期 <span className="text-red-500">*</span>
+                  计划归还日期 <span className="text-red-400">*</span>
                 </label>
                 <Controller
                   name="planReturnDate"
@@ -267,7 +267,7 @@ export default function BorrowApplyView() {
                   )}
                 />
                 {form.formState.errors.planReturnDate && (
-                  <p className="mt-1.5 text-xs text-red-500">
+                  <p className="mt-1.5 text-xs text-red-400">
                     {form.formState.errors.planReturnDate.message}
                   </p>
                 )}
@@ -276,7 +276,7 @@ export default function BorrowApplyView() {
               {/* 借阅原因 */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-body">
-                  借阅原因 <span className="text-red-500">*</span>
+                  借阅原因 <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   {...form.register('reason')}
@@ -284,11 +284,11 @@ export default function BorrowApplyView() {
                   placeholder="请说明借阅用途，至少 5 个字"
                   maxLength={500}
                   className={cn(
-                    'w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary'
+                    'w-full resize-none rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2.5 text-sm text-[var(--color-slate-title)] placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary'
                   )}
                 />
                 {form.formState.errors.reason && (
-                  <p className="mt-1.5 text-xs text-red-500">
+                  <p className="mt-1.5 text-xs text-red-400">
                     {form.formState.errors.reason.message}
                   </p>
                 )}
@@ -351,7 +351,7 @@ export default function BorrowApplyView() {
                 <span
                   className={cn(
                     'font-semibold',
-                    availableCopies > 0 ? 'text-primary-dark' : 'text-red-500'
+                    availableCopies > 0 ? 'text-primary-dark' : 'text-red-400'
                   )}
                 >
                   {availableCopies} 份
@@ -370,8 +370,8 @@ export default function BorrowApplyView() {
               </div>
 
               {availableCopies <= 0 && (
-                <div className="rounded-lg bg-red-50 p-3 text-center">
-                  <p className="text-sm font-medium text-red-600">
+                <div className="rounded-lg bg-red-500/15 p-3 text-center">
+                  <p className="text-sm font-medium text-red-300">
                     该档案已全部借出，暂不可申请
                   </p>
                 </div>

@@ -71,9 +71,9 @@ const ACTION_OPTIONS = [
 ]
 
 const ACTION_STYLE: Record<string, { label: string; className: string }> = {
-  PASS: { label: '通过', className: 'bg-emerald-50 text-emerald-700' },
-  REJECT: { label: '驳回', className: 'bg-red-50 text-red-700' },
-  BACK: { label: '退回', className: 'bg-blue-50 text-blue-700' },
+  PASS: { label: '通过', className: 'bg-emerald-500/15 text-emerald-300' },
+  REJECT: { label: '驳回', className: 'bg-red-500/15 text-red-300' },
+  BACK: { label: '退回', className: 'bg-blue-500/15 text-blue-300' },
 }
 
 const BIZ_TYPE_LABEL: Record<number, string> = {
@@ -140,7 +140,7 @@ export default function AuditLogView() {
             <span
               className={cn(
                 'text-sm',
-                isDestroy ? 'text-red-700 font-semibold' : 'text-slate-title'
+                isDestroy ? 'text-red-300 font-semibold' : 'text-slate-title'
               )}
             >
               {BIZ_TYPE_LABEL[val] || val}
@@ -167,7 +167,7 @@ export default function AuditLogView() {
         cell: (info) => {
           const style = ACTION_STYLE[info.getValue()] ?? {
             label: info.row.original.actionName || info.getValue(),
-            className: 'bg-slate-100 text-slate-600',
+            className: 'bg-[var(--color-bg-soft)] text-slate-body',
           }
           return (
             <span
@@ -307,7 +307,7 @@ export default function AuditLogView() {
           onClick={() => setDateDrawerOpen(true)}
           className={cn(
             'flex h-10 w-full items-center justify-between rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 py-2 text-sm',
-            !dateRange?.from && 'text-slate-400'
+            !dateRange?.from && 'text-[var(--text-faint)]'
           )}
         >
           <span className="flex items-center gap-2">
@@ -316,7 +316,7 @@ export default function AuditLogView() {
           </span>
           {dateRange?.from && (
             <span
-              className="text-xs text-slate-400 hover:text-red-500"
+              className="text-xs text-[var(--text-faint)] hover:text-red-400"
               onClick={(e) => {
                 e.stopPropagation()
                 clearDateRange()
@@ -401,7 +401,7 @@ export default function AuditLogView() {
             onClick={() => setDateDrawerOpen(true)}
             className={cn(
               'flex h-10 w-52 items-center justify-between rounded-btn border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-3 text-sm',
-              !dateRange?.from && 'text-slate-400'
+              !dateRange?.from && 'text-[var(--text-faint)]'
             )}
           >
             <span className="flex items-center gap-2 truncate">
@@ -410,7 +410,7 @@ export default function AuditLogView() {
             </span>
             {dateRange?.from && (
               <span
-                className="ml-1 shrink-0 text-xs text-slate-400 hover:text-red-500"
+                className="ml-1 shrink-0 text-xs text-[var(--text-faint)] hover:text-red-400"
                 onClick={(e) => { e.stopPropagation(); clearDateRange() }}
               >
                 清除
@@ -465,7 +465,7 @@ export default function AuditLogView() {
           <span className="text-sm text-slate-body">
             共 <strong className="text-primary-dark">{pageData?.total ?? 0}</strong> 条记录
           </span>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-[var(--text-faint)]">
             日志不可删除、不可编辑
           </span>
         </div>
@@ -475,7 +475,7 @@ export default function AuditLogView() {
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-[var(--color-bg-soft)]" />
               ))}
             </div>
           ) : records.length === 0 ? (
@@ -505,7 +505,7 @@ export default function AuditLogView() {
                     <TableRow
                       key={row.id}
                       className={cn(
-                        destroyRow && 'bg-red-50/60 hover:bg-red-50'
+                        destroyRow && 'bg-red-500/10 hover:bg-red-500/15'
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -525,7 +525,7 @@ export default function AuditLogView() {
         <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-40 animate-pulse rounded-card bg-slate-100" />
+                <div key={i} className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
               ))
             : records.length === 0
               ? <EmptyState description="暂无审计日志记录" />
@@ -533,7 +533,7 @@ export default function AuditLogView() {
                   const destroyCard = isDestroyLog(log)
                   const actionStyle = ACTION_STYLE[log.action] ?? {
                     label: log.actionName || log.action,
-                    className: 'bg-slate-100 text-slate-600',
+                    className: 'bg-[var(--color-bg-soft)] text-slate-body',
                   }
                   return (
                     <div
@@ -541,7 +541,7 @@ export default function AuditLogView() {
                       className={cn(
                         'rounded-card border p-4 shadow-card active:scale-[0.99] transition-transform',
                         destroyCard
-                          ? 'border-red-200 bg-red-50'
+                          ? 'border-red-500/30 bg-red-500/15'
                           : 'border-[var(--color-border-light)] bg-[var(--color-bg-main)]'
                       )}
                     >
@@ -549,12 +549,12 @@ export default function AuditLogView() {
                       <div className="mb-2 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           {destroyCard && (
-                            <AlertTriangle size={14} className="text-red-600" />
+                            <AlertTriangle size={14} className="text-red-300" />
                           )}
                           <span
                             className={cn(
                               'text-sm font-semibold',
-                              destroyCard ? 'text-red-700' : 'text-slate-title'
+                              destroyCard ? 'text-red-300' : 'text-slate-title'
                             )}
                           >
                             {BIZ_TYPE_LABEL[log.businessType] || log.businessType}
@@ -571,18 +571,18 @@ export default function AuditLogView() {
                       </div>
 
                       {/* 档号 */}
-                      <div className="mb-2 font-mono text-[11px] text-slate-400 truncate">
+                      <div className="mb-2 font-mono text-[11px] text-[var(--text-faint)] truncate">
                         {log.targetArchiveNo || '—'}
                       </div>
 
                       {/* 明细 */}
                       <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-body">
                         <div className="flex justify-between">
-                          <span className="text-slate-400">操作人</span>
+                          <span className="text-[var(--text-faint)]">操作人</span>
                           <span>{log.approverName || '—'}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">操作时间</span>
+                          <span className="text-[var(--text-faint)]">操作时间</span>
                           <span>{log.createdAt?.slice(0, 16).replace('T', ' ') || '—'}</span>
                         </div>
                       </div>
@@ -592,10 +592,10 @@ export default function AuditLogView() {
                         <div
                           className={cn(
                             'rounded-lg p-3 text-sm leading-relaxed',
-                            destroyCard ? 'bg-red-100/50 text-red-800' : 'bg-[var(--color-bg-soft)] text-slate-body'
+                            destroyCard ? 'bg-red-500/15 text-red-300' : 'bg-[var(--color-bg-soft)] text-slate-body'
                           )}
                         >
-                          <span className="mb-1 block text-[10px] font-medium text-slate-400">
+                          <span className="mb-1 block text-[10px] font-medium text-[var(--text-faint)]">
                             审批意见
                           </span>
                           {log.opinion}
@@ -675,7 +675,7 @@ export default function AuditLogView() {
                   chevron: 'fill-[var(--color-slate-title)]',
                   month_grid: 'w-full border-collapse',
                   weekdays: 'flex',
-                  weekday: 'text-slate-400 rounded-md w-9 font-normal text-[0.8rem] text-center',
+                  weekday: 'text-[var(--text-faint)] rounded-md w-9 font-normal text-[0.8rem] text-center',
                   weeks: 'space-y-1',
                   week: 'flex w-full',
                   day: 'text-center text-sm p-0 relative w-9 h-9',
@@ -687,8 +687,8 @@ export default function AuditLogView() {
                   range_end: 'bg-primary text-white hover:bg-primary hover:text-white',
                   range_middle: 'bg-primary/20 text-primary-dark',
                   today: 'bg-accent/10 text-accent',
-                  outside: 'text-slate-400 opacity-50',
-                  disabled: 'text-slate-400 opacity-50',
+                  outside: 'text-[var(--text-faint)] opacity-50',
+                  disabled: 'text-[var(--text-faint)] opacity-50',
                 }}
               />
             </div>
