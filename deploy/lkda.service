@@ -1,0 +1,53 @@
+# ───────────────────────────────────────────────────────────────
+# 莱矿-档案管理系统 后端 systemd 服务单元
+# 安装:  sudo cp deploy/lkda.service /etc/systemd/system/lkda.service
+#        sudo systemctl daemon-reload
+#        sudo systemctl enable --now lkda
+# 查看:  systemctl status lkda   |   journalctl -u lkda -f
+#
+# 机器: 12C / 32G / Ubuntu 24.04，JVM 用 G1GC、堆 2~8G。
+# 若 SQL Server 与本服务同机部署，请相应调低 -Xmx 并给 SQL Server
+# 设置 'max server memory'（见 deploy/README.md 内存规划）。
+# ───────────────────────────────────────────────────────────────
+[Unit]
+Description=LKDA Archive Backend (Spring Boot)
+Documentation=file:/opt/lkda/deploy/README.md
+After=network-online.target
+Wants=network-online.target
+# 若数据库在同机（SQL Server on Linux），可解开下一行确保启动顺序
+# After=mssql-server.service
+
+[Service]
+Type=simple
+User=lkda
+Group=lkda
+WorkingDirectory=/opt/lkda
+# 机密（DB 账号密码等）放在 0600 权限的 env 文件，绝不写进 jar / git
+EnvironmentFile=/opt/lkda/lkda.env
+ExecStart=/usr/bin/java \
+  -Xms2g -Xmx8g \
+  -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \
+  -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/lkda/logs \
+  -Dfile.encoding=UTF-8 \
+  -Djava.security.egd=file:/dev/./urandom \
+  -jar /opt/lkda/archive-1.0.0.jar \
+  --spring.profiles.active=prod
+
+SuccessExitStatus=143
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+
+# ── 安全加固（systemd sandbox）────────────────────────────────
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+# 允许写入的目录（日志、上传件）
+ReadWritePaths=/opt/lkda/logs /data/lkda-uploads
+
+# ── 资源/句柄 ─────────────────────────────────────────────────
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

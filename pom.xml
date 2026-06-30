@@ -65,10 +65,17 @@
             <version>${mybatis-plus.version}</version>
         </dependency>
 
-        <!-- MySQL 驱动 -->
+        <!-- MySQL 驱动（dev profile 使用） -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- SQL Server 驱动（prod profile 使用；版本由 Spring Boot BOM 管理） -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
             <scope>runtime</scope>
         </dependency>
 
