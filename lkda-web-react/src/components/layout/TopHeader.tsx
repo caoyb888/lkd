@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
 import { useNotifyStore } from '@/stores/notifyStore'
+import { useThemeStore } from '@/stores/themeStore'
 import {
   PanelLeftOpen,
   PanelLeftClose,
@@ -11,6 +12,8 @@ import {
   Lock,
   User,
   ChevronDown,
+  Sun,
+  Mountain,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
@@ -28,6 +31,7 @@ export default function TopHeader({
   const navigate = useNavigate()
   const { userInfo, logout } = useAuthStore()
   const { todoCount } = useNotifyStore()
+  const { theme, themeLabel, toggleTheme } = useThemeStore()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -101,6 +105,16 @@ export default function TopHeader({
 
       {/* Right */}
       <div className="flex items-center gap-2">
+        {/* Theme toggle — 岩层(暗) / 本色(亮) 双色方案 */}
+        <button
+          onClick={toggleTheme}
+          title={`切换主题（当前：${themeLabel}）`}
+          aria-label="切换主题"
+          className="flex items-center justify-center w-9 h-9 rounded-btn text-[var(--color-slate-body)] hover:bg-[var(--color-bg-soft)] hover:text-[var(--color-slate-title)] transition-colors"
+        >
+          {theme === 'light' ? <Sun size={19} /> : <Mountain size={19} />}
+        </button>
+
         {/* Notification bell */}
         <button
           onClick={handleBellClick}

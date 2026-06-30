@@ -67,13 +67,49 @@
     --color-header-text: var(--text);
     --color-skeleton:    var(--surface-2);
     --color-login-card-bg: var(--glass-bg);
+
+    color-scheme: dark;
+  }
+
+  /* ============================================================
+     灵动智档 · 本色 (LIMESTONE) — second / light scheme
+     Opt-in via <html data-theme="light"> (see themeStore).
+     Only the raw STRATA tokens are re-declared; every --color-*
+     alias and component class references these via var(), so the
+     whole UI flips by overriding this single block.
+     ============================================================ */
+  :root[data-theme='light'] {
+    --bg:          oklch(0.955 0.008 85);
+    --bg-grain:    oklch(0.91 0.012 80);
+    --surface:     oklch(0.99 0.004 85);
+    --surface-2:   oklch(0.965 0.008 82);
+    --surface-hi:  oklch(0.93 0.012 80);
+    --line:        oklch(0.86 0.012 78);
+    --line-soft:   oklch(0.89 0.010 78 / 0.8);
+    --text:        oklch(0.26 0.014 160);
+    --text-dim:    oklch(0.44 0.012 160);
+    --text-faint:  oklch(0.60 0.012 162);
+    --glass-bg:    oklch(0.99 0.006 85 / 0.6);
+    --glass-line:  oklch(0.30 0.02 160 / 0.08);
+    --shadow:      0 1px 0 oklch(1 0 0 / 0.6) inset, 0 20px 44px -28px oklch(0.3 0.04 60 / 0.45);
+
+    /* teal accent reads darker on a light surface */
+    --c-teal:      oklch(0.58 0.118 182);
+    --c-teal-dim:  oklch(0.58 0.118 182 / 0.14);
+    --c-teal-light: oklch(0.66 0.11 182);
+    --c-teal-dark:  oklch(0.50 0.115 182);
+    --c-ore:       oklch(0.58 0.118 64);
+    --c-ore-dim:   oklch(0.58 0.118 64 / 0.14);
+    --c-flux:      oklch(0.56 0.16 22);
+    --c-flux-dim:  oklch(0.56 0.16 22 / 0.14);
+
+    color-scheme: light;
   }
 
   html {
     font-family: 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
       Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
       'Segoe UI Symbol', 'Noto Color Emoji';
-    color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -135,3 +171,29 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ============================================================
+   本色 (LIMESTONE) status-color bridge
+   The app's status chips/text were tuned for the dark scheme as
+   translucent fill (bg-X-500/15 — works on either background) plus
+   a bright pastel text shade (text-X-300/400 — illegible on a light
+   surface). Under the light theme we darken just that text shade so
+   the semantic colors stay readable; the fills are left untouched.
+   Unlayered so it wins over Tailwind's @layer utilities. The teal
+   accent (text-primary*) is var-driven and already adapts.
+   ============================================================ */
+:root[data-theme='light'] .text-red-300,
+:root[data-theme='light'] .text-red-400     { color: #b91c1c; }
+:root[data-theme='light'] .text-emerald-300,
+:root[data-theme='light'] .text-emerald-400 { color: #047857; }
+:root[data-theme='light'] .text-blue-300,
+:root[data-theme='light'] .text-blue-400    { color: #1d4ed8; }
+:root[data-theme='light'] .text-sky-300,
+:root[data-theme='light'] .text-sky-400     { color: #0369a1; }
+:root[data-theme='light'] .text-amber-300,
+:root[data-theme='light'] .text-amber-400   { color: #b45309; }
+:root[data-theme='light'] .text-orange-300,
+:root[data-theme='light'] .text-orange-400  { color: #c2410c; }
+:root[data-theme='light'] .text-violet-300,
+:root[data-theme='light'] .text-violet-400  { color: #6d28d9; }
+:root[data-theme='light'] .text-slate-300   { color: #475569; }

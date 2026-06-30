@@ -12,15 +12,19 @@ export default {
           dark: 'oklch(0.62 0.12 182 / <alpha-value>)',
         },
         accent: 'oklch(0.74 0.122 64 / <alpha-value>)', // ore / copper
+        // 自适应 token（暗色值与原硬编码一致），随主题切换；全站无透明度修饰符
         background: {
-          main: 'oklch(0.205 0.008 168 / <alpha-value>)',
-          aside: 'oklch(0.205 0.008 168 / <alpha-value>)',
-          soft: 'oklch(0.245 0.009 168 / <alpha-value>)',
+          main: 'var(--surface)',
+          aside: 'var(--surface)',
+          soft: 'var(--surface-2)',
         },
         // merges into Tailwind's built-in slate scale (50..950 stay available)
+        // 指向自适应 token —— 正文/标题在 岩层(暗)/本色(亮) 两套主题下都清晰
+        // (--text / --text-dim 的暗色值与原硬编码一致，故暗色主题外观不变；
+        //  这两个工具类全站均无透明度修饰符，去掉 <alpha-value> 安全)
         slate: {
-          title: 'oklch(0.955 0.008 150 / <alpha-value>)',
-          body: 'oklch(0.74 0.010 160 / <alpha-value>)',
+          title: 'var(--text)',
+          body: 'var(--text-dim)',
         },
       },
       fontFamily: {
