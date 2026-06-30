@@ -23,6 +23,8 @@ import {
 } from 'lucide-react'
 
 import PageHeader from '@/components/PageHeader'
+import ViewModeToggle from '@/components/ViewModeToggle'
+import { useViewMode } from '@/hooks/useViewMode'
 import { VirtualCardList } from '@/components/VirtualCardList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -117,7 +119,8 @@ export default function VolumeListView() {
     size: PAGE_SIZE,
   })
   const [filterOpen, setFilterOpen] = useState(false)
-  const [viewMode, setViewMode] = useState<'table' | 'card'>('table')
+  /* 视图模式（列表 / 卡片），记住用户上次的选择 */
+  const [viewMode, setViewMode] = useViewMode('lkda_volume_view')
 
   /* ── 字典数据 ─────────────────────────────────────────────── */
   const categoryL1Options = dictStore.getItems('category_l1')
@@ -484,24 +487,8 @@ export default function VolumeListView() {
             <Download size={16} />
             导出列表
           </Button>
-          <div className="ml-1 flex items-center gap-1">
-            <Button
-              variant={viewMode === 'table' ? 'primary' : 'outline'}
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setViewMode('table')}
-            >
-              <LayoutList size={14} />
-            </Button>
-            <Button
-              variant={viewMode === 'card' ? 'primary' : 'outline'}
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setViewMode('card')}
-            >
-              <LayoutGrid size={14} />
-            </Button>
-          </div>
+          {/* 视图切换：列表 / 卡片（分段控件，状态会被记住）*/}
+          <ViewModeToggle value={viewMode} onChange={setViewMode} className="ml-1" />
         </div>
       </div>
 
@@ -668,8 +655,8 @@ export default function VolumeListView() {
                       onClick={() => goDetail(vol)}
                     >
                       <div className="mb-3 flex items-start justify-between">
-                        <div>
-                          <div className="mb-1 font-mono text-xs text-[var(--text-faint)]">
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-1 font-mono text-xs text-[var(--text-faint)] break-all">
                             {vol.archiveNo}
                           </div>
                           <div className="text-sm font-semibold text-slate-title line-clamp-2">

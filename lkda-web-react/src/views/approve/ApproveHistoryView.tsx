@@ -22,6 +22,8 @@ import { format } from 'date-fns'
 import 'react-day-picker/dist/style.css'
 
 import PageHeader from '@/components/PageHeader'
+import ViewModeToggle from '@/components/ViewModeToggle'
+import { useViewMode } from '@/hooks/useViewMode'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -98,6 +100,7 @@ export default function ApproveHistoryView() {
     size: PAGE_SIZE,
   })
   const [filterOpen, setFilterOpen] = useState(false)
+  const [viewMode, setViewMode] = useViewMode('lkda_approve_history_view')
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set())
 
   /* ── 日期范围状态 ─────────────────────────────────────────── */
@@ -366,6 +369,7 @@ export default function ApproveHistoryView() {
         <div className="mb-2 flex items-center gap-2">
           <ClipboardList size={20} className="text-primary-dark" />
           <h2 className="text-xl font-bold text-slate-title">审批历史追溯</h2>
+          <ViewModeToggle value={viewMode} onChange={setViewMode} className="ml-auto" />
         </div>
         <div className="rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-4 py-2.5">
           <div className="flex items-center gap-2">
@@ -417,7 +421,7 @@ export default function ApproveHistoryView() {
         </div>
 
         {/* 电脑端表格视图 */}
-        <div className="hidden md:block overflow-auto">
+        <div className={cn('overflow-auto', viewMode === 'table' ? 'hidden md:block' : 'hidden')}>
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -485,7 +489,7 @@ export default function ApproveHistoryView() {
         </div>
 
         {/* 手机端卡片列表 */}
-        <div className="grid grid-cols-1 gap-3 p-3 md:hidden">
+        <div className={cn('grid grid-cols-1 gap-3 p-3', viewMode === 'card' ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:hidden')}>
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="h-36 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />

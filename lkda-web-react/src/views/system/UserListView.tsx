@@ -22,6 +22,8 @@ import {
 } from 'lucide-react'
 
 import PageHeader from '@/components/PageHeader'
+import ViewModeToggle from '@/components/ViewModeToggle'
+import { useViewMode } from '@/hooks/useViewMode'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -165,6 +167,7 @@ export default function UserListView() {
   const [editingUser, setEditingUser] = useState<UserListVO | null>(null)
   const [resetPwdOpen, setResetPwdOpen] = useState(false)
   const [resetTarget, setResetTarget] = useState<UserListVO | null>(null)
+  const [viewMode, setViewMode] = useViewMode('lkda_user_view')
 
   const isEdit = !!editingUser
 
@@ -472,10 +475,13 @@ export default function UserListView() {
             <Users size={20} className="text-primary-dark" />
             <h2 className="text-xl font-bold text-slate-title">用户管理</h2>
           </div>
-          <Button onClick={openAdd}>
-            <Plus size={16} />
-            新建用户
-          </Button>
+          <div className="flex items-center gap-2">
+            <ViewModeToggle value={viewMode} onChange={setViewMode} />
+            <Button onClick={openAdd}>
+              <Plus size={16} />
+              新建用户
+            </Button>
+          </div>
         </div>
         <div className="rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] px-4 py-2.5">
           <div className="flex flex-wrap items-center gap-2">
@@ -583,8 +589,8 @@ export default function UserListView() {
           </span>
         </div>
 
-        {/* 电脑端表格 */}
-        <div className="hidden md:block overflow-auto">
+        {/* 电脑端表格（列表视图）*/}
+        <div className={cn('overflow-auto', viewMode === 'table' ? 'hidden md:block' : 'hidden')}>
           {isLoading ? (
             <div className="space-y-3 p-8">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -634,8 +640,13 @@ export default function UserListView() {
           )}
         </div>
 
-        {/* 手机端卡片列表 */}
-        <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+        {/* 卡片视图（手机端始终卡片；电脑端在卡片视图时多列网格）*/}
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-4 p-4',
+            viewMode === 'card' ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:hidden'
+          )}
+        >
           {isLoading ? (
             Array.from({ length: 4 }).map((_, i) => (
               <div

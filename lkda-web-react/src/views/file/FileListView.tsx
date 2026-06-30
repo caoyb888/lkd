@@ -36,6 +36,8 @@ import {
 } from 'lucide-react'
 
 import PageHeader from '@/components/PageHeader'
+import ViewModeToggle from '@/components/ViewModeToggle'
+import { useViewMode } from '@/hooks/useViewMode'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { NumberInput } from '@/components/ui/number-input'
@@ -418,6 +420,7 @@ export default function FileListView() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingFile, setEditingFile] = useState<ArchiveFileListVO | null>(null)
   const [sortSaving, setSortSaving] = useState(false)
+  const [viewMode, setViewMode] = useViewMode('lkda_file_view')
 
   const isEdit = !!editingFile
 
@@ -704,12 +707,19 @@ export default function FileListView() {
             </span>
           )}
         </div>
-        {canEdit && (
-          <Button onClick={openCreate}>
-            <Plus size={16} />
-            新建文件
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <ViewModeToggle
+            value={viewMode}
+            onChange={setViewMode}
+            className="hidden md:inline-flex"
+          />
+          {canEdit && (
+            <Button onClick={openCreate}>
+              <Plus size={16} />
+              新建文件
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* ── DndContext 包裹列表 ───────────────────────────────── */}
@@ -723,7 +733,12 @@ export default function FileListView() {
           strategy={verticalListSortingStrategy}
         >
           {/* ── 电脑端表格 ─────────────────────────────────────── */}
-          <div className="hidden overflow-auto rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] shadow-card md:block">
+          <div
+            className={cn(
+              'overflow-auto rounded-card border border-[var(--color-border-light)] bg-[var(--color-bg-main)] shadow-card',
+              viewMode === 'table' ? 'hidden md:block' : 'hidden'
+            )}
+          >
             {filesLoading ? (
               <div className="space-y-3 p-8">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -766,6 +781,31 @@ export default function FileListView() {
               </Table>
             )}
           </div>
+
+          {/* ── 电脑端卡片视图 ─────────────────────────────────── */}
+          {viewMode === 'card' && (
+            <div className="hidden gap-3 md:grid md:grid-cols-2 lg:grid-cols-3">
+              {filesLoading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-40 animate-pulse rounded-card bg-[var(--color-bg-soft)]" />
+                ))
+              ) : fileList.length === 0 ? (
+                <div className="col-span-full">
+                  <EmptyState description="暂无卷内文件，点击「新建文件」开始录入" />
+                </div>
+              ) : (
+                fileList.map((file) => (
+                  <SortableCard
+                    key={file.recordId}
+                    file={file}
+                    canEdit={canEdit}
+                    onEdit={openEdit}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
+            </div>
+          )}
 
           {/* ── 手机端卡片列表 ─────────────────────────────────── */}
           <div className="grid grid-cols-1 gap-3 md:hidden">
