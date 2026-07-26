@@ -1,6 +1,7 @@
 package com.laikuang.archive.search.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.laikuang.archive.common.constant.ResultCode;
 import com.laikuang.archive.common.exception.BusinessException;
 import com.laikuang.archive.file.domain.converter.ArchiveFileConverter;
@@ -51,10 +52,10 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
                 .and(w -> w.like(ArchiveVolume::getVolumeTitle, keyword)
                            .or()
                            .like(ArchiveVolume::getArchiveNo, keyword))
-                .orderByDesc(ArchiveVolume::getCreatedAt)
-                .last("LIMIT 50");
+                .orderByDesc(ArchiveVolume::getCreatedAt);
 
-        List<ArchiveVolume> volumeList = volumeMapper.selectList(volumeWrapper);
+        // 用分页插件截取前 50 条（方言无关，兼容 MySQL/SQL Server）
+        List<ArchiveVolume> volumeList = volumeMapper.selectPage(new Page<>(1, 50), volumeWrapper).getRecords();
 
         // 2. 检索文件：匹配文件标题或主题词（status = 3 且未销毁）
         LambdaQueryWrapper<ArchiveFile> fileWrapper = new LambdaQueryWrapper<ArchiveFile>()
@@ -64,10 +65,9 @@ public class GlobalSearchServiceImpl implements GlobalSearchService {
                 .and(w -> w.like(ArchiveFile::getFileTitle, keyword)
                            .or()
                            .like(ArchiveFile::getKeywords, keyword))
-                .orderByDesc(ArchiveFile::getCreatedAt)
-                .last("LIMIT 50");
+                .orderByDesc(ArchiveFile::getCreatedAt);
 
-        List<ArchiveFile> fileList = fileMapper.selectList(fileWrapper);
+        List<ArchiveFile> fileList = fileMapper.selectPage(new Page<>(1, 50), fileWrapper).getRecords();
 
         GlobalSearchVO vo = new GlobalSearchVO();
         vo.setVolumes(volumeConverter.toListVO(volumeList));

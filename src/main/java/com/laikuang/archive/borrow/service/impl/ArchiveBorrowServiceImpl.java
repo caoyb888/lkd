@@ -407,7 +407,7 @@ public class ArchiveBorrowServiceImpl implements ArchiveBorrowService {
                         .eq(ArchiveVolume::getArchiveNo, archiveNo)
                         .eq(ArchiveVolume::getYear, year)
                         .eq(ArchiveVolume::getDestroyFlag, 0)
-                        .last("LIMIT 1"));
+                        , false);
         if (volume == null) {
             throw new BusinessException(ResultCode.PARAM_ERROR, "档案不存在或已销毁");
         }
@@ -419,7 +419,7 @@ public class ArchiveBorrowServiceImpl implements ArchiveBorrowService {
                 new LambdaQueryWrapper<ArchiveVolume>()
                         .eq(ArchiveVolume::getArchiveNo, archiveNo)
                         .eq(ArchiveVolume::getDestroyFlag, 0)
-                        .last("LIMIT 1"));
+                        , false);
         if (volume == null) {
             throw new BusinessException(ResultCode.PARAM_ERROR, "档案不存在或已销毁");
         }
@@ -450,7 +450,7 @@ public class ArchiveBorrowServiceImpl implements ArchiveBorrowService {
                 new LambdaQueryWrapper<ArchiveVolume>()
                         .eq(ArchiveVolume::getArchiveNo, borrow.getArchiveNo())
                         .eq(ArchiveVolume::getDestroyFlag, 0)
-                        .last("LIMIT 1"));
+                        , false);
         if (volume != null) {
             vo.setVolumeTitle(volume.getVolumeTitle());
             int copies = volume.getCopies() == null ? 0 : volume.getCopies();
@@ -476,7 +476,7 @@ public class ArchiveBorrowServiceImpl implements ArchiveBorrowService {
                 new LambdaQueryWrapper<ArchiveVolume>()
                         .eq(ArchiveVolume::getArchiveNo, borrow.getArchiveNo())
                         .eq(ArchiveVolume::getDestroyFlag, 0)
-                        .last("LIMIT 1"));
+                        , false);
         if (volume != null) {
             vo.setVolumeTitle(volume.getVolumeTitle());
             int copies = volume.getCopies() == null ? 0 : volume.getCopies();

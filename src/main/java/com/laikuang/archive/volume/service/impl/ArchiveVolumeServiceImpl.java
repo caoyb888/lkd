@@ -825,7 +825,7 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
                         .eq(ArchiveVolume::getArchiveNo, archiveNo)
                         .eq(ArchiveVolume::getDestroyFlag, 0)
                         .orderByDesc(ArchiveVolume::getYear)
-                        .last("LIMIT 1"));
+                        , false);
         if (volume == null) {
             throw new BusinessException(ResultCode.PARAM_ERROR, "档案不存在或已销毁");
         }
