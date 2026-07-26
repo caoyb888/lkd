@@ -21,8 +21,8 @@ import com.laikuang.archive.volume.domain.vo.ArchiveVolumeVO;
 import com.laikuang.archive.volume.mapper.ArchiveVolumeMapper;
 import com.laikuang.archive.volume.service.ArchiveVolumeService;
 import com.laikuang.archive.volume.service.print.ArchivePrintService;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -348,8 +348,8 @@ class Sprint2IntegrationTest {
     // ==================== 4. Word 文档结构完整性 ====================
 
     @Test
-    @DisplayName("【S2-05】Word套打：文档应包含封皮、侧脊、案卷目录、卷内目录4部分")
-    void printDocumentShouldContainAllFourParts() {
+    @DisplayName("【S2-05】PDF套打：文档应包含封皮、侧脊、案卷目录、卷内目录4部分")
+    void printDocumentShouldContainAllFourParts() throws Exception {
         ArchiveVolumeVO volume = volumeService.createVolume(buildVolumeDto());
         // 添加 3 个卷内文件
         for (int i = 1; i <= 3; i++) {
@@ -357,58 +357,35 @@ class Sprint2IntegrationTest {
         }
 
         MockHttpServletResponse response = new MockHttpServletResponse();
-        printService.printVolume(volume.getRecordId(), volume.getYear(), response);
+        printService.printVolume(volume.getRecordId(), volume.getYear(), "all", response);
 
         byte[] bytes = response.getContentAsByteArray();
         assertTrue(bytes.length > 0);
+        assertEquals("application/pdf", response.getContentType());
 
-        try (XWPFDocument doc = new XWPFDocument(new ByteArrayInputStream(bytes))) {
-            StringBuilder sb = new StringBuilder();
-            for (XWPFParagraph p : doc.getParagraphs()) {
-                sb.append(p.getText());
-            }
-            doc.getTables().forEach(table -> {
-                table.getRows().forEach(row -> {
-                    row.getTableCells().forEach(cell -> {
-                        cell.getParagraphs().forEach(p -> sb.append(p.getText()));
-                    });
-                });
-            });
-            String allText = sb.toString();
+        // 标题类文本在 HTML 中含 &#160; 等空白，统一去除后断言
+        String allText = pdfText(bytes).replaceAll("[\\s ]+", "");
 
-            assertTrue(allText.contains("莱矿集团档案盒"), "应包含封皮标题");
-            assertTrue(allText.contains("档号：" + volume.getArchiveNo()), "应包含档号");
-            assertTrue(allText.contains("案 卷 目 录"), "应包含案卷目录标题");
-            assertTrue(allText.contains("卷 内 文 件 目 录"), "应包含卷内文件目录标题");
-
-            // 验证表格行数：表头1行 + 3条数据 = 至少4行
-            int tableRowCount = doc.getTables().stream()
-                    .mapToInt(t -> t.getRows().size())
-                    .sum();
-            assertTrue(tableRowCount >= 4, "表格总行数应 >= 4（含表头+数据），实际=" + tableRowCount);
-        } catch (Exception e) {
-            fail("Word 文件解析失败", e);
-        }
+        assertTrue(allText.contains("莱矿档案室"), "应包含封皮落款");
+        assertTrue(allText.contains("案卷题名"), "应包含封皮题名区");
+        assertTrue(allText.contains("档号：" + volume.getArchiveNo()), "应包含档号");
+        assertTrue(allText.contains("案卷目录"), "应包含案卷目录标题");
+        assertTrue(allText.contains("卷内文件目录"), "应包含卷内文件目录标题");
+        assertTrue(allText.contains("共3件"), "卷内目录应统计 3 件");
     }
 
     @Test
-    @DisplayName("【S2-05】Word套打：无卷内文件时表格仅有表头")
-    void printDocumentWithoutFilesShouldHaveHeaderOnly() {
+    @DisplayName("【S2-05】PDF套打：无卷内文件时目录为 0 件")
+    void printDocumentWithoutFilesShouldHaveHeaderOnly() throws Exception {
         ArchiveVolumeVO volume = volumeService.createVolume(buildVolumeDto());
 
         MockHttpServletResponse response = new MockHttpServletResponse();
-        printService.printVolume(volume.getRecordId(), volume.getYear(), response);
+        printService.printVolume(volume.getRecordId(), volume.getYear(), "all", response);
 
         byte[] bytes = response.getContentAsByteArray();
-        try (XWPFDocument doc = new XWPFDocument(new ByteArrayInputStream(bytes))) {
-            // 找出最大的表格（卷内文件目录表），应为 1 行（仅表头）
-            int maxTableRows = doc.getTables().stream()
-                    .mapToInt(t -> t.getRows().size())
-                    .max().orElse(0);
-            assertEquals(1, maxTableRows, "无文件时卷内目录表应仅有表头");
-        } catch (Exception e) {
-            fail("Word 文件解析失败", e);
-        }
+        String allText = pdfText(bytes).replaceAll("[\\s ]+", "");
+        assertTrue(allText.contains("卷内文件目录"), "应包含卷内文件目录标题");
+        assertTrue(allText.contains("共0件"), "无文件时卷内目录应为 0 件");
     }
 
     // ==================== 5. 端到端链路 ====================
@@ -446,13 +423,21 @@ class Sprint2IntegrationTest {
         assertTrue(page.getRecords().stream()
                 .anyMatch(v -> v.getRecordId().equals(volume.getRecordId())));
 
-        // 6. Word 打印
+        // 6. PDF 打印
         MockHttpServletResponse response = new MockHttpServletResponse();
-        printService.printVolume(volume.getRecordId(), volume.getYear(), response);
+        printService.printVolume(volume.getRecordId(), volume.getYear(), "all", response);
         assertTrue(response.getContentAsByteArray().length > 0);
+        assertEquals("application/pdf", response.getContentType());
     }
 
     // ==================== 工具方法 ====================
+
+    /** 用 PDFBox 提取 PDF 全文文本 */
+    private String pdfText(byte[] bytes) throws Exception {
+        try (PDDocument doc = PDDocument.load(bytes)) {
+            return new PDFTextStripper().getText(doc);
+        }
+    }
 
     private ArchiveVolumeSaveDTO buildVolumeDto() {
         ArchiveVolumeSaveDTO dto = new ArchiveVolumeSaveDTO();

@@ -2,7 +2,6 @@ package com.laikuang.archive.system.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laikuang.archive.common.constant.ResultCode;
-import com.laikuang.archive.common.result.Result;
 import com.laikuang.archive.system.domain.dto.ChangePasswordDTO;
 import com.laikuang.archive.system.domain.dto.CreateUserDTO;
 import com.laikuang.archive.system.domain.dto.LoginDTO;
@@ -59,10 +58,8 @@ class SystemControllerIntegrationTest {
                 .andReturn();
 
         String body = result.getResponse().getContentAsString();
-        Result res = objectMapper.readValue(body, Result.class);
-        @SuppressWarnings("unchecked")
-        java.util.Map<String, Object> data = (java.util.Map<String, Object>) res.getData();
-        adminToken = (String) data.get("token");
+        // Result 为不可变封装（无私有构造），测试侧用 JsonNode 解析
+        adminToken = objectMapper.readTree(body).path("data").path("token").asText();
         assertNotNull(adminToken, "Token 不应为空");
     }
 
