@@ -5,14 +5,15 @@ import { useDictStore } from '@/stores/dict'
 import { useAuthStore } from '@/stores/auth'
 import { VolumeApi } from '@/api/volume'
 import type { ArchiveVolumeListVO } from '@/types/vo'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
 
 const router    = useRouter()
 const dictStore = useDictStore()
 const authStore = useAuthStore()
 
 // ── 视图模式 ────────────────────────────────────────────────────
-type ViewMode = 'table' | 'card'
-const viewMode = ref<ViewMode>('table')
+const viewMode = useViewMode('volume')
 
 // ── 年度选项（2018 - 当前年）────────────────────────────────────
 const currentYear = new Date().getFullYear()
@@ -219,28 +220,7 @@ const archiveStatusValue = (row: ArchiveVolumeListVO) => {
         </el-button>
       </div>
 
-      <div class="view-toggle">
-        <el-tooltip content="表格视图" placement="top">
-          <el-button
-            :type="viewMode === 'table' ? 'primary' : 'default'"
-            circle
-            size="small"
-            @click="viewMode = 'table'"
-          >
-            <el-icon><List /></el-icon>
-          </el-button>
-        </el-tooltip>
-        <el-tooltip content="卡片视图" placement="top">
-          <el-button
-            :type="viewMode === 'card' ? 'primary' : 'default'"
-            circle
-            size="small"
-            @click="viewMode = 'card'"
-          >
-            <el-icon><Grid /></el-icon>
-          </el-button>
-        </el-tooltip>
-      </div>
+      <ViewModeToggle v-model="viewMode" />
     </div>
 
     <!-- ── 表格视图 ──────────────────────────────────────────────── -->

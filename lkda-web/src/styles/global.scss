@@ -35,6 +35,24 @@ html, body, #app {
   border: 1px solid #E2E8F0 !important;
 }
 
+// ── 岩层暗色主题下的全局修正 ─────────────────────────────────
+[data-theme="strata"] {
+  .el-card {
+    border-color: #36413F !important;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #222B29;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #414D4B;
+
+    &:hover {
+      background: #5A6866;
+    }
+  }
+}
+
 // 表格行 hover
 .el-table__row:hover > td {
   background-color: var(--theme-bg-light) !important;

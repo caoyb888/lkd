@@ -77,6 +77,47 @@
   --theme-accent-light:   #93C5FD;
 }
 
+// ── 岩层暗色主题（STRATA，配色移植自 React 端 oklch 近似值）────────
+[data-theme="strata"] {
+  // 主色：青玉（STRATA teal）
+  --color-primary:        #3CCBC0;
+  --color-primary-light:  #74DCD2;
+  --color-primary-dark:   #1FA398;
+
+  // 辅色：矿石橙
+  --color-accent:         #D9903F;
+
+  // 背景（玄武岩暗色）
+  --color-bg-main:        #222B29;
+  --color-bg-aside:       #222B29;
+  --color-bg-page:        #181F1E;
+
+  // 文字
+  --color-text-title:     #EFF5F2;
+  --color-text-body:      #ADBAB5;
+
+  // 圆角
+  --radius-card:          10px;
+  --radius-btn:           6px;
+
+  // 阴影
+  --shadow-card:          0 1px 8px rgba(0, 0, 0, 0.4);
+
+  // Element Plus 主题覆盖
+  --el-color-primary:     #3CCBC0;
+
+  // ── 语义化主题色 ─────────────────────────────────────────────
+  --theme-bg-light:       #2C3634;
+  --theme-bg-lighter:     #36413F;
+  --theme-bg-soft:        #2C3634;
+  --theme-bg-card:        #26302E;
+  --theme-border-light:   #36413F;
+  --theme-border-medium:  #414D4B;
+  --theme-accent-light:   #74DCD2;
+
+  color-scheme: dark;
+}
+
 // ── SCSS 变量（映射到 CSS 变量，支持运行时切换）────────────
 $color-primary:       var(--color-primary);
 $color-primary-light: var(--color-primary-light);

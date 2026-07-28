@@ -181,11 +181,12 @@ async function handleLogout() {
       </div>
 
       <div class="header-right">
-        <!-- 主题切换 -->
+        <!-- 主题切换（活力新知 → 深海蓝晶 → 岩层暗色 循环） -->
         <el-tooltip :content="`切换主题（当前：${themeStore.themeLabel}）`" placement="bottom">
           <el-icon class="header-icon theme-toggle" @click="themeStore.toggleTheme">
-            <Sunny v-if="themeStore.isOcean" />
-            <Moon v-else />
+            <Moon v-if="themeStore.isOcean" />
+            <Star v-else-if="themeStore.isStrata" />
+            <Sunny v-else />
           </el-icon>
         </el-tooltip>
 

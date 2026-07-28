@@ -6,9 +6,14 @@ import { useDictStore } from '@/stores/dict'
 import { ApproveApi } from '@/api/approve'
 import type { ApproveQueueItemVO } from '@/api/approve'
 import type { ArchiveVolumeDetailVO, ApproveLogVO } from '@/types/vo'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
 
 const router    = useRouter()
 const dictStore = useDictStore()
+
+// ── 视图模式 ─────────────────────────────────────────────────────
+const viewMode = useViewMode('approve_confirm')
 
 // ── 年度选项 ─────────────────────────────────────────────────────
 const currentYear = new Date().getFullYear()
@@ -245,6 +250,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
             共 <strong>{{ total }}</strong> 条待确认归档案卷
           </span>
         </div>
+        <ViewModeToggle v-model="viewMode" />
       </div>
 
       <template v-if="loading">
@@ -257,7 +263,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
       />
 
       <el-table
-        v-else
+        v-else-if="viewMode === 'table'"
         :data="tableData"
         row-key="recordId"
         stripe
@@ -297,7 +303,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
           </template>
         </el-table-column>
 
-        <el-table-column label="立卷人" prop="compilerName" width="100" />
+        <el-table-column label="立卷人" prop="compiler" width="100" />
 
         <el-table-column label="流转时间" prop="updatedAt" min-width="160" sortable>
           <template #default="{ row }">
@@ -327,6 +333,43 @@ const goDetail = (row: ApproveQueueItemVO) =>
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 卡片视图 -->
+      <div v-else class="card-grid-wrap">
+        <div class="card-grid">
+          <div
+            v-for="row in tableData"
+            :key="row.recordId"
+            class="archive-card"
+            @click="openDetail(row)"
+          >
+            <div class="archive-card-icon-wrap">
+              <el-icon class="archive-card-icon"><FolderChecked /></el-icon>
+            </div>
+            <div class="archive-card-body">
+              <div class="archive-card-no">{{ row.archiveNo }}</div>
+              <div class="archive-card-title" :title="row.volumeTitle">
+                {{ row.volumeTitle }}
+              </div>
+              <div class="archive-card-meta">
+                <span class="meta-text">{{ row.categoryL1Label || label('category_l1', row.categoryL1) }}</span>
+                <span v-if="row.securityLevel" class="security-chip">
+                  {{ row.securityLevelLabel || label('security_level', row.securityLevel) }}
+                </span>
+              </div>
+            </div>
+            <div class="archive-card-footer">
+              <span class="meta-text">{{ row.compiler || '—' }} · {{ row.updatedAt }}</span>
+              <el-button
+                link
+                size="small"
+                class="btn-view-link"
+                @click.stop="goDetail(row)"
+              >详情</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div v-if="total > 0" class="pagination-wrap">
         <el-pagination
@@ -416,7 +459,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
               </div>
               <div class="info-item">
                 <span class="info-label">设备代号</span>
-                <span class="info-value">{{ detail.equipmentCode ? label('equipment_code', detail.equipmentCode) : '—' }}</span>
+                <span class="info-value">{{ detail.deviceCode ? label('equipment_code', detail.deviceCode) : '—' }}</span>
               </div>
             </div>
           </section>
@@ -434,7 +477,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
               </div>
               <div class="info-item col-span-2">
                 <span class="info-label">编制单位</span>
-                <span class="info-value">{{ detail.compilingUnit || '—' }}</span>
+                <span class="info-value">{{ detail.compileUnit || '—' }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">密级</span>
@@ -453,7 +496,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
               </div>
               <div class="info-item">
                 <span class="info-label">页数</span>
-                <span class="info-value">{{ detail.pageCount ? detail.pageCount + ' 页' : '—' }}</span>
+                <span class="info-value">{{ detail.totalPages ? detail.totalPages + ' 页' : '—' }}</span>
               </div>
             </div>
           </section>
@@ -467,7 +510,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
             <div class="info-grid">
               <div class="info-item">
                 <span class="info-label">立卷人</span>
-                <span class="info-value">{{ detail.compilerName || '—' }}</span>
+                <span class="info-value">{{ detail.compiler || '—' }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">立卷日期</span>
@@ -475,7 +518,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
               </div>
               <div class="info-item">
                 <span class="info-label">审核人</span>
-                <span class="info-value">{{ detail.reviewerName || '—' }}</span>
+                <span class="info-value">{{ detail.reviewer || '—' }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">流转时间</span>
@@ -489,7 +532,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
           </section>
 
           <!-- 备考（有内容才显示）-->
-          <section v-if="detail.remark || detail.note" class="detail-section">
+          <section v-if="detail.remark || detail.notes" class="detail-section">
             <div class="section-header">
               <span class="section-bar" />
               <span class="section-title">备考</span>
@@ -499,9 +542,9 @@ const goDetail = (row: ApproveQueueItemVO) =>
                 <span class="info-label">备考说明</span>
                 <span class="info-value textarea-val">{{ detail.remark }}</span>
               </div>
-              <div v-if="detail.note" class="info-item col-span-3">
+              <div v-if="detail.notes" class="info-item col-span-3">
                 <span class="info-label">备注</span>
-                <span class="info-value textarea-val">{{ detail.note }}</span>
+                <span class="info-value textarea-val">{{ detail.notes }}</span>
               </div>
             </div>
           </section>
@@ -685,7 +728,7 @@ const goDetail = (row: ApproveQueueItemVO) =>
           </div>
           <div class="summary-row">
             <span class="summary-label">立卷人</span>
-            <span class="summary-value">{{ detail.compilerName || '—' }}</span>
+            <span class="summary-value">{{ detail.compiler || '—' }}</span>
           </div>
         </div>
 
@@ -910,6 +953,101 @@ const goDetail = (row: ApproveQueueItemVO) =>
   justify-content: flex-end;
   padding: 16px 20px;
   border-top: 1px solid #F1F5F9;
+}
+
+// ── 卡片视图 ──────────────────────────────────────────────────────
+.card-grid-wrap {
+  padding: 16px 20px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-text {
+  font-size: 12px;
+  color: $color-text-body;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
 }
 
 // ── Drawer ────────────────────────────────────────────────────────

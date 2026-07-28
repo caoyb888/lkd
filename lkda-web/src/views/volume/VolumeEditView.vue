@@ -44,25 +44,25 @@ const yearOptions = Array.from({ length: currentYear - 2017 }, (_, i) => String(
 
 // ── 表单数据 ────────────────────────────────────────────────────
 const formRef = ref<FormInstance>()
-const form = reactive<ArchiveVolumeSaveDTO & { compileDate: string; archiveDate: string }>({
+const form = reactive<ArchiveVolumeSaveDTO & { compileDate: string; archiveDate: string; compiler: string }>({
   fondsNo:        '',
   year:           String(currentYear),
   categoryL1:     '',
   categoryL2:     '',
   categoryL3:     '',
-  equipmentCode:  '',
+  deviceCode:     '',
   volumeTitle:    '',
-  compilingUnit:  '',
+  compileUnit:    '',
   securityLevel:  '',
   retentionPeriod:'',
   copies:         1,
-  pageCount:      undefined,
-  compilerName:   authStore.userInfo?.nickname ?? '',
+  totalPages:     undefined,
+  compiler:       authStore.userInfo?.nickname ?? '',
   compileDate:    '',
-  reviewerName:   '',
+  reviewer:       '',
   archiveDate:    '',
   remark:         '',
-  note:           '',
+  notes:          '',
 })
 
 // ── 状态 ────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ const archiveNoPreview = ref('')
 const previewLoading   = ref(false)
 
 const canPreview = computed(() =>
-  !!form.fondsNo && !!form.year && !!form.categoryL1 && !!form.equipmentCode
+  !!form.fondsNo && !!form.year && !!form.categoryL1 && !!form.deviceCode
 )
 
 let previewTimer: ReturnType<typeof setTimeout> | null = null
@@ -94,7 +94,7 @@ async function fetchPreviewNo() {
       categoryL1:   form.categoryL1,
       categoryL2:   form.categoryL2 || undefined,
       categoryL3:   form.categoryL3 || undefined,
-      deviceCode:   form.equipmentCode,
+      deviceCode:   form.deviceCode,
       year:         form.year,
     })
   } catch {
@@ -110,7 +110,7 @@ const previewWatchSource = computed(() => ({
   categoryL1:   form.categoryL1,
   categoryL2:   form.categoryL2,
   categoryL3:   form.categoryL3,
-  equipmentCode:form.equipmentCode,
+  deviceCode:form.deviceCode,
 }))
 
 watch(previewWatchSource, () => {
@@ -137,19 +137,19 @@ async function loadDetail() {
       categoryL1:     d.categoryL1     ?? '',
       categoryL2:     d.categoryL2     ?? '',
       categoryL3:     d.categoryL3     ?? '',
-      equipmentCode:  d.equipmentCode  ?? '',
+      deviceCode:  d.deviceCode  ?? '',
       volumeTitle:    d.volumeTitle    ?? '',
-      compilingUnit:  d.compilingUnit  ?? '',
+      compileUnit:  d.compileUnit  ?? '',
       securityLevel:  d.securityLevel  ?? '',
       retentionPeriod:d.retentionPeriod?? '',
       copies:         d.copies         ?? 1,
-      pageCount:      d.pageCount      || undefined,
-      compilerName:   d.compilerName   ?? '',
+      totalPages:      d.totalPages      || undefined,
+      compiler:   d.compiler   ?? '',
       compileDate:    d.compileDate    ?? '',
-      reviewerName:   d.reviewerName   ?? '',
+      reviewer:   d.reviewer   ?? '',
       archiveDate:    d.archiveDate    ?? '',
       remark:         d.remark         ?? '',
-      note:           d.note           ?? '',
+      notes:           d.notes           ?? '',
     })
     archiveNoPreview.value = d.archiveNo ?? ''
   } finally {
@@ -169,7 +169,7 @@ const rules: FormRules = {
   fondsNo:      [{ required: true, message: '请选择全宗号',   trigger: 'change' }],
   year:         [{ required: true, message: '请选择年度',     trigger: 'change' }],
   categoryL1:   [{ required: true, message: '请选择一级类目', trigger: 'change' }],
-  equipmentCode:[{ required: true, message: '请选择设备代号', trigger: 'change' }],
+  deviceCode:[{ required: true, message: '请选择设备代号', trigger: 'change' }],
   volumeTitle:  [
     { required: true, message: '请输入案卷题名', trigger: 'blur' },
     { max: 200,       message: '不超过 200 字',  trigger: 'blur' },
@@ -193,7 +193,7 @@ async function saveDraft() {
       await VolumeApi.update(recordId.value!, form.year, buildPayload())
       ElMessage.success('草稿已保存')
     } else {
-      const newId = await VolumeApi.saveDraft(buildPayload())
+      const newId = (await VolumeApi.saveDraft(buildPayload())).recordId
       ElMessage.success('草稿已创建')
       router.replace(`/volume/edit/${newId}`)
     }
@@ -216,7 +216,7 @@ async function submitForReview() {
   try {
     let targetId = recordId.value
     if (!targetId) {
-      targetId = await VolumeApi.saveDraft(buildPayload())
+      targetId = (await VolumeApi.saveDraft(buildPayload())).recordId
     } else {
       await VolumeApi.update(targetId, form.year, buildPayload())
     }
@@ -237,19 +237,18 @@ function buildPayload(): ArchiveVolumeSaveDTO {
     categoryL1:     form.categoryL1,
     categoryL2:     form.categoryL2    || undefined,
     categoryL3:     form.categoryL3    || undefined,
-    equipmentCode:  form.equipmentCode,
+    deviceCode:     form.deviceCode,
     volumeTitle:    form.volumeTitle,
-    compilingUnit:  form.compilingUnit || undefined,
+    compileUnit:    form.compileUnit || undefined,
     securityLevel:  form.securityLevel || undefined,
     retentionPeriod:form.retentionPeriod || undefined,
     copies:         form.copies,
-    pageCount:      form.pageCount     || undefined,
-    compilerName:   form.compilerName  || undefined,
+    totalPages:     form.totalPages     || undefined,
     compileDate:    form.compileDate   || undefined,
-    reviewerName:   form.reviewerName  || undefined,
+    reviewer:       form.reviewer  || undefined,
     archiveDate:    form.archiveDate   || undefined,
     remark:         form.remark        || undefined,
-    note:           form.note          || undefined,
+    notes:          form.notes          || undefined,
   }
 }
 
@@ -383,8 +382,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
           </el-form-item>
 
           <!-- 设备代号 -->
-          <el-form-item label="设备代号" prop="equipmentCode" required>
-            <el-select v-model="form.equipmentCode" placeholder="请选择设备代号" clearable class="w-full">
+          <el-form-item label="设备代号" prop="deviceCode" required>
+            <el-select v-model="form.deviceCode" placeholder="请选择设备代号" clearable class="w-full">
               <el-option
                 v-for="item in equipCodeOptions"
                 :key="item.itemValue"
@@ -437,8 +436,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
           </el-form-item>
 
           <!-- 编制单位 -->
-          <el-form-item label="编制单位" prop="compilingUnit" class="col-span-2">
-            <el-input v-model="form.compilingUnit" placeholder="请输入编制单位" clearable />
+          <el-form-item label="编制单位" prop="compileUnit" class="col-span-2">
+            <el-input v-model="form.compileUnit" placeholder="请输入编制单位" clearable />
           </el-form-item>
 
           <!-- 密级 -->
@@ -477,9 +476,9 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
           </el-form-item>
 
           <!-- 页数 -->
-          <el-form-item label="页数" prop="pageCount">
+          <el-form-item label="页数" prop="totalPages">
             <el-input-number
-              v-model="form.pageCount"
+              v-model="form.totalPages"
               :min="0"
               :max="99999"
               placeholder="选填"
@@ -501,8 +500,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
 
         <div class="form-grid">
           <!-- 立卷人 -->
-          <el-form-item label="立卷人" prop="compilerName">
-            <el-input v-model="form.compilerName" placeholder="请输入立卷人姓名" clearable />
+          <el-form-item label="立卷人" prop="compiler">
+            <el-input v-model="form.compiler" placeholder="请输入立卷人姓名" clearable />
           </el-form-item>
 
           <!-- 立卷日期 -->
@@ -517,8 +516,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
           </el-form-item>
 
           <!-- 审核人 -->
-          <el-form-item label="审核人" prop="reviewerName">
-            <el-input v-model="form.reviewerName" placeholder="请输入审核人姓名" clearable />
+          <el-form-item label="审核人" prop="reviewer">
+            <el-input v-model="form.reviewer" placeholder="请输入审核人姓名" clearable />
           </el-form-item>
 
           <!-- 归档日期 -->
@@ -555,9 +554,9 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
             />
           </el-form-item>
 
-          <el-form-item label="备注" prop="note" class="col-span-2">
+          <el-form-item label="备注" prop="notes" class="col-span-2">
             <el-input
-              v-model="form.note"
+              v-model="form.notes"
               type="textarea"
               :rows="3"
               placeholder="请输入备注（选填）"

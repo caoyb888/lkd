@@ -36,6 +36,17 @@ instance.interceptors.response.use(
       // 将 Result.data 作为最终响应值返回，配合下方类型门面实现 Promise<T>
       return result.data as unknown as AxiosResponse
     }
+    // sa-token 未登录/过期时后端返回 HTTP 200 + 业务码 401，需踢回登录页
+    if (result.code === 401) {
+      import('@/stores/auth').then(({ useAuthStore }) => {
+        useAuthStore().logout()
+      })
+      import('@/router').then(({ default: router }) => {
+        router.push('/login')
+      })
+      ElMessage.error(result.msg || '登录已过期，请重新登录')
+      return Promise.reject(result)
+    }
     ElMessage.error(result.msg || '操作失败')
     return Promise.reject(result)
   },

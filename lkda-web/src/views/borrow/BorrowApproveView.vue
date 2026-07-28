@@ -3,6 +3,11 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { BorrowApi } from '@/api/borrow'
 import type { BorrowVO } from '@/types/vo'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
+
+// ── 视图模式 ─────────────────────────────────────────────────────
+const viewMode = useViewMode('borrow_approve')
 
 // ── 查询参数 ─────────────────────────────────────────────────────
 const query = reactive({
@@ -176,6 +181,8 @@ function handleSizeChange(size: number) {
         <span class="queue-count">
           共 <strong>{{ total }}</strong> 条待处理借阅申请
         </span>
+        <div class="toolbar-spacer" />
+        <ViewModeToggle v-model="viewMode" />
       </div>
 
       <template v-if="loading && tableData.length === 0">
@@ -188,7 +195,7 @@ function handleSizeChange(size: number) {
       />
 
       <el-table
-        v-else
+        v-else-if="viewMode === 'table'"
         v-loading="loading"
         :data="tableData"
         row-key="borrowId"
@@ -248,6 +255,48 @@ function handleSizeChange(size: number) {
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 卡片视图 -->
+      <div v-else v-loading="loading" class="card-grid-wrap">
+        <div class="card-grid">
+          <div
+            v-for="row in tableData"
+            :key="row.borrowId"
+            class="archive-card"
+            @click="openApprove(row)"
+          >
+            <div class="archive-card-icon-wrap">
+              <el-icon class="archive-card-icon"><Suitcase /></el-icon>
+            </div>
+            <div class="archive-card-body">
+              <div class="archive-card-no">{{ row.archiveNo }}</div>
+              <div class="archive-card-title" :title="row.volumeTitle">
+                {{ row.volumeTitle }}
+              </div>
+              <div class="archive-card-meta">
+                <span class="applicant-name">{{ row.borrowerName }}</span>
+                <span class="applicant-dept">{{ row.borrowerDept }}</span>
+              </div>
+              <div class="archive-card-meta">
+                <span class="meta-text">{{ row.applyCount }} 件</span>
+                <span class="meta-text">计划归还 {{ row.planReturnDate || '—' }}</span>
+              </div>
+            </div>
+            <div class="archive-card-footer">
+              <span class="meta-text">{{ row.createdAt }}</span>
+              <el-button
+                type="primary"
+                size="small"
+                class="btn-approve"
+                @click.stop="openApprove(row)"
+              >
+                <el-icon><EditPen /></el-icon>
+                审批
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div v-if="total > 0" class="pagination-wrap">
         <el-pagination
@@ -589,6 +638,105 @@ function handleSizeChange(size: number) {
     background: $color-primary;
     border-color: $color-primary;
   }
+}
+
+.toolbar-spacer { flex: 1; }
+
+// ── 卡片视图 ──────────────────────────────────────────────────────
+.card-grid-wrap {
+  padding: 16px 20px;
+  min-height: 200px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.meta-text {
+  font-size: 12px;
+  color: $color-text-body;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
 }
 
 // ── Drawer ────────────────────────────────────────────────────────

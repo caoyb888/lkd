@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -9,6 +9,8 @@ import { useAuthStore } from '@/stores/auth'
 import { VolumeApi } from '@/api/volume'
 import { FileApi, type ArchiveFileSaveDTO } from '@/api/file'
 import type { ArchiveVolumeDetailVO, ArchiveFileListVO } from '@/types/vo'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
 
 const route     = useRoute()
 const router    = useRouter()
@@ -61,8 +63,8 @@ let   sortable: Sortable | null = null
 async function loadFiles() {
   loading.value = true
   try {
-    if (volume.value?.volumeNo && volume.value?.year) {
-      files.value = await FileApi.listByVolume(volume.value.volumeNo, volume.value.year)
+    if (volume.value?.archiveNo && volume.value?.year) {
+      files.value = await FileApi.listByVolume(volume.value.archiveNo, volume.value.year)
     } else {
       files.value = []
     }
@@ -70,6 +72,22 @@ async function loadFiles() {
     loading.value = false
   }
 }
+
+// ── 视图模式（表格容器用 v-show 切换，避免 tbody 销毁导致 sortable 失效）──
+const viewMode = useViewMode('file')
+
+// ── 前端分页（listByVolume 一次返回全量，页内切片展示）─────────────
+const PAGE_SIZE = 20
+const page = ref(1)
+const pagedFiles = computed(() =>
+  files.value.slice((page.value - 1) * PAGE_SIZE, page.value * PAGE_SIZE)
+)
+
+// 切换案卷时重置页码
+watch(
+  () => [volume.value?.archiveNo, volume.value?.year],
+  () => { page.value = 1 }
+)
 
 // ── 拖拽排序 ─────────────────────────────────────────────────────
 const sortSaving = ref(false)
@@ -85,8 +103,12 @@ function initSortable() {
     ghostClass: 'sortable-ghost',
     onEnd: async ({ oldIndex, newIndex }) => {
       if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
-      const moved = files.value.splice(oldIndex, 1)[0]
-      files.value.splice(newIndex, 0, moved)
+      // DOM 下标是当前页的页内下标，换算为全量列表下标
+      const offset = (page.value - 1) * PAGE_SIZE
+      const from = oldIndex + offset
+      const to   = newIndex + offset
+      const moved = files.value.splice(from, 1)[0]
+      files.value.splice(to, 0, moved)
       // 重新编号
       files.value = files.value.map((f, i) => ({ ...f, seqNo: i + 1 }))
       await saveSortOrder()
@@ -297,23 +319,26 @@ onMounted(async () => {
           保存排序…
         </span>
       </div>
-      <el-button
-        v-if="canEdit"
-        type="primary"
-        class="btn-new"
-        @click="openCreate"
-      >
-        <el-icon><Plus /></el-icon>
-        新建文件
-      </el-button>
+      <div class="toolbar-right">
+        <ViewModeToggle v-model="viewMode" />
+        <el-button
+          v-if="canEdit"
+          type="primary"
+          class="btn-new"
+          @click="openCreate"
+        >
+          <el-icon><Plus /></el-icon>
+          新建文件
+        </el-button>
+      </div>
     </div>
 
-    <!-- ── 文件列表 ───────────────────────────────────────────────── -->
-    <el-card shadow="never" class="table-card">
+    <!-- ── 文件列表（表格视图）────────────────────────────────────── -->
+    <el-card v-show="viewMode === 'table'" shadow="never" class="table-card">
       <el-table
         ref="tableRef"
         v-loading="loading"
-        :data="files"
+        :data="pagedFiles"
         row-key="recordId"
         class="file-table"
         max-height="calc(100vh - 300px)"
@@ -366,7 +391,73 @@ onMounted(async () => {
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 分页 -->
+      <div v-if="files.length > PAGE_SIZE" class="pager-bar">
+        <el-pagination
+          v-model:current-page="page"
+          :page-size="PAGE_SIZE"
+          :total="files.length"
+          layout="total, prev, pager, next"
+          background
+        />
+      </div>
     </el-card>
+
+    <!-- ── 卡片视图 ───────────────────────────────────────────────── -->
+    <div v-show="viewMode === 'card'" class="card-view" v-loading="loading">
+      <EmptyState
+        v-if="!loading && pagedFiles.length === 0"
+        description="暂无卷内文件，点击「新建文件」开始录入"
+      />
+
+      <div class="card-grid">
+        <div
+          v-for="row in pagedFiles"
+          :key="row.recordId"
+          class="archive-card"
+        >
+          <div class="archive-card-icon-wrap">
+            <el-icon class="archive-card-icon"><Document /></el-icon>
+          </div>
+          <div class="archive-card-body">
+            <div class="archive-card-no">{{ row.fileNo || '—' }}</div>
+            <div class="archive-card-title" :title="row.fileTitle">
+              {{ row.fileTitle }}
+            </div>
+            <div class="archive-card-meta">
+              <span class="meta-text">{{ row.responsible || '—' }}</span>
+              <span class="meta-text">{{ row.pages ?? '—' }} 页</span>
+              <span
+                v-if="row.securityLevel"
+                class="security-chip small"
+                :style="securityStyle(row.securityLevel)"
+              >{{ getSecurityLabel(row.securityLevel) }}</span>
+            </div>
+          </div>
+          <div class="archive-card-footer">
+            <span class="meta-text">{{ row.archiveDate || '—' }}</span>
+            <el-button
+              v-if="canEdit"
+              link
+              type="primary"
+              size="small"
+              @click.stop="openEdit(row)"
+            >编辑</el-button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="files.length > PAGE_SIZE" class="pager-bar">
+        <el-pagination
+          v-model:current-page="page"
+          :page-size="PAGE_SIZE"
+          :total="files.length"
+          layout="total, prev, pager, next"
+          background
+        />
+      </div>
+    </div>
 
     <!-- ── 新建/编辑 Drawer ───────────────────────────────────────── -->
     <el-drawer
@@ -528,6 +619,13 @@ onMounted(async () => {
   max-width: 1200px;
 }
 
+// ── 分页栏 ────────────────────────────────────────────────────────
+.pager-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
 // ── 关联案卷横幅 ──────────────────────────────────────────────────
 .volume-banner {
   border-radius: var(--radius-card);
@@ -616,6 +714,112 @@ onMounted(async () => {
   border-radius: var(--radius-btn);
 
   &:hover { opacity: 0.9; }
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// ── 卡片视图 ──────────────────────────────────────────────────────
+.card-view {
+  min-height: 200px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-text {
+  font-size: 12px;
+  color: $color-text-body;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
+}
+
+.security-chip.small {
+  padding: 1px 6px;
+  font-size: 10px;
 }
 
 // ── 表格 ──────────────────────────────────────────────────────────

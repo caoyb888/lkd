@@ -192,11 +192,11 @@ async function handleSubmit() {
           </div>
           <div class="info-item">
             <span class="info-label">编制单位</span>
-            <span class="info-value">{{ volumeInfo.compilingUnit || '—' }}</span>
+            <span class="info-value">{{ volumeInfo.compileUnit || '—' }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">立卷人</span>
-            <span class="info-value">{{ volumeInfo.compilerName || '—' }}</span>
+            <span class="info-value">{{ volumeInfo.compiler || '—' }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">归档日期</span>

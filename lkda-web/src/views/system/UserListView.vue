@@ -6,6 +6,11 @@ import { UserApi, type UserListVO } from '@/api/system/user'
 import { DeptApi } from '@/api/system/dept'
 import type { DeptVO } from '@/types/vo'
 import { desensitizePhone } from '@/utils/desensitize'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
+
+// ── 视图模式 ────────────────────────────────────────────────────
+const viewMode = useViewMode('user')
 
 // ── 常量 ────────────────────────────────────────────────────────
 const ROLE_OPTIONS = [
@@ -292,12 +297,16 @@ onMounted(() => {
         <span class="toolbar-title">
           共 <strong>{{ pagination.total }}</strong> 条记录
         </span>
-        <el-button type="primary" class="add-btn" @click="openAdd">
-          <el-icon><Plus /></el-icon>新建用户
-        </el-button>
+        <div class="toolbar-right">
+          <ViewModeToggle v-model="viewMode" />
+          <el-button type="primary" class="add-btn" @click="openAdd">
+            <el-icon><Plus /></el-icon>新建用户
+          </el-button>
+        </div>
       </div>
 
       <el-table
+        v-if="viewMode === 'table'"
         v-loading="tableLoading"
         :data="tableData"
         row-key="userId"
@@ -381,6 +390,53 @@ onMounted(() => {
           <EmptyState description="暂无用户数据" />
         </template>
       </el-table>
+
+      <!-- 卡片视图 -->
+      <div v-else v-loading="tableLoading" class="card-grid-wrap">
+        <EmptyState
+          v-if="!tableLoading && tableData.length === 0"
+          description="暂无用户数据"
+        />
+
+        <div class="card-grid">
+          <div
+            v-for="row in tableData"
+            :key="row.userId"
+            class="archive-card"
+          >
+            <div class="archive-card-icon-wrap">
+              <el-icon class="archive-card-icon"><User /></el-icon>
+            </div>
+            <div class="archive-card-body">
+              <div class="archive-card-no">{{ row.username }}</div>
+              <div class="archive-card-title" :title="row.nickname">
+                {{ row.nickname }}
+              </div>
+              <div class="archive-card-meta">
+                <span class="meta-text">{{ row.deptName || '—' }}</span>
+              </div>
+              <div class="archive-card-meta">
+                <span
+                  v-for="r in row.roles"
+                  :key="r"
+                  class="role-tag"
+                  :class="r.toLowerCase()"
+                >
+                  {{ ROLE_LABEL[r] ?? r }}
+                </span>
+              </div>
+            </div>
+            <div class="archive-card-footer">
+              <span class="status-badge" :class="row.status === 1 ? 'enabled' : 'disabled'">
+                {{ row.status === 1 ? '启用' : '禁用' }}
+              </span>
+              <el-button link type="primary" @click.stop="openEdit(row)">
+                <el-icon><EditPen /></el-icon>编辑
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- 分页 -->
       <div class="pagination-wrap">
@@ -716,6 +772,108 @@ onMounted(() => {
   justify-content: flex-end;
   padding: 16px 20px;
   border-top: 1px solid #F1F5F9;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// ── 卡片视图 ──────────────────────────────────────────────────────
+.card-grid-wrap {
+  padding: 16px 20px;
+  min-height: 200px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.meta-text {
+  font-size: 12px;
+  color: $color-text-body;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
 }
 
 // ── 对话框 ──────────────────────────────────────────────────────────

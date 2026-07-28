@@ -230,7 +230,7 @@ const statusMeta = computed(() => {
                 </div>
                 <div class="info-item">
                   <span class="info-label">设备代号</span>
-                  <span class="info-value">{{ detail.equipmentCode ? label('equipment_code', detail.equipmentCode) : '—' }}</span>
+                  <span class="info-value">{{ detail.deviceCode ? label('equipment_code', detail.deviceCode) : '—' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">案卷号</span>
@@ -254,7 +254,7 @@ const statusMeta = computed(() => {
                 </div>
                 <div class="info-item col-span-2">
                   <span class="info-label">编制单位</span>
-                  <span class="info-value">{{ detail.compilingUnit || '—' }}</span>
+                  <span class="info-value">{{ detail.compileUnit || '—' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">密级</span>
@@ -273,7 +273,7 @@ const statusMeta = computed(() => {
                 </div>
                 <div class="info-item">
                   <span class="info-label">页数</span>
-                  <span class="info-value">{{ detail.pageCount ? detail.pageCount + ' 页' : '—' }}</span>
+                  <span class="info-value">{{ detail.totalPages ? detail.totalPages + ' 页' : '—' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">在库状态</span>
@@ -295,7 +295,7 @@ const statusMeta = computed(() => {
               <div class="info-grid">
                 <div class="info-item">
                   <span class="info-label">立卷人</span>
-                  <span class="info-value">{{ detail.compilerName || '—' }}</span>
+                  <span class="info-value">{{ detail.compiler || '—' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">立卷日期</span>
@@ -303,7 +303,7 @@ const statusMeta = computed(() => {
                 </div>
                 <div class="info-item">
                   <span class="info-label">审核人</span>
-                  <span class="info-value">{{ detail.reviewerName || '—' }}</span>
+                  <span class="info-value">{{ detail.reviewer || '—' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">归档日期</span>
@@ -323,7 +323,7 @@ const statusMeta = computed(() => {
 
           <!-- 备考 -->
           <el-tab-pane
-            v-if="detail.remark || detail.note"
+            v-if="detail.remark || detail.notes"
             label="备考"
             name="notes"
           >
@@ -333,9 +333,9 @@ const statusMeta = computed(() => {
                   <span class="info-label">备考说明</span>
                   <span class="info-value textarea-value">{{ detail.remark }}</span>
                 </div>
-                <div v-if="detail.note" class="info-item col-span-4">
+                <div v-if="detail.notes" class="info-item col-span-4">
                   <span class="info-label">备注</span>
-                  <span class="info-value textarea-value">{{ detail.note }}</span>
+                  <span class="info-value textarea-value">{{ detail.notes }}</span>
                 </div>
               </div>
             </div>

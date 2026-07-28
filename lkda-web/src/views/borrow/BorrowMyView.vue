@@ -4,8 +4,13 @@ import { useRouter } from 'vue-router'
 import { BorrowApi } from '@/api/borrow'
 import type { BorrowVO } from '@/types/vo'
 import { fmtDate, fmtDateTime } from '@/utils/date'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
 
 const router = useRouter()
+
+// ── 视图模式 ─────────────────────────────────────────────────────
+const viewMode = useViewMode('borrow_my')
 
 // ── 状态筛选选项 ─────────────────────────────────────────────────
 const STATUS_OPTIONS = [
@@ -164,6 +169,7 @@ const goApply = () => router.push('/volume/list')
         <span class="total-label">
           共 <strong>{{ total }}</strong> 条借阅记录
         </span>
+        <ViewModeToggle v-model="viewMode" />
       </div>
 
       <!-- 骨架屏 -->
@@ -179,7 +185,7 @@ const goApply = () => router.push('/volume/list')
 
       <!-- 表格 -->
       <el-table
-        v-else
+        v-else-if="viewMode === 'table'"
         v-loading="loading"
         :data="tableData"
         row-key="borrowId"
@@ -258,6 +264,49 @@ const goApply = () => router.push('/volume/list')
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 卡片视图 -->
+      <div v-else v-loading="loading" class="card-grid-wrap">
+        <div class="card-grid">
+          <div
+            v-for="row in tableData"
+            :key="row.borrowId"
+            class="archive-card"
+            @click="openDetail(row)"
+          >
+            <div class="archive-card-icon-wrap">
+              <el-icon class="archive-card-icon"><Suitcase /></el-icon>
+            </div>
+            <div class="archive-card-body">
+              <div class="archive-card-no">{{ row.archiveNo }}</div>
+              <div class="archive-card-title" :title="row.volumeTitle">
+                {{ row.volumeTitle }}
+              </div>
+              <div class="archive-card-meta">
+                <span class="meta-text">{{ row.applyCount }} 件</span>
+                <span class="meta-text">申请 {{ fmtDateTime(row.createdAt) }}</span>
+              </div>
+              <div class="archive-card-meta">
+                <span
+                  class="plan-date"
+                  :class="{
+                    'is-urgent':   row.remindLevel === 1,
+                    'is-overdue':  row.status === 4 || row.remindLevel === 2,
+                    'is-returned': row.status === 3,
+                  }"
+                >计划归还 {{ fmtDate(row.planReturnDate) }}</span>
+              </div>
+            </div>
+            <div class="archive-card-footer">
+              <StatusTag
+                type="borrow"
+                :value="row.status"
+                :remain-days="[1, 4].includes(row.status) ? getRemainDays(row) : undefined"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- 分页 -->
       <div v-if="total > 0" class="pagination-wrap">
@@ -497,6 +546,9 @@ const goApply = () => router.push('/volume/list')
 .skeleton-padding { padding: 24px; }
 
 .table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 10px 20px 8px;
   border-bottom: 1px solid #F1F5F9;
 }
@@ -597,6 +649,102 @@ const goApply = () => router.push('/volume/list')
     background: $color-primary;
     border-color: $color-primary;
   }
+}
+
+// ── 卡片视图 ──────────────────────────────────────────────────────
+.card-grid-wrap {
+  padding: 16px 20px;
+  min-height: 200px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.meta-text {
+  font-size: 12px;
+  color: $color-text-body;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
 }
 
 // ── Drawer ────────────────────────────────────────────────────────

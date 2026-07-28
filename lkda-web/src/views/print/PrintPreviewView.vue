@@ -5,7 +5,7 @@ import { ElMessage } from 'element-plus'
 import { useDictStore } from '@/stores/dict'
 import { VolumeApi } from '@/api/volume'
 import { FileApi } from '@/api/file'
-import { PrintApi } from '@/api/print'
+import { PrintApi, type PrintType } from '@/api/print'
 import type { ArchiveVolumeDetailVO } from '@/types/vo'
 import type { ArchiveFileListVO } from '@/types/vo'
 
@@ -36,8 +36,8 @@ async function loadData() {
       }
     }
     volume.value = vol
-    if (vol?.volumeNo && vol?.year) {
-      files.value = await FileApi.listByVolume(vol.volumeNo, vol.year)
+    if (vol?.archiveNo && vol?.year) {
+      files.value = await FileApi.listByVolume(vol.archiveNo, vol.year)
     } else {
       files.value = []
     }
@@ -65,18 +65,37 @@ const TABS: { key: TabKey; label: string; icon: string }[] = [
 const lbl = (code: string, val?: string) =>
   (val ? dictStore.getDictLabel(code, val) || val : null) || '—'
 
-// ── 下载 Word ────────────────────────────────────────────────────
+// ── 下载 PDF ─────────────────────────────────────────────────────
 const downloading = ref(false)
+
+/** tab key → 后端 PrintType 映射 */
+const TAB_TO_PRINT_TYPE: Record<TabKey, PrintType> = {
+  'cover':          'cover',
+  'spine':          'spine',
+  'vol-catalogue':  'volume-catalogue',
+  'file-catalogue': 'file-catalogue',
+}
+
+const TAB_LABEL: Record<TabKey, string> = {
+  'cover':          '封皮',
+  'spine':          '侧脊',
+  'vol-catalogue':  '案卷目录',
+  'file-catalogue': '卷内文件目录',
+}
 
 async function handleDownload() {
   if (!volume.value) return
   downloading.value = true
   try {
-    const blob = await PrintApi.downloadDocx(volumeId.value, volume.value.year)
+    const blob = await PrintApi.downloadPdf(
+      volumeId.value,
+      volume.value.year,
+      TAB_TO_PRINT_TYPE[activeTab.value],
+    )
     const url  = URL.createObjectURL(blob)
     const a    = document.createElement('a')
     a.href     = url
-    a.download = `档案_${volume.value.archiveNo}.docx`
+    a.download = `档案_${volume.value.archiveNo}_${TAB_LABEL[activeTab.value]}.pdf`
     a.click()
     URL.revokeObjectURL(url)
   } catch {
@@ -123,7 +142,7 @@ const volTableRows = computed(() => (volume.value ? [volume.value] : []))
           @click="handleDownload"
         >
           <el-icon><Download /></el-icon>
-          下载 Word(.docx)
+          下载 PDF
         </el-button>
         <el-button
           type="primary"
@@ -212,7 +231,7 @@ const volTableRows = computed(() => (volume.value ? [volume.value] : []))
                   件数 <strong>{{ volume.copies ?? '—' }}</strong>
                 </span>
                 <span class="cover-count-item">
-                  页数 <strong>{{ volume.pageCount ?? '—' }}</strong>
+                  页数 <strong>{{ volume.totalPages ?? '—' }}</strong>
                 </span>
               </div>
 
@@ -304,19 +323,19 @@ const volTableRows = computed(() => (volume.value ? [volume.value] : []))
                   <td>{{ row.volumeTitle }}</td>
                   <td class="center">{{ row.year }}</td>
                   <td class="center">{{ row.copies ?? '—' }}</td>
-                  <td class="center">{{ row.pageCount ?? '—' }}</td>
+                  <td class="center">{{ row.totalPages ?? '—' }}</td>
                   <td class="center">{{ row.retentionPeriodLabel || lbl('retention_period', row.retentionPeriod) }}</td>
                   <td class="center">{{ row.securityLevelLabel || lbl('security_level', row.securityLevel) }}</td>
-                  <td>{{ row.note || '—' }}</td>
+                  <td>{{ row.notes || '—' }}</td>
                 </tr>
               </tbody>
             </table>
 
             <div class="catalogue-footer">
-              <span>编制单位：{{ volume.compilingUnit || '—' }}</span>
-              <span>立卷人：{{ volume.compilerName || '—' }}</span>
+              <span>编制单位：{{ volume.compileUnit || '—' }}</span>
+              <span>立卷人：{{ volume.compiler || '—' }}</span>
               <span>立卷日期：{{ volume.compileDate || '—' }}</span>
-              <span>审核人：{{ volume.reviewerName || '—' }}</span>
+              <span>审核人：{{ volume.reviewer || '—' }}</span>
             </div>
           </div>
         </div>
@@ -369,7 +388,7 @@ const volTableRows = computed(() => (volume.value ? [volume.value] : []))
 
             <div class="catalogue-footer" v-if="files.length > 0">
               <span>共 {{ files.length }} 件</span>
-              <span>立卷人：{{ volume.compilerName || '—' }}</span>
+              <span>立卷人：{{ volume.compiler || '—' }}</span>
             </div>
           </div>
         </div>

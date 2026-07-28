@@ -10,32 +10,44 @@ export interface ImportResult {
 
 export interface VolumeQueryDTO extends PageQuery {
   year?: string
+  fondsNo?: string
   categoryL1?: string
   categoryL2?: string
+  categoryL3?: string
+  deviceCode?: string
+  securityLevel?: string
+  archiveNo?: string
   status?: number
   inStock?: number
   keyword?: string
 }
 
+// 与后端 ArchiveVolumeSaveDTO 对齐（立卷人 compiler 由后端取当前用户，无需传入）
 export interface ArchiveVolumeSaveDTO {
-  fondsNo: string
   year: string
+  fondsNo: string
+  categoryName?: string
   categoryL1: string
   categoryL2?: string
   categoryL3?: string
-  equipmentCode: string
+  deviceCode: string
   volumeTitle: string
-  compilingUnit?: string
-  securityLevel?: string
-  retentionPeriod?: string
-  copies?: number
-  pageCount?: number
-  compilerName?: string
+  fileCount?: number
+  totalPages?: number
+  compileUnit?: string
   compileDate?: string
-  reviewerName?: string
+  retentionPeriod?: string
+  securityLevel?: string
+  compileDateActual?: string
+  reviewer?: string
+  inspectDate?: string
   archiveDate?: string
+  notes?: string
   remark?: string
-  note?: string
+  categoryCode?: string
+  locationNo?: string
+  copies?: number
+  organization?: string
 }
 
 export interface ArchiveNoPreviewDTO {
@@ -58,10 +70,13 @@ export const VolumeApi = {
     http.get<string>('/volume/archive-no/preview', { params }),
 
   saveDraft: (data: ArchiveVolumeSaveDTO) =>
-    http.post<number>('/volume', data),
+    http.post<ArchiveVolumeDetailVO>('/volume', data),
 
   update: (id: number, year: string, data: ArchiveVolumeSaveDTO) =>
     http.put<void>(`/volume/${id}?year=${encodeURIComponent(year)}`, data),
+
+  delete: (id: number, year: string) =>
+    http.delete<void>(`/volume/${id}?year=${encodeURIComponent(year)}`),
 
   submit: (id: number, year: string) =>
     http.put<void>(`/volume/${id}/submit?year=${encodeURIComponent(year)}`),

@@ -29,7 +29,7 @@ export interface ApproveQueueItemVO {
   categoryL1Label: string
   securityLevel: string
   securityLevelLabel: string
-  compilerName: string
+  compiler: string
   compilerId: number
   status: number
   createdAt: string

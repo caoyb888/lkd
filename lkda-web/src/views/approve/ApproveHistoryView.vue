@@ -4,8 +4,13 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ApproveApi } from '@/api/approve'
 import type { ApproveLogVO } from '@/types/vo'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
 
 const router = useRouter()
+
+// ── 视图模式 ─────────────────────────────────────────────────────
+const viewMode = useViewMode('approve_history')
 
 // ── 业务类型选项 ─────────────────────────────────────────────────
 const BIZ_OPTIONS = [
@@ -220,6 +225,7 @@ const DATE_FORMAT = 'YYYY-MM-DD'
               点击行展开意见
             </span>
           </el-tooltip>
+          <ViewModeToggle v-model="viewMode" />
         </div>
       </div>
 
@@ -236,7 +242,7 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 
       <!-- 表格 -->
       <el-table
-        v-else
+        v-else-if="viewMode === 'table'"
         v-loading="loading"
         :data="tableData"
         row-key="logId"
@@ -355,6 +361,51 @@ const DATE_FORMAT = 'YYYY-MM-DD'
         </el-table-column>
       </el-table>
 
+      <!-- 卡片视图 -->
+      <div v-else v-loading="loading" class="card-grid-wrap">
+        <div class="card-grid">
+          <div
+            v-for="row in tableData"
+            :key="row.logId"
+            class="archive-card"
+            @click="goVolumeDetail(row)"
+          >
+            <div class="archive-card-icon-wrap">
+              <el-icon class="archive-card-icon"><Stamp /></el-icon>
+            </div>
+            <div class="archive-card-body">
+              <div class="archive-card-no">{{ row.targetArchiveNo || '—' }}</div>
+              <div class="archive-card-title" :title="row.opinion || '该审批操作未填写意见'">
+                {{ row.opinion || '该审批操作未填写意见' }}
+              </div>
+              <div class="archive-card-meta">
+                <span
+                  class="biz-tag"
+                  :style="{
+                    background: bizMeta(row.businessType).bg,
+                    color:      bizMeta(row.businessType).color,
+                  }"
+                >{{ bizMeta(row.businessType).text }}</span>
+                <span
+                  class="action-tag"
+                  :style="{
+                    background: actionMeta(row.action).bg,
+                    color:      actionMeta(row.action).color,
+                  }"
+                >{{ actionMeta(row.action).text }}</span>
+              </div>
+            </div>
+            <div class="archive-card-footer">
+              <span class="approver-cell">
+                <el-icon><UserFilled /></el-icon>
+                {{ row.approverName }}
+              </span>
+              <span class="time-cell">{{ row.createdAt }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 分页 -->
       <div v-if="total > 0" class="pagination-wrap">
         <el-pagination
@@ -441,7 +492,7 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 }
 
 .toolbar-left { display: flex; align-items: center; gap: 8px; }
-.toolbar-right { display: flex; align-items: center; }
+.toolbar-right { display: flex; align-items: center; gap: 10px; }
 
 .total-label {
   font-size: 13px;
@@ -646,6 +697,97 @@ const DATE_FORMAT = 'YYYY-MM-DD'
     background: $color-primary;
     border-color: $color-primary;
   }
+}
+
+// ── 卡片视图 ──────────────────────────────────────────────────────
+.card-grid-wrap {
+  padding: 16px 20px;
+  min-height: 200px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
 }
 
 .el-button { border-radius: var(--radius-btn); }

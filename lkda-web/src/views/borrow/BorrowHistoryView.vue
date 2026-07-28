@@ -6,9 +6,15 @@ import type { BorrowVO } from '@/types/vo'
 import type { BorrowHistoryQueryDTO } from '@/api/borrow'
 import { useAuthStore } from '@/stores/auth'
 import { fmtDate, fmtDateTime } from '@/utils/date'
+import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import { useViewMode } from '@/composables/useViewMode'
 
 const auth = useAuthStore()
 const isAdmin = computed(() => auth.isAdmin)
+
+// ─── 视图模式 ────────────────────────────────────────────────────────────────
+
+const viewMode = useViewMode('borrow_history')
 
 // ─── 搜索条件 ────────────────────────────────────────────────────────────────
 
@@ -187,12 +193,15 @@ async function handleReturn() {
         />
         <el-button type="primary" @click="handleSearch">查询</el-button>
         <el-button @click="handleReset">重置</el-button>
+        <div class="search-spacer" />
+        <ViewModeToggle v-model="viewMode" />
       </div>
     </el-card>
 
     <!-- 表格 -->
     <el-card shadow="never" class="table-card">
       <el-table
+        v-if="viewMode === 'table'"
         v-loading="loading"
         :data="list"
         :row-class-name="rowClassName"
@@ -249,6 +258,57 @@ async function handleReturn() {
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 卡片视图 -->
+      <div v-else v-loading="loading" class="card-view">
+        <EmptyState
+          v-if="!loading && list.length === 0"
+          description="暂无借阅历史记录"
+        />
+
+        <div class="card-grid">
+          <div
+            v-for="row in list"
+            :key="row.borrowId"
+            class="archive-card"
+          >
+            <div class="archive-card-icon-wrap">
+              <el-icon class="archive-card-icon"><Suitcase /></el-icon>
+            </div>
+            <div class="archive-card-body">
+              <div class="archive-card-no">{{ row.archiveNo }}</div>
+              <div class="archive-card-title" :title="row.volumeTitle">
+                {{ row.volumeTitle }}
+              </div>
+              <div class="archive-card-meta">
+                <span class="meta-text">{{ row.borrowerName }}</span>
+                <span v-if="isAdmin" class="meta-text">{{ row.borrowerDept }}</span>
+              </div>
+              <div class="archive-card-meta">
+                <span class="meta-text">借出 {{ fmtDate(row.borrowDate) }}</span>
+                <span class="meta-text" :class="{ 'overdue-date': isOverdue(row) }">
+                  计划归还 {{ fmtDate(row.planReturnDate) }}
+                </span>
+              </div>
+            </div>
+            <div class="archive-card-footer">
+              <StatusTag
+                type="borrow"
+                :value="(row.status === 1 && (row.remainingDays ?? 0) < 0) ? 4 : row.status"
+                :remain-days="row.status === 1 ? (row.remainingDays ?? undefined) : undefined"
+              />
+              <el-button
+                v-if="isAdmin && (row.status === 1 || row.status === 4)"
+                type="primary"
+                link
+                @click.stop="openReturn(row)"
+              >
+                登记归还
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- 分页 -->
       <div class="pagination-bar">
@@ -367,6 +427,104 @@ async function handleReturn() {
     justify-content: flex-end;
     padding-top: 20px;
   }
+}
+
+.search-spacer { flex: 1; }
+
+// ─── 卡片视图 ──────────────────────────────────────────────────────────────
+
+.card-view {
+  min-height: 200px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.archive-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-card);
+  padding: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.archive-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--theme-bg-lighter), var(--theme-border-medium));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.archive-card-icon {
+  font-size: 22px;
+  color: $color-primary-dark;
+}
+
+.archive-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-card-no {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 4px;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.archive-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.meta-text {
+  font-size: 12px;
+  color: $color-text-body;
+}
+
+.archive-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  flex-wrap: wrap;
 }
 
 .overdue-date {

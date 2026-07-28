@@ -28,14 +28,16 @@ export interface DeptVO {
   children?: DeptVO[]
 }
 
-// 案卷列表 VO
+// 案卷列表 VO（与后端 ArchiveVolumeListVO 对齐）
 export interface ArchiveVolumeListVO {
   recordId: number
   year: string
   archiveNo: string
   volumeTitle: string
+  categoryName: string
   categoryL1: string
   categoryL1Label: string
+  categoryL2: string
   securityLevel: string
   securityLevelLabel: string
   retentionPeriod: string
@@ -44,30 +46,34 @@ export interface ArchiveVolumeListVO {
   inStock: number
   destroyFlag: number
   pendingDestroy: number
+  copies: number
+  borrowedCopies: number
+  compilerId: number
   compiler: string
   createdAt: string
   updatedAt: string
 }
 
-// 案卷详情 VO
+// 案卷详情 VO（与后端 ArchiveVolumeVO 对齐）
 export interface ArchiveVolumeDetailVO extends ArchiveVolumeListVO {
   fondsNo: string
-  categoryL2: string
   categoryL3: string
-  equipmentCode: string
+  deviceCode: string
   volumeNo: string
-  compilingUnit: string
-  copies: number
-  borrowedCopies: number
-  pageCount: number
-  compilerId: number
-  compilerName: string
+  compileUnit: string
+  fileCount: number
+  totalPages: number
   compileDate: string
-  reviewerName: string
+  compileDateActual: string
+  reviewer: string
+  inspectDate: string
   archiveDate: string
+  notes: string
   remark: string
-  note: string
-  pendingDestroy: number
+  categoryCode: string
+  locationNo: string
+  registerDate: string
+  organization: string
 }
 
 // 借阅状态 VO（对应后端 ArchiveBorrowListVO / ArchiveBorrowVO）
