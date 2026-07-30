@@ -22,6 +22,7 @@ public class ArchiveFileListVO {
     private Integer status;
     private Integer inStock;
     private String securityLevel;
+    private String securityLevelLabel;
     private Long compilerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

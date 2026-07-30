@@ -23,4 +23,8 @@ public class CreateDictItemDTO {
     private String  itemLabel;
 
     private Integer sortOrder;
+
+    /** 父级字典项值（树形关联用），NULL=顶级 */
+    @Size(max = 50)
+    private String  parentValue;
 }

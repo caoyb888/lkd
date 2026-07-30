@@ -36,6 +36,17 @@ http.interceptors.response.use(
       return response
     }
 
+    // 后端未登录以 HTTP 200 + 业务码 401 返回（sa-token），必须按认证失败处理
+    if (result.code === 401) {
+      localStorage.removeItem('satoken')
+      localStorage.removeItem('lkda_auth')
+      if (window.location.pathname !== '/login') {
+        toast.error(result.msg || '登录已过期，请重新登录')
+        window.location.href = '/login'
+      }
+      return Promise.reject(result)
+    }
+
     // 业务错误提示
     toast.error(result.msg || '操作失败')
     return Promise.reject(result)

@@ -23,9 +23,10 @@ export interface FileSortDTO {
 }
 
 export const FileApi = {
-  listByVolume: (volumeNo: string, year: string) =>
+  // 关联键为档号（全库唯一），后端按 archive_no + year 查询
+  listByVolume: (archiveNo: string, year: string) =>
     Http.get<ArchiveFileListVO[]>(
-      `/file/volume/${encodeURIComponent(volumeNo)}?year=${encodeURIComponent(year)}`
+      `/file/volume/${encodeURIComponent(archiveNo)}?year=${encodeURIComponent(year)}`
     ),
 
   save: (data: ArchiveFileSaveDTO) => Http.post<number>('/file', data),

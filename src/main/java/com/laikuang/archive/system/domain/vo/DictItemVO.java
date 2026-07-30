@@ -13,6 +13,8 @@ public class DictItemVO {
     private String  itemValue;
     private String  itemLabel;
     private Integer sortOrder;
+    /** 父级字典项值（树形关联用），NULL=顶级 */
+    private String  parentValue;
     /** 状态：1-启用，0-停用 */
     private Integer status;
 }

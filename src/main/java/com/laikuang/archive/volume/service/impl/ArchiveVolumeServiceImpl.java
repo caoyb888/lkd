@@ -349,11 +349,12 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
         // 已正式归档：全员可查（无需额外限制）
 
         ArchiveVolumeVO vo = converter.toVO(volume);
+        fillDetailDictLabels(vo);
 
-        // 加载卷内文件列表（按 seq_no 排序）
+        // 加载卷内文件列表（按 seq_no 排序，关联键为唯一档号）
         List<ArchiveFile> files = fileMapper.selectList(
                 new LambdaQueryWrapper<ArchiveFile>()
-                        .eq(ArchiveFile::getVolumeNo, volume.getVolumeNo())
+                        .eq(ArchiveFile::getArchiveNo, volume.getArchiveNo())
                         .eq(ArchiveFile::getYear, year)
                         .eq(ArchiveFile::getDestroyFlag, 0)
                         .orderByAsc(ArchiveFile::getSeqNo));
@@ -556,7 +557,7 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
                         row.getCategoryL1(), row.getCategoryL2(),
                         row.getCategoryL3(), row.getDeviceCode());
                 int next = groupCounter.get(groupKey);
-                volumeNo = String.format("%03d", next);
+                volumeNo = String.format("%02d", next);
                 groupCounter.put(groupKey, next + 1);
             }
             volume.setVolumeNo(volumeNo);
@@ -697,7 +698,7 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
                 }
             }
         }
-        return String.format("%03d", next);
+        return String.format("%02d", next);
     }
 
     private String buildArchiveNo(ArchiveVolumeSaveDTO dto, String volumeNo) {
@@ -830,9 +831,10 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
             throw new BusinessException(ResultCode.PARAM_ERROR, "档案不存在或已销毁");
         }
         ArchiveVolumeVO vo = converter.toVO(volume);
+        fillDetailDictLabels(vo);
         List<ArchiveFile> files = fileMapper.selectList(
                 new LambdaQueryWrapper<ArchiveFile>()
-                        .eq(ArchiveFile::getVolumeNo, volume.getVolumeNo())
+                        .eq(ArchiveFile::getArchiveNo, volume.getArchiveNo())
                         .eq(ArchiveFile::getYear, volume.getYear())
                         .eq(ArchiveFile::getDestroyFlag, 0)
                         .orderByAsc(ArchiveFile::getSeqNo));
@@ -846,19 +848,19 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
     }
 
     /**
-     * 为列表 VO 填充密级和保管期限的字典中文标签。
+     * 为列表 VO 填充一级类目、密级和保管期限的字典中文标签。
      */
     private void fillDictLabels(List<ArchiveVolumeListVO> list) {
         if (list == null || list.isEmpty()) {
             return;
         }
-        List<DictItemVO> securityItems = dictService.getActiveItemsByCode("security_level");
-        List<DictItemVO> retentionItems = dictService.getActiveItemsByCode("retention_period");
-        Map<String, String> securityMap = securityItems.stream()
-                .collect(Collectors.toMap(DictItemVO::getItemValue, DictItemVO::getItemLabel, (a, b) -> a));
-        Map<String, String> retentionMap = retentionItems.stream()
-                .collect(Collectors.toMap(DictItemVO::getItemValue, DictItemVO::getItemLabel, (a, b) -> a));
+        Map<String, String> categoryL1Map = dictLabelMap("category_l1");
+        Map<String, String> securityMap = dictLabelMap("security_level");
+        Map<String, String> retentionMap = dictLabelMap("retention_period");
         for (ArchiveVolumeListVO vo : list) {
+            if (vo.getCategoryL1() != null) {
+                vo.setCategoryL1Label(categoryL1Map.getOrDefault(vo.getCategoryL1(), vo.getCategoryL1()));
+            }
             if (vo.getSecurityLevel() != null) {
                 vo.setSecurityLevelLabel(securityMap.getOrDefault(vo.getSecurityLevel(), vo.getSecurityLevel()));
             }
@@ -866,5 +868,32 @@ public class ArchiveVolumeServiceImpl implements ArchiveVolumeService {
                 vo.setRetentionPeriodLabel(retentionMap.getOrDefault(vo.getRetentionPeriod(), vo.getRetentionPeriod()));
             }
         }
+    }
+
+    /**
+     * 为详情 VO 填充一级类目、密级和保管期限的字典中文标签。
+     */
+    private void fillDetailDictLabels(ArchiveVolumeVO vo) {
+        if (vo == null) {
+            return;
+        }
+        if (vo.getCategoryL1() != null) {
+            vo.setCategoryL1Label(dictLabelMap("category_l1")
+                    .getOrDefault(vo.getCategoryL1(), vo.getCategoryL1()));
+        }
+        if (vo.getSecurityLevel() != null) {
+            vo.setSecurityLevelLabel(dictLabelMap("security_level")
+                    .getOrDefault(vo.getSecurityLevel(), vo.getSecurityLevel()));
+        }
+        if (vo.getRetentionPeriod() != null) {
+            vo.setRetentionPeriodLabel(dictLabelMap("retention_period")
+                    .getOrDefault(vo.getRetentionPeriod(), vo.getRetentionPeriod()));
+        }
+    }
+
+    /** 读取字典项并组装 value -> label 映射 */
+    private Map<String, String> dictLabelMap(String dictCode) {
+        return dictService.getActiveItemsByCode(dictCode).stream()
+                .collect(Collectors.toMap(DictItemVO::getItemValue, DictItemVO::getItemLabel, (a, b) -> a));
     }
 }

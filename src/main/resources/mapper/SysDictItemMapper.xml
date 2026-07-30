@@ -17,6 +17,7 @@
             di.item_value,
             di.item_label,
             di.sort_order,
+            di.parent_value,
             di.status
         FROM sys_dict_item di
         INNER JOIN sys_dict d ON di.dict_code = d.dict_code
@@ -36,6 +37,7 @@
             di.item_value,
             di.item_label,
             di.sort_order,
+            di.parent_value,
             di.status
         FROM sys_dict_item di
         INNER JOIN sys_dict d ON di.dict_code = d.dict_code

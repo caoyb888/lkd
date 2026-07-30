@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 /**
  * 文件级明细目录新建 DTO。
- * 文件必须关联到某一案卷（通过 volumeNo + year 定位）。
+ * 文件必须关联到某一案卷（通过 archiveNo + year 定位，档号全库唯一）。
  */
 @Data
 public class ArchiveFileSaveDTO {

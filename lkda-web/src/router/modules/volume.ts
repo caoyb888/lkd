@@ -20,6 +20,12 @@ export const volumeRoutes: RouteRecordRaw[] = [
     meta: { title: '案卷详情' },
   },
   {
+    path: '/volume/drafts',
+    name: 'VolumeDraftList',
+    component: () => import('@/views/volume/VolumeDraftListView.vue'),
+    meta: { title: '待归档', roles: ['archive_admin', 'user'] },
+  },
+  {
     path: '/volume/import',
     name: 'VolumeImport',
     component: () => import('@/views/volume/VolumeImportView.vue'),

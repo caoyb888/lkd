@@ -69,6 +69,7 @@ const rawMenuTree: MenuItem[] = [
     roles: [],
     children: [
       { path: '/volume/list', title: '案卷目录', icon: 'Files', roles: [] },
+      { path: '/volume/drafts', title: '待归档', icon: 'Document', roles: ['archive_admin', 'user'] },
       { path: '/volume/import', title: 'Excel 导入', icon: 'Upload', roles: ['archive_admin'] },
     ],
   },

@@ -14,6 +14,10 @@ import com.laikuang.archive.file.service.ArchiveFileService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +28,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -136,12 +143,12 @@ public class ArchiveFileController {
      * GET /api/file/volume/{volumeNo}?year=2026
      * 按案卷号查询卷内文件列表（按 seq_no 升序）。
      */
-    @GetMapping("/volume/{volumeNo}")
+    @GetMapping("/volume/{archiveNo}")
     @SaCheckPermission(PermissionConstants.ARCHIVE_VIEW)
     public Result<List<ArchiveFileListVO>> listFilesByVolume(
-            @PathVariable String volumeNo,
+            @PathVariable String archiveNo,
             @RequestParam @NotBlank(message = "年度不能为空") String year) {
-        return Result.success(fileService.listFilesByVolume(volumeNo, year));
+        return Result.success(fileService.listFilesByVolume(archiveNo, year));
     }
 
     /**
@@ -154,5 +161,43 @@ public class ArchiveFileController {
             @RequestBody @Validated List<ArchiveFileSortDTO> items) {
         fileService.batchSort(items);
         return Result.success();
+    }
+
+    // ==================== 电子原文 ====================
+
+    /**
+     * POST /api/file/{recordId}/original?year=2026
+     * 上传电子原文（仅限草稿态且立卷人本人）。
+     */
+    @PostMapping("/{recordId}/original")
+    @SaCheckPermission(PermissionConstants.ARCHIVE_CREATE)
+    public Result<String> uploadOriginal(
+            @PathVariable Long recordId,
+            @RequestParam @NotBlank(message = "年度不能为空") String year,
+            @RequestParam("file") MultipartFile file) {
+        return Result.success(fileService.uploadOriginal(recordId, year, file));
+    }
+
+    /**
+     * GET /api/file/{recordId}/original?year=2026
+     * 下载电子原文（草稿态仅限立卷人本人，权限同详情接口）。
+     */
+    @GetMapping("/{recordId}/original")
+    @SaCheckPermission(PermissionConstants.ARCHIVE_VIEW)
+    public ResponseEntity<Resource> downloadOriginal(
+            @PathVariable Long recordId,
+            @RequestParam @NotBlank(message = "年度不能为空") String year) {
+        // getFileDetail 内含草稿水平越权校验
+        ArchiveFileVO detail = fileService.getFileDetail(recordId, year);
+        Resource resource = fileService.loadOriginal(detail.getOriginalPath());
+        // 存储名为 {recordId}_{原始文件名}，下载时还原原始文件名
+        String stored = detail.getOriginalPath();
+        String downloadName = stored != null && stored.startsWith(recordId + "_")
+                ? stored.substring((recordId + "_").length()) : stored;
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename*=UTF-8''" + UriUtils.encode(downloadName, StandardCharsets.UTF_8))
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

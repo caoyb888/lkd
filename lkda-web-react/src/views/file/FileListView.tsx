@@ -37,6 +37,7 @@ import {
 
 import PageHeader from '@/components/PageHeader'
 import ViewModeToggle from '@/components/ViewModeToggle'
+import Pagination from '@/components/ui/pagination'
 import { useViewMode } from '@/hooks/useViewMode'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -458,15 +459,27 @@ export default function FileListView() {
     data: files,
     isLoading: filesLoading,
   } = useQuery({
-    queryKey: ['file', 'list', volume?.volumeNo, volume?.year],
+    queryKey: ['file', 'list', volume?.archiveNo, volume?.year],
     queryFn: () => {
       if (!volume?.volumeNo || !volume?.year) return []
-      return FileApi.listByVolume(volume.volumeNo, volume.year)
+      return FileApi.listByVolume(volume.archiveNo, volume.year)
     },
     enabled: !!volume?.volumeNo && !!volume?.year,
   })
 
   const fileList = files ?? []
+
+  /* ── 前端分页（listByVolume 一次返回全量，页内切片展示）────── */
+  const PAGE_SIZE = 20
+  const [page, setPage] = useState(1)
+  useEffect(() => {
+    setPage(1)
+  }, [volume?.volumeNo, volume?.year])
+  const totalPages = Math.max(1, Math.ceil(fileList.length / PAGE_SIZE))
+  const pagedFiles = useMemo(
+    () => fileList.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [fileList, page]
+  )
 
   /* ── 拖拽传感器 ───────────────────────────────────────────── */
   const sensors = useSensors(
@@ -768,7 +781,7 @@ export default function FileListView() {
                   </tr>
                 </TableHeader>
                 <TableBody>
-                  {fileList.map((file) => (
+                  {pagedFiles.map((file) => (
                     <SortableTableRow
                       key={file.recordId}
                       file={file}
@@ -794,7 +807,7 @@ export default function FileListView() {
                   <EmptyState description="暂无卷内文件，点击「新建文件」开始录入" />
                 </div>
               ) : (
-                fileList.map((file) => (
+                pagedFiles.map((file) => (
                   <SortableCard
                     key={file.recordId}
                     file={file}
@@ -816,7 +829,7 @@ export default function FileListView() {
             ) : fileList.length === 0 ? (
               <EmptyState description="暂无卷内文件，点击「新建文件」开始录入" />
             ) : (
-              fileList.map((file) => (
+              pagedFiles.map((file) => (
                 <SortableCard
                   key={file.recordId}
                   file={file}
@@ -827,6 +840,8 @@ export default function FileListView() {
               ))
             )}
           </div>
+
+          <Pagination current={page} total={totalPages} onChange={setPage} />
         </SortableContext>
       </DndContext>
 

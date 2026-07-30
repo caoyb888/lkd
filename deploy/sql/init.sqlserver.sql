@@ -110,6 +110,7 @@ CREATE TABLE [sys_dict_item] (
     [item_value] NVARCHAR(50)  NOT NULL,
     [item_label] NVARCHAR(100) NOT NULL,
     [sort_order] INT           NULL     CONSTRAINT df_ditem_sort   DEFAULT (0),
+    [parent_value] NVARCHAR(50) NULL,
     [status]     TINYINT       NULL     CONSTRAINT df_ditem_status DEFAULT (1),
     [created_at] DATETIME2     NOT NULL CONSTRAINT df_ditem_created DEFAULT (SYSDATETIME()),
     [updated_at] DATETIME2     NOT NULL CONSTRAINT df_ditem_updated DEFAULT (SYSDATETIME()),

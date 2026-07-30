@@ -72,6 +72,7 @@ CREATE TABLE `sys_dict_item` (
   `item_value` VARCHAR(50)  NOT NULL                COMMENT '数据字典实际值（存储于业务表中，如 30_years）',
   `item_label` VARCHAR(100) NOT NULL                COMMENT '数据字典显示名称（前端展示用，如 30年）',
   `sort_order` INT          DEFAULT 0               COMMENT '排序顺序',
+  `parent_value` VARCHAR(50) DEFAULT NULL            COMMENT '父级字典项值（树形关联用，NULL=顶级）',
   `status`     TINYINT(1)   DEFAULT 1               COMMENT '状态：1-启用，0-停用',
   `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP                    COMMENT '创建时间',
   `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

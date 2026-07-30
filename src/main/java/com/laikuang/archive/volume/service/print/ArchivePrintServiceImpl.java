@@ -43,7 +43,7 @@ public class ArchivePrintServiceImpl implements ArchivePrintService {
 
         List<ArchiveFile> files = fileMapper.selectList(
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<ArchiveFile>()
-                        .eq(ArchiveFile::getVolumeNo, volume.getVolumeNo())
+                        .eq(ArchiveFile::getArchiveNo, volume.getArchiveNo())
                         .eq(ArchiveFile::getYear, year)
                         .eq(ArchiveFile::getDestroyFlag, 0)
                         .orderByAsc(ArchiveFile::getSeqNo));

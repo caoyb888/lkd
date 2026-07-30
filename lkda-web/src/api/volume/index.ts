@@ -63,6 +63,10 @@ export const VolumeApi = {
   page: (params: VolumeQueryDTO) =>
     http.get<Page<ArchiveVolumeListVO>>('/volume/page', { params }),
 
+  // 我的草稿（待归档）分页：后端强制 status=0 且按当前立卷人过滤
+  draftPage: (params: PageQuery) =>
+    http.get<Page<ArchiveVolumeListVO>>('/volume/draft-page', { params }),
+
   detail: (id: number, year: string) =>
     http.get<ArchiveVolumeDetailVO>(`/volume/${id}?year=${encodeURIComponent(year)}`),
 

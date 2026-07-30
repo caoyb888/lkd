@@ -16,6 +16,7 @@ public class ArchiveVolumeListVO {
     private String volumeTitle;
     private String categoryName;
     private String categoryL1;
+    private String categoryL1Label;
     private String categoryL2;
     private String securityLevel;
     private String securityLevelLabel;

@@ -50,6 +50,11 @@ public class ArchiveVolumeVO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    /** 字典中文标签（详情展示用，随 VO 填充） */
+    private String categoryL1Label;
+    private String securityLevelLabel;
+    private String retentionPeriodLabel;
+
     /** 卷内文件列表（按需填充） */
     private List<ArchiveFileBriefVO> fileList;
 }

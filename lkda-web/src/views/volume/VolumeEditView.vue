@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useDictStore } from '@/stores/dict'
 import { useAuthStore } from '@/stores/auth'
 import { VolumeApi, type ArchiveVolumeSaveDTO } from '@/api/volume'
-import type { ArchiveVolumeDetailVO } from '@/types/vo'
+import { FileApi } from '@/api/file'
+import FileEditDrawer from '@/components/FileEditDrawer.vue'
+import type { ArchiveVolumeDetailVO, ArchiveFileListVO } from '@/types/vo'
 
 const route     = useRoute()
 const router    = useRouter()
@@ -32,8 +34,9 @@ async function resolveYear(): Promise<string | undefined> {
 // ── 字典选项 ────────────────────────────────────────────────────
 const fondsNoOptions       = computed(() => dictStore.getDictItems('fonds_no'))
 const categoryL1Options    = computed(() => dictStore.getDictItems('category_l1'))
-const categoryL2Options    = computed(() => dictStore.getDictItems('category_l2'))
-const categoryL3Options    = computed(() => dictStore.getDictItems('category_l3'))
+// 树形联动：二级按一级过滤，三级按二级过滤
+const categoryL2Options    = computed(() => dictStore.getDictItemsByParent('category_l2', form.categoryL1))
+const categoryL3Options    = computed(() => dictStore.getDictItemsByParent('category_l3', form.categoryL2))
 const equipCodeOptions     = computed(() => dictStore.getDictItems('equipment_code'))
 const securityOptions      = computed(() => dictStore.getDictItems('security_level'))
 const retentionOptions     = computed(() => dictStore.getDictItems('retention_period'))
@@ -77,7 +80,7 @@ const archiveNoPreview = ref('')
 const previewLoading   = ref(false)
 
 const canPreview = computed(() =>
-  !!form.fondsNo && !!form.year && !!form.categoryL1 && !!form.deviceCode
+  !!form.fondsNo && !!form.year && !!form.categoryL1
 )
 
 let previewTimer: ReturnType<typeof setTimeout> | null = null
@@ -152,6 +155,7 @@ async function loadDetail() {
       notes:           d.notes           ?? '',
     })
     archiveNoPreview.value = d.archiveNo ?? ''
+    savedVolumeNo.value = d.volumeNo ?? ''
   } finally {
     loading.value = false
   }
@@ -161,7 +165,8 @@ onMounted(async () => {
   if (!dictStore.loaded) {
     await dictStore.loadAll().catch(() => {})
   }
-  loadDetail()
+  await loadDetail()
+  loadFiles()
 })
 
 // ── 校验规则 ────────────────────────────────────────────────────
@@ -169,7 +174,6 @@ const rules: FormRules = {
   fondsNo:      [{ required: true, message: '请选择全宗号',   trigger: 'change' }],
   year:         [{ required: true, message: '请选择年度',     trigger: 'change' }],
   categoryL1:   [{ required: true, message: '请选择一级类目', trigger: 'change' }],
-  deviceCode:[{ required: true, message: '请选择设备代号', trigger: 'change' }],
   volumeTitle:  [
     { required: true, message: '请输入案卷题名', trigger: 'blur' },
     { max: 200,       message: '不超过 200 字',  trigger: 'blur' },
@@ -193,9 +197,12 @@ async function saveDraft() {
       await VolumeApi.update(recordId.value!, form.year, buildPayload())
       ElMessage.success('草稿已保存')
     } else {
-      const newId = (await VolumeApi.saveDraft(buildPayload())).recordId
-      ElMessage.success('草稿已创建')
-      router.replace(`/volume/edit/${newId}`)
+      const created = await VolumeApi.saveDraft(buildPayload())
+      ElMessage.success('草稿已创建，可继续录入卷内文件')
+      archiveNoPreview.value = created.archiveNo ?? archiveNoPreview.value
+      savedVolumeNo.value = created.volumeNo ?? ''
+      router.replace(`/volume/edit/${created.recordId}?year=${encodeURIComponent(form.year)}`)
+      loadFiles()
     }
   } finally {
     saving.value = false
@@ -228,6 +235,62 @@ async function submitForReview() {
   } finally {
     submitting.value = false
   }
+}
+
+// ── 卷内文件（草稿保存后可录入）────────────────────────────────
+const files           = ref<ArchiveFileListVO[]>([])
+const filesLoading    = ref(false)
+const fileDrawerVisible = ref(false)
+const fileEditId      = ref<number | undefined>()
+const fileDrawerRef   = ref<InstanceType<typeof FileEditDrawer> | null>(null)
+const savedVolumeNo   = ref('')   // 已保存案卷的案卷号（后端生成）
+
+async function loadFiles() {
+  if (!recordId.value || !archiveNoPreview.value || !form.year) return
+  filesLoading.value = true
+  try {
+    files.value = await FileApi.listByVolume(archiveNoPreview.value, form.year)
+  } catch {
+    files.value = []
+  } finally {
+    filesLoading.value = false
+  }
+}
+
+function openFileCreate() {
+  fileEditId.value = undefined
+  fileDrawerVisible.value = true
+}
+
+function openFileEdit(row: ArchiveFileListVO) {
+  fileEditId.value = row.recordId
+  fileDrawerVisible.value = true
+  nextTick(() => {
+    fileDrawerRef.value?.setForm({
+      year:         row.year ?? form.year,
+      seqNo:        row.seqNo,
+      fileNo:       row.fileNo  ?? '',
+      fileTitle:    row.fileTitle,
+      responsible:  row.responsible ?? '',
+      pages:        row.pages,
+      securityLevel:row.securityLevel ?? '',
+      archiveDate:  row.archiveDate ?? '',
+      keywords:     row.keywords ?? '',
+      originalPath: row.originalPath ?? '',
+      remark:       row.remark ?? '',
+    })
+  })
+}
+
+async function handleFileDelete(row: ArchiveFileListVO) {
+  await ElMessageBox.confirm(
+    `确认删除文件「${row.fileTitle}」？此操作不可撤销。`,
+    '删除确认',
+    { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' },
+  )
+  await FileApi.delete(row.recordId, row.year)
+  ElMessage.success('已删除')
+  await loadFiles()
 }
 
 function buildPayload(): ArchiveVolumeSaveDTO {
@@ -381,8 +444,8 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
             </el-select>
           </el-form-item>
 
-          <!-- 设备代号 -->
-          <el-form-item label="设备代号" prop="deviceCode" required>
+          <!-- 设备代号（设备仪器类必填，其他类目可选） -->
+          <el-form-item label="设备代号" prop="deviceCode">
             <el-select v-model="form.deviceCode" placeholder="请选择设备代号" clearable class="w-full">
               <el-option
                 v-for="item in equipCodeOptions"
@@ -408,7 +471,7 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
             </template>
             <template v-else>
               <el-icon><Document /></el-icon>
-              <span class="archive-no-hint">填写全宗号、年度、一级类目、设备代号后自动生成</span>
+              <span class="archive-no-hint">填写全宗号、年度、一级类目后自动生成</span>
             </template>
           </div>
         </div>
@@ -568,6 +631,69 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
       </el-card>
     </el-form>
 
+    <!-- ── 卷内文件（草稿保存后可录入）────────────────────────── -->
+    <el-card v-if="recordId" shadow="never" class="form-section files-section">
+      <template #header>
+        <div class="section-header">
+          <span class="section-dot" />
+          <span class="section-title">卷内文件</span>
+          <span class="section-sub">草稿态可录入、编辑、删除</span>
+          <el-button
+            v-if="!readonly"
+            type="primary"
+            size="small"
+            class="files-add-btn"
+            @click="openFileCreate"
+          >
+            <el-icon><Plus /></el-icon>
+            新增文件
+          </el-button>
+        </div>
+      </template>
+
+      <el-table
+        v-loading="filesLoading"
+        :data="files"
+        row-key="recordId"
+        size="small"
+      >
+        <template #empty>
+          <EmptyState description="暂无卷内文件，点击「新增文件」开始录入" />
+        </template>
+        <el-table-column prop="seqNo" label="顺序号" width="76" align="center" />
+        <el-table-column prop="fileNo" label="文件编号" width="120" show-overflow-tooltip />
+        <el-table-column prop="fileTitle" label="文件标题" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="responsible" label="责任者" width="110" show-overflow-tooltip />
+        <el-table-column label="页数" width="70" align="center">
+          <template #default="{ row }">{{ row.pages ?? '—' }}</template>
+        </el-table-column>
+        <el-table-column label="电子原文" width="90" align="center">
+          <template #default="{ row }">
+            <el-icon v-if="row.originalPath" title="已上传"><Paperclip /></el-icon>
+            <span v-else class="dash">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="!readonly" label="操作" width="110" align="center">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="openFileEdit(row)">编辑</el-button>
+            <el-button link type="danger" @click="handleFileDelete(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <!-- 卷内文件编辑抽屉（共享组件） -->
+    <FileEditDrawer
+      ref="fileDrawerRef"
+      v-model="fileDrawerVisible"
+      :edit-id="fileEditId"
+      :archive-no="archiveNoPreview"
+      :volume-no="savedVolumeNo"
+      :year="form.year"
+      :file-count="files.length"
+      @saved="loadFiles"
+    />
+
     <!-- ── 底部操作栏 ──────────────────────────────────────────── -->
     <div class="form-footer">
       <el-button size="large" @click="handleCancel">取消</el-button>
@@ -653,6 +779,10 @@ const statusTag = computed(() => STATUS_LABELS[currentStatus.value] ?? STATUS_LA
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.files-add-btn {
+  margin-left: auto;
 }
 
 .section-dot {

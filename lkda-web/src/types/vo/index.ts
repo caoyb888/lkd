@@ -16,6 +16,8 @@ export interface DictItemVO {
   itemValue: string
   itemLabel: string
   sortOrder: number
+  /** 父级字典项值（树形关联用），NULL=顶级 */
+  parentValue?: string | null
   status: number      // 0-停用, 1-启用
 }
 

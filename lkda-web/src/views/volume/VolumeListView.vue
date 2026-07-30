@@ -21,9 +21,9 @@ const yearOptions = Array.from({ length: currentYear - 2017 }, (_, i) =>
   String(currentYear - i),
 )
 
-// ── 字典选项 ────────────────────────────────────────────────────
+// ── 字典选项（树形联动：二级按一级过滤）──────────────────────────
 const categoryL1Options = computed(() => dictStore.getDictItems('category_l1'))
-const categoryL2Options = computed(() => dictStore.getDictItems('category_l2'))
+const categoryL2Options = computed(() => dictStore.getDictItemsByParent('category_l2', query.categoryL1))
 
 const STATUS_OPTIONS = [
   { label: '草稿',   value: 0 },

@@ -53,10 +53,22 @@ public interface ArchiveFileService {
     /**
      * 按案卷号查询卷内文件列表（按 seq_no 排序）。
      */
-    List<ArchiveFileListVO> listFilesByVolume(String volumeNo, String year);
+    List<ArchiveFileListVO> listFilesByVolume(String archiveNo, String year);
 
     /**
      * 批量更新卷内文件顺序号（拖拽排序）。
      */
     void batchSort(List<com.laikuang.archive.file.domain.dto.ArchiveFileSortDTO> items);
+
+    /**
+     * 上传电子原文（仅限草稿态且立卷人本人）。
+     * @return 存储后的 original_path 值
+     */
+    String uploadOriginal(Long recordId, String year,
+                          org.springframework.web.multipart.MultipartFile file);
+
+    /**
+     * 按 original_path 加载电子原文资源（下载用，权限由 getFileDetail 先行校验）。
+     */
+    org.springframework.core.io.Resource loadOriginal(String originalPath);
 }

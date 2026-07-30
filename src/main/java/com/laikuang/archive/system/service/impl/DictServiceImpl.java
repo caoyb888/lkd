@@ -138,11 +138,16 @@ public class DictServiceImpl implements DictService {
                     "字典 [" + dto.getDictCode() + "] 已停用，不能新增字典项");
         }
 
-        // 同一字典下 itemValue 不重复
-        Long count = dictItemMapper.selectCount(
-                new LambdaQueryWrapper<SysDictItem>()
-                        .eq(SysDictItem::getDictCode, dto.getDictCode())
-                        .eq(SysDictItem::getItemValue, dto.getItemValue()));
+        // 同一字典同一父级下 itemValue 不重复（树形字典允许不同父级下值重复）
+        LambdaQueryWrapper<SysDictItem> dupWrapper = new LambdaQueryWrapper<SysDictItem>()
+                .eq(SysDictItem::getDictCode, dto.getDictCode())
+                .eq(SysDictItem::getItemValue, dto.getItemValue());
+        if (StringUtils.hasText(dto.getParentValue())) {
+            dupWrapper.eq(SysDictItem::getParentValue, dto.getParentValue());
+        } else {
+            dupWrapper.isNull(SysDictItem::getParentValue);
+        }
+        Long count = dictItemMapper.selectCount(dupWrapper);
         if (count > 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR,
                     "字典项值 [" + dto.getItemValue() + "] 在该字典下已存在");
@@ -153,6 +158,7 @@ public class DictServiceImpl implements DictService {
         item.setItemValue(dto.getItemValue());
         item.setItemLabel(dto.getItemLabel());
         item.setSortOrder(dto.getSortOrder() == null ? 0 : dto.getSortOrder());
+        item.setParentValue(dto.getParentValue());
         item.setStatus(1);
         dictItemMapper.insert(item);
 
@@ -171,6 +177,7 @@ public class DictServiceImpl implements DictService {
         update.setItemValue(dto.getItemValue());
         update.setItemLabel(dto.getItemLabel());
         update.setSortOrder(dto.getSortOrder());
+        update.setParentValue(dto.getParentValue());
         update.setStatus(dto.getStatus());
         dictItemMapper.updateById(update);
 
@@ -227,6 +234,7 @@ public class DictServiceImpl implements DictService {
         vo.setItemValue(item.getItemValue());
         vo.setItemLabel(item.getItemLabel());
         vo.setSortOrder(item.getSortOrder());
+        vo.setParentValue(item.getParentValue());
         vo.setStatus(item.getStatus());
         return vo;
     }

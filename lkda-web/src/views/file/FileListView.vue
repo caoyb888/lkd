@@ -2,14 +2,15 @@
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, ElTable } from 'element-plus'
-import type { FormInstance, FormRules } from 'element-plus'
 import Sortable from 'sortablejs'
 import { useDictStore } from '@/stores/dict'
 import { useAuthStore } from '@/stores/auth'
 import { VolumeApi } from '@/api/volume'
-import { FileApi, type ArchiveFileSaveDTO } from '@/api/file'
+import { FileApi } from '@/api/file'
 import type { ArchiveVolumeDetailVO, ArchiveFileListVO } from '@/types/vo'
 import ViewModeToggle from '@/components/ViewModeToggle.vue'
+import FileEditDrawer from '@/components/FileEditDrawer.vue'
+import FileDetailDrawer from '@/components/FileDetailDrawer.vue'
 import { useViewMode } from '@/composables/useViewMode'
 
 const route     = useRoute()
@@ -147,89 +148,48 @@ const securityStyle = (lv: string) => SECURITY_STYLE[lv] ?? { bg: '#F1F5F9', col
 const getSecurityLabel = (value: string) =>
   dictStore.getDictLabel('security_level', value) || value
 
-// ── Drawer 表单 ──────────────────────────────────────────────────
+// ── 新建/编辑/详情 Drawer（共享组件）──────────────────────────────
 const drawerVisible = ref(false)
-const drawerTitle   = ref('')
 const editId        = ref<number | undefined>()
-const formRef       = ref<FormInstance>()
-const saving        = ref(false)
-
-const emptyForm = (): ArchiveFileSaveDTO & { keywords: string } => ({
-  volumeId:     volumeId.value,
-  year:         volume.value?.year ?? '',
-  seqNo:        (files.value.length + 1),
-  fileNo:       '',
-  fileTitle:    '',
-  responsible:  '',
-  pages:        undefined as unknown as number,
-  securityLevel:'',
-  archiveDate:  '',
-  keywords:     '',
-  originalPath: '',
-  remark:       '',
-})
-
-const form = ref(emptyForm())
-
-const rules: FormRules = {
-  fileTitle: [{ required: true, message: '请输入文件标题', trigger: 'blur' }],
-  seqNo:     [{ required: true, message: '请填写顺序号',   trigger: 'blur' }],
-}
+const editDrawerRef = ref<InstanceType<typeof FileEditDrawer> | null>(null)
 
 function openCreate() {
-  editId.value      = undefined
-  drawerTitle.value = '新建卷内文件'
-  form.value        = emptyForm()
+  editId.value = undefined
   drawerVisible.value = true
 }
 
 function openEdit(row: ArchiveFileListVO) {
-  editId.value      = row.recordId
-  drawerTitle.value = '编辑卷内文件'
-  form.value = {
-    volumeId:     volumeId.value,
-    year:         row.year ?? volume.value?.year ?? '',
-    seqNo:        row.seqNo,
-    fileNo:       row.fileNo  ?? '',
-    fileTitle:    row.fileTitle,
-    responsible:  row.responsible ?? '',
-    pages:        row.pages,
-    securityLevel:row.securityLevel ?? '',
-    archiveDate:  row.archiveDate ?? '',
-    keywords:     row.keywords ?? '',
-    originalPath: row.originalPath ?? '',
-    remark:       row.remark ?? '',
-  }
+  editId.value = row.recordId
   drawerVisible.value = true
+  nextTick(() => {
+    editDrawerRef.value?.setForm({
+      year:         row.year ?? volume.value?.year ?? '',
+      seqNo:        row.seqNo,
+      fileNo:       row.fileNo  ?? '',
+      fileTitle:    row.fileTitle,
+      responsible:  row.responsible ?? '',
+      pages:        row.pages,
+      securityLevel:row.securityLevel ?? '',
+      archiveDate:  row.archiveDate ?? '',
+      keywords:     row.keywords ?? '',
+      originalPath: row.originalPath ?? '',
+      remark:       row.remark ?? '',
+    })
+  })
 }
 
-function closeDrawer() {
-  drawerVisible.value = false
-  formRef.value?.resetFields()
+async function onSaved() {
+  await loadFiles()
+  nextTick(bindSortable)
 }
 
-async function submitForm() {
-  const valid = await formRef.value?.validate().catch(() => false)
-  if (!valid) return
-  saving.value = true
-  try {
-    const payload = {
-      ...form.value,
-      keywords: form.value.keywords || undefined,
-    }
-    if (editId.value) {
-      await FileApi.update(editId.value, payload.year, payload)
-      ElMessage.success('文件信息已更新')
-    } else {
-      await FileApi.save(payload)
-      ElMessage.success('文件已新建')
-    }
-    closeDrawer()
-    await loadFiles()
-    nextTick(bindSortable)
-  } finally {
-    saving.value = false
-  }
+// ── 只读详情 Drawer ─────────────────────────────────────────────
+const detailVisible = ref(false)
+const detailId      = ref<number | undefined>()
+
+function openDetail(row: ArchiveFileListVO) {
+  detailId.value = row.recordId
+  detailVisible.value = true
 }
 
 // ── 删除 ─────────────────────────────────────────────────────────
@@ -243,29 +203,6 @@ async function handleDelete(row: ArchiveFileListVO) {
   ElMessage.success('已删除')
   await loadFiles()
   nextTick(bindSortable)
-}
-
-// ── 主题词 Tag 输入 ───────────────────────────────────────────────
-const keywordInput  = ref('')
-const keywordList   = computed<string[]>(() =>
-  form.value.keywords
-    ? form.value.keywords.split(',').map(s => s.trim()).filter(Boolean)
-    : []
-)
-
-function addKeyword() {
-  const kw = keywordInput.value.trim()
-  if (!kw) return
-  const exists = keywordList.value.includes(kw)
-  if (!exists) {
-    const arr = [...keywordList.value, kw]
-    form.value.keywords = arr.join(',')
-  }
-  keywordInput.value = ''
-}
-
-function removeKeyword(kw: string) {
-  form.value.keywords = keywordList.value.filter(k => k !== kw).join(',')
 }
 
 // ── 初始化 ───────────────────────────────────────────────────────
@@ -381,13 +318,13 @@ onMounted(async () => {
         <el-table-column label="归档日期" width="108" align="center">
           <template #default="{ row }">{{ row.archiveDate || '—' }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right" align="center">
+        <el-table-column label="操作" width="150" fixed="right" align="center">
           <template #default="{ row }">
+            <el-button link type="primary" @click="openDetail(row)">查看</el-button>
             <template v-if="canEdit">
               <el-button link type="primary" @click="openEdit(row)">编辑</el-button>
               <el-button link type="danger"  @click="handleDelete(row)">删除</el-button>
             </template>
-            <span v-else class="dash">—</span>
           </template>
         </el-table-column>
       </el-table>
@@ -438,6 +375,12 @@ onMounted(async () => {
           <div class="archive-card-footer">
             <span class="meta-text">{{ row.archiveDate || '—' }}</span>
             <el-button
+              link
+              type="primary"
+              size="small"
+              @click.stop="openDetail(row)"
+            >查看</el-button>
+            <el-button
               v-if="canEdit"
               link
               type="primary"
@@ -459,154 +402,24 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- ── 新建/编辑 Drawer ───────────────────────────────────────── -->
-    <el-drawer
+    <!-- ── 新建/编辑 Drawer（共享组件） ──────────────────────────── -->
+    <FileEditDrawer
+      ref="editDrawerRef"
       v-model="drawerVisible"
-      :title="drawerTitle"
-      direction="rtl"
-      size="560px"
-      :close-on-click-modal="false"
-      class="file-drawer"
-      @closed="closeDrawer"
-    >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-position="top"
-        class="drawer-form"
-      >
-        <!-- 关联案卷号（只读） -->
-        <el-form-item label="关联案卷号">
-          <el-input :value="volume?.archiveNo ?? ''" disabled class="w-full" />
-        </el-form-item>
+      :edit-id="editId"
+      :archive-no="volume?.archiveNo ?? ''"
+      :volume-no="volume?.volumeNo ?? ''"
+      :year="volume?.year ?? ''"
+      :file-count="files.length"
+      @saved="onSaved"
+    />
 
-        <div class="form-row-2">
-          <!-- 顺序号 -->
-          <el-form-item label="顺序号" prop="seqNo">
-            <el-input-number
-              v-model="form.seqNo"
-              :min="1"
-              :max="9999"
-              controls-position="right"
-              class="w-full"
-            />
-          </el-form-item>
-          <!-- 文件编号 -->
-          <el-form-item label="文件编号" prop="fileNo">
-            <el-input v-model="form.fileNo" placeholder="可选" clearable class="w-full" />
-          </el-form-item>
-        </div>
-
-        <!-- 文件标题 -->
-        <el-form-item label="文件标题" prop="fileTitle" required>
-          <el-input
-            v-model="form.fileTitle"
-            placeholder="请输入文件标题（必填）"
-            maxlength="200"
-            show-word-limit
-            clearable
-            class="w-full"
-          />
-        </el-form-item>
-
-        <div class="form-row-2">
-          <!-- 责任者 -->
-          <el-form-item label="责任者" prop="responsible">
-            <el-input v-model="form.responsible" placeholder="可选" clearable class="w-full" />
-          </el-form-item>
-          <!-- 页数 -->
-          <el-form-item label="页数" prop="pages">
-            <el-input-number
-              v-model="form.pages"
-              :min="0"
-              :max="99999"
-              placeholder="可选"
-              controls-position="right"
-              class="w-full"
-            />
-          </el-form-item>
-        </div>
-
-        <div class="form-row-2">
-          <!-- 密级 -->
-          <el-form-item label="密级" prop="securityLevel">
-            <el-select v-model="form.securityLevel" placeholder="请选择密级" clearable class="w-full">
-              <el-option
-                v-for="item in securityOptions"
-                :key="item.itemValue"
-                :label="item.itemLabel"
-                :value="item.itemValue"
-              />
-            </el-select>
-          </el-form-item>
-          <!-- 归档日期 -->
-          <el-form-item label="归档日期" prop="archiveDate">
-            <el-date-picker
-              v-model="form.archiveDate"
-              type="date"
-              placeholder="请选择归档日期"
-              value-format="YYYY-MM-DD"
-              class="w-full"
-            />
-          </el-form-item>
-        </div>
-
-        <!-- 主题词 Tag 输入 -->
-        <el-form-item label="主题词" prop="keywords">
-          <div class="keyword-wrap">
-            <div class="keyword-tags">
-              <el-tag
-                v-for="kw in keywordList"
-                :key="kw"
-                closable
-                @close="removeKeyword(kw)"
-                class="keyword-tag"
-              >{{ kw }}</el-tag>
-              <el-input
-                v-model="keywordInput"
-                placeholder="输入后按 Enter 添加"
-                size="small"
-                class="keyword-input"
-                @keyup.enter.prevent="addKeyword"
-              />
-            </div>
-            <div class="keyword-hint">多个主题词逐个添加，点击标签右侧 × 删除</div>
-          </div>
-        </el-form-item>
-
-        <!-- 原文路径 -->
-        <el-form-item label="原文路径" prop="originalPath">
-          <el-input
-            v-model="form.originalPath"
-            placeholder="电子原文存储路径（可选）"
-            clearable
-            class="w-full"
-          />
-        </el-form-item>
-
-        <!-- 备注 -->
-        <el-form-item label="备注" prop="remark">
-          <el-input
-            v-model="form.remark"
-            type="textarea"
-            :rows="3"
-            placeholder="可选"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-      </el-form>
-
-      <template #footer>
-        <div class="drawer-footer">
-          <el-button @click="closeDrawer">取消</el-button>
-          <el-button type="primary" :loading="saving" class="btn-save" @click="submitForm">
-            {{ editId ? '保存修改' : '新建文件' }}
-          </el-button>
-        </div>
-      </template>
-    </el-drawer>
+    <!-- ── 只读详情 Drawer ───────────────────────────────────────── -->
+    <FileDetailDrawer
+      v-model="detailVisible"
+      :record-id="detailId"
+      :year="volume?.year ?? ''"
+    />
   </div>
 </template>
 

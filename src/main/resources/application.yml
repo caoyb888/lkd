@@ -3,6 +3,10 @@ spring:
     name: laikuang-archive
   profiles:
     active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -63,3 +67,8 @@ logging:
   level:
     root: INFO
     com.laikuang.archive: DEBUG
+
+# 业务配置
+lkda:
+  # 电子原文存储目录
+  upload-dir: ${UPLOAD_DIR:./uploads}

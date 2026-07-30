@@ -21,6 +21,10 @@ public class UpdateDictItemDTO {
 
     private Integer sortOrder;
 
+    /** 父级字典项值（树形关联用），NULL=顶级 */
+    @Size(max = 50)
+    private String  parentValue;
+
     /** 状态：1-启用，0-停用 */
     @NotNull(message = "状态不能为空")
     private Integer status;
